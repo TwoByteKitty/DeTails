@@ -1,8 +1,7 @@
-const morgan = require('morgan');
-const express = require('express');
-
-const router = require('./routes/index.js');
-const db = require('./config/db.js');
+import db from './config/db';
+import express, { Application, Express } from 'express';
+import morgan from 'morgan';
+import router from './routes/index';
 
 //-- .env --------------------------------------------------------------------
 // if (process.env.NODE_ENV !== 'production') {
@@ -17,19 +16,16 @@ const db = require('./config/db.js');
 
 //-- Constants ---------------------------------------------------------------
 
-const LOG_MODE = process.env.NODE_ENV === 'production' ? 'common' : 'dev';
+const LOG_MODE: string = process.env.NODE_ENV === 'production' ? 'common' : 'dev';
 
 //-- Express -----------------------------------------------------------------
-const app = express();
+const app: Application = express();
 
 //-- TODO Mongoose Setup ----------------------------------------------------------
-db.connect(
-    process.env.MONGODB_URI ||
-    'mongodb://localhost/DeTail'
-)
-db.connection.on('error', err => {
-    console.log(`Mongoose connection err:\n${err}`)
-})
+db.connect(process.env.MONGODB_URI || 'mongodb://localhost/DeTail');
+db.connection.on('error', (err: any) => {
+	console.log(`Mongoose connection err:\n${err}`);
+});
 
 //-- Middleware --------------------------------------------------------------
 app.use(morgan(LOG_MODE));
@@ -52,4 +48,4 @@ app.use('/api', router);
 //   res.sendFile(path.join(__dirname, '../client/build/index.html'));
 // });
 
-module.exports = app;
+export default app;

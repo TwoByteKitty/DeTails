@@ -1,4 +1,4 @@
-const db = require('../config/db.js');
+import db from '../config/db';
 
 const Schema = db.Schema;
 
@@ -7,6 +7,4 @@ const petSchema = new Schema({
   health: { type: Number, required: true, default: 100 }
 });
 
-const Pet = db.model("Pet", petSchema);
-
-module.exports = Pet;
+export const Pet = db.model("Pet", petSchema);
