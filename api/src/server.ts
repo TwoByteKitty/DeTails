@@ -1,5 +1,5 @@
 import db from './config/db';
-import express, { Application, Express } from 'express';
+import express, { Application } from 'express';
 import morgan from 'morgan';
 import router from './routes/index';
 
@@ -24,12 +24,12 @@ const app: Application = express();
 //-- TODO Mongoose Setup ----------------------------------------------------------
 db.connect(process.env.MONGODB_URI || 'mongodb://localhost/DeTail');
 db.connection.on('error', (err: any) => {
-	console.log(`Mongoose connection err:\n${err}`);
+  console.log(`Mongoose connection err:\n${err}`);
 });
 
 //-- Middleware --------------------------------------------------------------
 app.use(morgan(LOG_MODE));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // app.use(passport.initialize());
 
