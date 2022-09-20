@@ -1,13 +1,14 @@
 import { Schema, model, Types } from 'mongoose';
 
 export type PetType = 'cat' | 'dog' | 'reptile' | 'amphibian' | 'fish';
+export type SexType = 'male' | 'female';
 
 export interface IPet {
   _id: string;
   name: string;
   type: PetType;
   species: string;
-  sex: string;
+  sex: SexType;
   dateOfBirth: Date;
   description: string;
 }

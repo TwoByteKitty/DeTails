@@ -1,5 +1,10 @@
 {
-  "cSpell.words": ["codepaths", "linebreak", "tsbuildinfo"],
+  "cSpell.words": [
+    "codepaths",
+    "linebreak",
+    "pinia",
+    "tsbuildinfo"
+  ],
   "emmet.triggerExpansionOnTab": true,
   "eslint.format.enable": true,
   "editor.codeActionsOnSave": {
