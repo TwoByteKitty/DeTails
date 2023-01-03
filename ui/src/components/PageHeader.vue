@@ -4,6 +4,10 @@ defineProps<{
 }>();
 </script>
 
+<script lang="ts">
+export default {};
+</script>
+
 <template>
   <h1>{{ msg }}</h1>
 </template>

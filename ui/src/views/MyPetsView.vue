@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RouterLink } from "vue-router";
+import { RouterLink } from 'vue-router';
 </script>
 <script lang="ts">
 const API_URL = `/api/pets`;
