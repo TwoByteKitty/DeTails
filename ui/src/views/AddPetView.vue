@@ -28,6 +28,8 @@ export default {
 
 <template>
   <form class="add-pet-form" :action="url" method="POST">
+    <v-icon icon="fas fa-plus" />
+    <v-icon icon="mdi:mdi-minus" />
     <input v-model="myPet.name" type="text" placeholder="Name" name="name" />
     <!--TODO: Populate from api-->
     <select v-model="myPet.type" placeholder="Type" name="type"></select>
