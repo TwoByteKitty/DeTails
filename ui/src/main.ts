@@ -1,14 +1,17 @@
+import { aliases, fa } from 'vuetify/iconsets/fa';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
-import 'vuetify/styles';
 import { createVuetify } from 'vuetify';
+import { mdi } from 'vuetify/iconsets/mdi';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
-import { aliases, fa } from 'vuetify/iconsets/fa';
-import { mdi } from 'vuetify/iconsets/mdi';
 
 import App from './App.vue';
 import router from './router';
+
+import '@fortawesome/fontawesome-free/css/all.css';
+import '@mdi/font/css/materialdesignicons.css';
+import 'vuetify/styles';
 import './assets/main.css';
 
 const app = createApp(App);
