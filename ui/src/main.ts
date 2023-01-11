@@ -1,30 +1,38 @@
-import { aliases, fa } from 'vuetify/iconsets/fa';
+import '@fortawesome/fontawesome-free/css/all.css';
+import '@mdi/font/css/materialdesignicons.css';
+import 'vuetify/styles';
+import './styles/main.css';
+
+import { fa } from 'vuetify/iconsets/fa';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { createVuetify } from 'vuetify';
-import { mdi } from 'vuetify/iconsets/mdi';
+import { aliases, mdi } from 'vuetify/iconsets/mdi';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 
 import App from './App.vue';
 import router from './router';
-
-import '@fortawesome/fontawesome-free/css/all.css';
-import '@mdi/font/css/materialdesignicons.css';
-import 'vuetify/styles';
-import './assets/main.css';
+import lightTheme from './styles/themes/light';
+import darkTheme from './styles/themes/dark';
 
 const app = createApp(App);
 const vuetify = createVuetify({
-  theme: { dark: true },
+  theme: {
+    defaultTheme: 'dark',
+    themes: {
+      lightTheme,
+      darkTheme,
+    },
+  },
   components,
   directives,
   icons: {
-    defaultSet: 'fa',
+    defaultSet: 'mdi',
     aliases,
     sets: {
-      fa,
       mdi,
+      fa,
     },
   },
 });

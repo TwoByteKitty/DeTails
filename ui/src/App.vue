@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import RouterView from './router/RouterView.vue';
-import HeaderView from './views/HeaderView.vue';
+import Header from './components/Header.vue';
 </script>
 
 <template>
   <div>
-    <HeaderView />
+    <Header />
     <RouterView />
   </div>
 </template>
