@@ -16,6 +16,7 @@ import './assets/main.css';
 
 const app = createApp(App);
 const vuetify = createVuetify({
+  theme: { dark: true },
   components,
   directives,
   icons: {
