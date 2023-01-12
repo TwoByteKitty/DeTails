@@ -3,15 +3,12 @@ const API_URL = `/api/pets/add/`;
 // There are two approaches, async or postback, either way the form need validated
 export default {
   data: () => ({
-    column: null,
-    inline: null,
-    url: API_URL,
     myPet: {
       name: '',
       type: null,
       species: '',
-      sex: '',
-      dateOfBirth: '',
+      sex: 'unknown',
+      dateOfBirth: new Date(),
       description: '',
     },
     petType: ['amphibian', 'bird', 'cat', 'dog', 'fish', 'lizard', 'snake'],
@@ -21,9 +18,29 @@ export default {
 
   methods: {
     async createPet() {
-      // POSSIBLE TODO: make this a post with the data and redirect to MyPetsView
       const url = `${API_URL}`;
-      this.myPet = await (await fetch(url)).json();
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(this.myPet),
+      };
+
+      fetch(url, requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+
+          // check for error response
+          if (!response.ok) {
+            // get error message from body or default to response status
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+          }
+          console.log(data);
+        })
+        .catch((error) => {
+          console.error('There was an error!', error);
+        });
     },
   },
 };
@@ -35,7 +52,7 @@ export default {
       <span>Registration successful!</span>
       <v-icon dark> mdi-checkbox-marked-circle </v-icon>
     </v-snackbar> -->
-    <form :action="url" method="POST">
+    <form>
       <v-container fluid>
         <v-row>
           <v-col>
@@ -72,7 +89,7 @@ export default {
         <v-row>
           <v-spacer></v-spacer>
           <v-col>
-            <v-btn size="x-large" color="success" prepend-icon="mdi-check"> Create </v-btn>
+            <v-btn size="x-large" color="success" prepend-icon="mdi-check" @click="createPet()"> Create </v-btn>
           </v-col>
           <v-spacer></v-spacer>
           <v-col>
