@@ -7,7 +7,7 @@ export default {};
 </script>
 
 <template>
-  <main>
+  <v-main>
     <RouterView />
-  </main>
+  </v-main>
 </template>

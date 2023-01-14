@@ -1,10 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Advent+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Calligraffitti&family=Cormorant+Infant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Cormorant+Upright:wght@300;400;500;600;700&family=Emilys+Candy&family=Kavivanar&family=Laila:wght@300;400;500;600;700&family=Lancelot&family=Milonga&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Shalimar&family=Spectral:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Trirong:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import "./themes/theme.css";
+
+/* font-family: 'Advent Pro', sans-serif;
+font-family: 'Calligraffitti', cursive;
+font-family: 'Cormorant Infant', serif;
+font-family: 'Cormorant Upright', serif;
+font-family: 'Emilys Candy', cursive;
+font-family: 'Kavivanar', cursive;
+font-family: 'Laila', sans-serif;
+font-family: 'Lancelot', cursive;
+font-family: 'Milonga', cursive;
+font-family: 'Raleway', sans-serif;
+font-family: 'Shalimar', cursive;
+font-family: 'Spectral', serif;
+font-family: 'Trirong', serif; */
 
 #app {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
 
+  font-family: 'Spectral', serif;
   font-weight: normal;
 }
 

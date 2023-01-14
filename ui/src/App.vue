@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import RouterView from './router/RouterView.vue';
-import Header from './components/Header.vue';
+import AppBar from './components/AppBar.vue';
 </script>
 
 <template>
-  <div>
-    <Header />
+  <v-app>
+    <AppBar />
     <RouterView />
-  </div>
+  </v-app>
 </template>

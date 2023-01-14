@@ -22,7 +22,7 @@ const LOG_MODE: string = process.env.NODE_ENV === 'production' ? 'common' : 'dev
 const app: Application = express();
 
 //-- TODO Mongoose Setup ----------------------------------------------------------
-db.connect(process.env.MONGODB_URI || 'mongodb://localhost/DeTail');
+db.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1/DeTail');
 db.connection.on('error', (err: any) => {
   console.log(`Mongoose connection err:\n${err}`);
 });
