@@ -16,12 +16,12 @@ font-family: 'Spectral', serif;
 font-family: 'Trirong', serif; */
 
 #app {
-  max-width: 1280px;
+  max-width: 75%;
   margin: 0 auto;
   padding: 2rem;
 
-  font-family: 'Spectral', serif;
-  font-weight: normal;
+  font-family: 'Laila', sans-serif;
+  font-weight: 300;
 }
 
 

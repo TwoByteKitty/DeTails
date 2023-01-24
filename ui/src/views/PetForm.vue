@@ -1,5 +1,7 @@
 <script lang="ts">
 const API_URL = `/api/pets/add/`;
+import Datepicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 // There are two approaches, async or postback, either way the form need validated
 export default {
   data: () => ({
