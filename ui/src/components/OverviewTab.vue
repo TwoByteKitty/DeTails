@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
 import EditModal from './EditModal.vue';
 export interface EditPetProps {
   _id: string;

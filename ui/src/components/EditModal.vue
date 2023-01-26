@@ -51,7 +51,7 @@ export default {
     dateOfBirth: {
       immediate: true,
       handler(newVal) {
-        this.fields.dateOfBirth = newVal ? newVal : this.dateOfBirthFormatted;
+        this.fields.dateOfBirth = newVal;
       },
     },
     description: {
