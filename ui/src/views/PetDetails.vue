@@ -1,31 +1,30 @@
-<script lang="ts">
-const API_URL = `/api/pets/`;
-// There are two approaches, async or postback, either way the form needs to be validated
+<script setup lang="ts">
 import OverviewTab from '../components/OverviewTab.vue';
 import WeightTab from '../components/WeightTab.vue';
 import FeedingTab from '../components/FeedingTab.vue';
 import ShedTab from '../components/ShedTab.vue';
-import WeightTab from '../components/WeightTab.vue';
-import FeedingTab from '../components/FeedingTab.vue';
-import ShedTab from '../components/ShedTab.vue';
+</script>
 
+<script lang="ts">
+const API_URL = `/api/pets/`;
 export default {
   components: { OverviewTab, WeightTab, FeedingTab, ShedTab },
-  data: () => ({
-    url: API_URL,
-    myPet: {
-      name: '',
-      type: '',
-      species: '',
-      sex: '',
-      dateOfBirth: '',
-      description: '',
-    },
-    tab: null,
-  }),
-
-  watch: {},
-
+  data (){
+    return {
+      url: API_URL,
+      myPet: {
+        _id:'',
+        name: '',
+        type: '',
+        species: '',
+        sex: '',
+        dateOfBirth: '',
+        dateOfBirthFormatted:'',
+        description: '',
+      },
+      tab: null,
+    };
+  },
   created() {
     // fetch on init
     this.getPet();

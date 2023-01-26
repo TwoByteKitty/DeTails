@@ -2,11 +2,13 @@
 import { RouterLink } from 'vue-router';
 import EditModal from './EditModal.vue';
 export interface EditPetProps {
-  name?: string;
-  type?: string;
-  species?: string;
-  dateOfBirth?: string;
-  description?: string;
+  _id: string;
+  name: string;
+  type: string;
+  species: string;
+  dateOfBirth: string;
+  dateOfBirthFormatted: string;
+  description: string;
 }
 defineProps<EditPetProps>();
 </script>
@@ -36,7 +38,7 @@ export default {
         <v-card-title class="d-flex justify-space-between">
           <span> Overview </span>
           <span>
-            <edit-modal v-bind="{ name, type, species, dateOfBirth, description }"></edit-modal>
+            <edit-modal v-bind="{ _id, name, type, species, dateOfBirthFormatted, description }"></edit-modal>
           </span>
         </v-card-title>
         <v-row>

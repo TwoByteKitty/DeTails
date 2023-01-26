@@ -1,27 +1,94 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
+/*@ts-ignore */
 import { PetType } from '@/shared/PetType';
 
 export interface EditPetProps {
-  name?: string;
-  type?: string;
-  species?: string;
-  dateOfBirth?: string;
-  description?: string;
+  _id: string;
+  name: string;
+  type: string;
+  species: string;
+  dateOfBirthFormatted: string;
+  description: string;
 }
 defineProps<EditPetProps>();
 </script>
 
 <script lang="ts">
+const API_URL = `/api/pets/`;
+
 export default {
-  data: () => ({
-    dialog: false,
-    fields: {
-      species: '',
-      dateOfBirth: '',
-      description: '',
+  data() {
+    return {
+      dialog: false,
+      fields: {
+        _id: this._id,
+        species: this.species,
+        type: this.type,
+        dateOfBirth: this.dateOfBirthFormatted,
+        description: this.description,
+      },
+    };
+  },
+  watch: {
+    _id: {
+      immediate: true,
+      handler(newVal) {
+        this.fields._id = newVal;
+      },
     },
-  }),
+    species: {
+      immediate: true,
+      handler(newVal) {
+        this.fields.species = newVal;
+      },
+    },
+    type: {
+      immediate: true,
+      handler(newVal) {
+        this.fields.type = newVal;
+      },
+    },
+    dateOfBirth: {
+      immediate: true,
+      handler(newVal) {
+        this.fields.dateOfBirth = newVal ? newVal : this.dateOfBirthFormatted;
+      },
+    },
+    description: {
+      immediate: true,
+      handler(newVal) {
+        this.fields.description = newVal;
+      },
+    },
+  },
+  methods: {
+    async editPet() {
+      const url = `${API_URL}/${this.$route.params.id}`;
+
+      const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...this.fields }),
+      };
+
+      fetch(url, requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+
+          // check for error response
+          if (!response.ok) {
+            // get error message from body or default to response status
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+          }
+          console.log(data);
+          this.dialog = false;
+        })
+        .catch((error) => {
+          console.error('There was an error!', error);
+        });
+    },
+  },
 };
 </script>
 
@@ -39,21 +106,16 @@ export default {
           <v-container>
             <v-row>
               <v-col cols="12" sm="6">
-                <v-select :items="PetType" :model-value="type" label="Type"></v-select>
+                <v-select :items="PetType" v-model="fields.type" label="Type"></v-select>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-text-field :model="fields.species" :model-value="species" label="Species"></v-text-field>
+                <v-text-field v-model="fields.species" label="Species"></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-text-field
-                  :model="fields.dateOfBirth"
-                  :model-value="dateOfBirth"
-                  label="Date of Birth"
-                  type="date"
-                ></v-text-field>
+                <v-text-field v-model="fields.dateOfBirth" label="Date of Birth" type="date"></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-textarea :model="fields.description" :model-value="description" label="Description"></v-textarea>
+                <v-textarea v-model="fields.description" label="Description"></v-textarea>
               </v-col>
             </v-row>
           </v-container>
@@ -61,7 +123,7 @@ export default {
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue-darken-1" variant="text" @click="dialog = false"> Close </v-btn>
-          <v-btn color="blue-darken-1" variant="text" @click="dialog = false"> Save </v-btn>
+          <v-btn color="blue-darken-1" variant="text" @click="editPet"> Save </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

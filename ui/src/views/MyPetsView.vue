@@ -26,7 +26,7 @@ export default {
 </script>
 
 <template>
-  <container fluid nogutters>
+  <v-container fluid nogutters>
     <v-toolbar flat>
       <v-toolbar-title> My Pets </v-toolbar-title>
       <v-spacer></v-spacer>
@@ -78,7 +78,7 @@ export default {
         </v-card>
       </v-list-item>
     </v-list>
-  </container>
+  </v-container>
 </template>
 
 <style>
