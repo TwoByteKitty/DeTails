@@ -17,6 +17,7 @@ const addPet = (request: Request<{}, {}, IPet>, response: Response) => {
 
 const editPet = (request: Request<{}, {}, IPet>, response: Response) => {
   const pet: IPet = request.body;
+  pet.dateOfBirth = new Date(pet.dateOfBirth);
   Pet.findByIdAndUpdate(pet._id, pet)
     .then((updatedPet) => response.json(updatedPet))
     .catch((err) => response.status(500).json(err));
