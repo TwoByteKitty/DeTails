@@ -1,3 +1,6 @@
+<script setup lang="ts">
+import { PetType } from '@/shared/PetType';
+</script>
 <script lang="ts">
 const API_URL = `/api/pets/add/`;
 // There are two approaches, async or postback, either way the form need validated
@@ -11,7 +14,6 @@ export default {
       dateOfBirth: new Date(),
       description: '',
     },
-    petType: ['amphibian', 'bird', 'cat', 'dog', 'fish', 'lizard', 'snake'],
   }),
 
   watch: {},
@@ -66,7 +68,7 @@ export default {
         </v-row>
         <v-row>
           <v-col>
-            <v-select v-model="myPet.type" label="Type" :items="petType" variant="solo"></v-select>
+            <v-select v-model="myPet.type" label="Type" :items="PetType" variant="solo"></v-select>
           </v-col>
         </v-row>
         <v-row>

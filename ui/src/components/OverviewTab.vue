@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
 import EditModal from './EditModal.vue';
+export interface EditPetProps {
+  name?: string;
+  type?: string;
+  species?: string;
+  dateOfBirth?: string;
+  description?: string;
+}
+defineProps<EditPetProps>();
 </script>
 
 <script lang="ts">
 export default {
   components: { EditModal },
-  props: {
-    name: String,
-    type: String,
-    species: String,
-    dateOfBirth: String,
-    description: String,
-    avatarPic: Image,
-  },
 };
 </script>
 

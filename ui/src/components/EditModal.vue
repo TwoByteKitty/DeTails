@@ -1,20 +1,26 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
+import { PetType } from '@/shared/PetType';
+
+export interface EditPetProps {
+  name?: string;
+  type?: string;
+  species?: string;
+  dateOfBirth?: string;
+  description?: string;
+}
+defineProps<EditPetProps>();
 </script>
 
 <script lang="ts">
 export default {
-  props: {
-    name: String,
-    type: String,
-    species: String,
-    dateOfBirth: String,
-    description: String,
-    avatarPic: Image,
-  },
   data: () => ({
     dialog: false,
-    speciesToEdit: '',
+    fields: {
+      species: '',
+      dateOfBirth: '',
+      description: '',
+    },
   }),
 };
 </script>
@@ -33,16 +39,21 @@ export default {
           <v-container>
             <v-row>
               <v-col cols="12" sm="6">
-                <v-select :items="['0-17', '18-29', '30-54', '54+']" label="Type"></v-select>
+                <v-select :items="PetType" :model-value="type" label="Type"></v-select>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-text-field v-model="speciesToEdit" label="Species"></v-text-field>
+                <v-text-field :model="fields.species" :model-value="species" label="Species"></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-text-field label="Date of Birth" type="date"></v-text-field>
+                <v-text-field
+                  :model="fields.dateOfBirth"
+                  :model-value="dateOfBirth"
+                  label="Date of Birth"
+                  type="date"
+                ></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-textarea label="Description"></v-textarea>
+                <v-textarea :model="fields.description" :model-value="description" label="Description"></v-textarea>
               </v-col>
             </v-row>
           </v-container>
