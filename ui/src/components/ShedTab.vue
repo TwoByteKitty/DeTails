@@ -15,7 +15,6 @@ export default {
   data() {
     return {
       chart_type: 'justify',
-      entireShed: 'Entire',
       chartData: {
         labels: ['January', 'February', 'March'],
         datasets: [{ data: [40, 20, 12] }],
@@ -52,6 +51,15 @@ export default {
           comments: 'bathed at apx 88F for 2 hours to resolve stuck shed. blah blah blah',
         },
       ],
+      newShed: {
+        shedId: 0,
+        pinkBelly: '',
+        blueEyes: '',
+        clearEyes: '',
+        shedSkin: '',
+        entire: 'Not Entire',
+        comments: '',
+      },
     };
   },
   components: { Datepicker },
@@ -61,6 +69,11 @@ export default {
     return {
       date,
     };
+  },
+  methods: {
+    createShed() {
+      console.log(this.newShed);
+    },
   },
 };
 </script>
@@ -111,38 +124,38 @@ export default {
           <v-row class="d-flex justify-center align-center">
             <v-col>
               <label>Pink Belly</label>
-              <Datepicker v-model="date" auto-apply dark />
+              <Datepicker v-model="newShed.pinkBelly" :enable-time-picker="false" auto-apply dark />
             </v-col>
             <v-col>
               <label>Blue Eyes</label>
-              <Datepicker v-model="date" auto-apply dark />
+              <Datepicker v-model="newShed.blueEyes" :enable-time-picker="false" auto-apply dark />
             </v-col>
             <v-col>
               <label>Eyes Cleared</label>
-              <Datepicker v-model="date" auto-apply dark />
+              <Datepicker v-model="newShed.clearEyes" :enable-time-picker="false" auto-apply dark />
             </v-col>
             <v-col>
               <label>Skin Shed</label>
-              <Datepicker v-model="date" auto-apply dark />
+              <Datepicker v-model="newShed.shedSkin" :enable-time-picker="false" auto-apply dark />
             </v-col>
             <v-col>
               <v-switch
-                v-model="entireShed"
+                v-model="newShed.entire"
                 hide-details
                 true-value="Entire"
                 false-value="Not Entire"
-                :label="`${entireShed}`"
+                :label="`${newShed.entire}`"
                 inset
               ></v-switch>
             </v-col>
           </v-row>
           <v-row>
             <v-col>
-              <v-textarea label="Comments" variant="outlined" rows="2"></v-textarea>
+              <v-textarea v-model="newShed.comments" label="Comments" variant="outlined"></v-textarea>
             </v-col>
           </v-row>
           <div class="shed-btn-div d-flex justify-space-around align-center flex-column flex-md-row fill-height">
-            <v-btn class="shed-btn elevation-9" size="x-large"> Add New Shed Cycle Data </v-btn>
+            <v-btn class="shed-btn elevation-9" size="x-large" @click="createShed()"> Add New Shed Cycle Data </v-btn>
           </div>
         </v-card>
       </v-col>

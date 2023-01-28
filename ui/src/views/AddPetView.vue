@@ -3,7 +3,7 @@ import { PetType } from '@/shared/PetType';
 </script>
 <script lang="ts">
 const API_URL = `/api/pets/add/`;
-// There are two approaches, async or postback, either way the form need validated
+// There are two approaches, async or postback, either way the form needs to be validated
 export default {
   data: () => ({
     myPet: {

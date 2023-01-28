@@ -16,6 +16,7 @@
     "@mdi/font": "^7.1.96",
     "@vuepic/vue-datepicker": "^3.6.5",
     "chart.js": "^4.1.2",
+    "moment": "^2.29.4",
     "pinia": "^2.0.21",
     "v-calendar": "^3.0.0-alpha.8",
     "vue": "^3.2.38",

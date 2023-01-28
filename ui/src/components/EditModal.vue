@@ -1,12 +1,14 @@
 <script setup lang="ts">
 /*@ts-ignore */
 import { PetType } from '@/shared/PetType';
+import { ref } from 'vue';
 
 export interface EditPetProps {
   _id: string;
   name: string;
   type: string;
   species: string;
+  dateOfBirth: string;
   dateOfBirthFormatted: string;
   description: string;
 }
@@ -50,8 +52,8 @@ export default {
     },
     dateOfBirth: {
       immediate: true,
-      handler(newVal) {
-        this.fields.dateOfBirth = newVal;
+      handler() {
+        this.fields.dateOfBirth = this.dateOfBirthFormatted;
       },
     },
     description: {

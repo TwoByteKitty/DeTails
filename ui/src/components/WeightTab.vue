@@ -11,11 +11,10 @@ import { ref } from 'vue';
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 export default {
   name: 'BarChart',
-  components: { Bar },
+  components: { Bar, Datepicker },
   data() {
     return {
       chart_type: 'justify',
-      entireShed: 'Entire',
       chartData: {
         labels: ['January', 'February', 'March'],
         datasets: [{ data: [40, 20, 12] }],
@@ -43,15 +42,25 @@ export default {
           comments: 'blah blah blah',
         },
       ],
+      newWeight: {
+        weightId: 0,
+        weighDate: '',
+        weight: '0',
+        comments: '',
+      },
     };
   },
-  components: { Datepicker },
   setup() {
     const date = ref(new Date());
 
     return {
       date,
     };
+  },
+  methods: {
+    createWeight() {
+      console.log(this.newWeight);
+    },
   },
 };
 </script>
@@ -94,23 +103,25 @@ export default {
                   <v-col>
                     <label>Weighing Date</label>
                     <div class="pb-22">
-                      <Datepicker v-model="date" auto-apply dark />
+                      <Datepicker v-model="newWeight.weighDate" auto-apply dark />
                     </div>
                   </v-col>
                   <v-col>
                     <label>Weight Amount (in grams)</label>
-                    <v-text-field type="number" suffix="g"></v-text-field>
+                    <v-text-field v-model="newWeight.weight" type="number" suffix="g"></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
                   <v-col>
-                    <v-textarea label="Comments" rows="2"></v-textarea>
+                    <v-textarea v-model="newWeight.comments" label="Comments" rows="2"></v-textarea>
                   </v-col>
                 </v-row>
                 <div
                   class="weight-btn-div d-flex justify-space-around align-center flex-column flex-md-row fill-height"
                 >
-                  <v-btn class="weight-btn elevation-9" size="x-large"> Add New Weight Data </v-btn>
+                  <v-btn class="weight-btn elevation-9" size="x-large" @click="createWeight()">
+                    Add New Weight Data
+                  </v-btn>
                 </div>
               </v-card>
             </v-col>

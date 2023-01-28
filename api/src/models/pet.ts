@@ -31,4 +31,8 @@ petSchema.virtual('dateOfBirthFormatted').get(function () {
   return moment(this.dateOfBirth).format('yyyy-MM-DD');
 });
 
+petSchema.virtual('age').get(function () {
+  //return moment(this.dateOfBirth).subtract(this.d).format('YY');
+});
+
 export const Pet = model<IPet>('Pet', petSchema);

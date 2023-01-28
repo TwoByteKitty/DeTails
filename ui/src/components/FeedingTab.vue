@@ -3,6 +3,8 @@ import { RouterLink } from 'vue-router';
 import Datepicker from '@vuepic/vue-datepicker';
 import { Calendar } from 'v-calendar';
 import '@vuepic/vue-datepicker/dist/main.css';
+import { PreyType } from '@/shared/PetType';
+import { DegreeOfDead } from '@/shared/PetType';
 </script>
 
 <script lang="ts">
@@ -11,7 +13,6 @@ export default {
     return {
       freqSlider: [20, 40],
       sizeSlider: [20, 40],
-      ateMeal: 'Eaten',
       mealHistory: [
         {
           id: 1,
@@ -44,9 +45,24 @@ export default {
           comments: 'blah blah blah',
         },
       ],
+      newMeal: {
+        mealId: 0,
+        date: '',
+        noOfPrey: 0,
+        preyType: null,
+        dOD: '',
+        mealWeight: 0,
+        eaten: 'Not Eaten',
+        comments: '',
+      },
     };
   },
   components: { Calendar, Datepicker },
+  methods: {
+    createMeal() {
+      console.log(this.newMeal);
+    },
+  },
   setup() {
     const date = ref(new Date());
 
@@ -163,38 +179,34 @@ export default {
           <v-row class="mt-6">
             <v-col>
               <label>Date of Feeding</label>
-              <Datepicker v-model="date" auto-apply dark />
+              <v-text-field v-model="newMeal.date" type="date"></v-text-field>
             </v-col>
             <v-col>
               <label>No. of Prey Item(s)</label>
-              <v-text-field type="number" variant="outlined"></v-text-field>
+              <v-text-field v-model="newMeal.noOfPrey" type="number" variant="outlined"></v-text-field>
             </v-col>
             <v-col>
               <label>Type of Prey Item(s)</label>
-              <v-select
-                :items="['Mouse', 'Rat', 'ASF', 'Quail', 'Chick', 'Other']"
-                multiple
-                variant="underlined"
-              ></v-select>
+              <v-select v-model="newMeal.preyType" :items="PreyType" multiple variant="underlined"></v-select>
             </v-col>
           </v-row>
           <v-row>
             <v-col>
               <label>Degree of Deadness</label>
-              <v-select :items="['Live', 'Frozen/Thawed', 'Pre-Killed']" multiple variant="underlined"></v-select>
+              <v-select v-model="newMeal.dOD" :items="DegreeOfDead" variant="underlined"></v-select>
             </v-col>
             <v-col class="weight-col">
-              <label>Aproximate Total Meal Weight(in grams)</label>
-              <v-text-field type="number" variant="outlined" suffix="g"></v-text-field>
+              <label>Aproximate Total Weight(in grams)</label>
+              <v-text-field v-model="newMeal.mealWeight" type="number" variant="outlined" suffix="g"></v-text-field>
             </v-col>
             <v-col>
               <div class="eaten-btn-div d-flex justify-space-around align-center flex-column flex-md-row fill-height">
                 <v-switch
-                  v-model="ateMeal"
+                  v-model="newMeal.eaten"
                   hide-details
                   true-value="Eaten"
                   false-value="Not Eaten"
-                  :label="`${ateMeal}`"
+                  :label="`${newMeal.eaten}`"
                   inset
                 ></v-switch>
               </div>
@@ -202,11 +214,11 @@ export default {
           </v-row>
           <v-row>
             <v-col>
-              <v-textarea clearable label="Comments"></v-textarea>
+              <v-textarea v-model="newMeal.comments" clearable label="Comments"></v-textarea>
             </v-col>
           </v-row>
           <div class="meal-btn-div d-flex justify-space-around align-center flex-column flex-md-row fill-height">
-            <v-btn class="meal-btn elevation-9" size="x-large"> Add New Meal Data </v-btn>
+            <v-btn class="meal-btn elevation-9" size="x-large" @click="createMeal()"> Add New Meal Data </v-btn>
           </div>
         </v-card>
       </v-col>
