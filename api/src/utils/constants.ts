@@ -1,1 +1,1 @@
-export const FILE_UPLOAD_PATH = 'uploads/';
+export const FILE_UPLOAD_PATH = '/uploads/';

@@ -8,6 +8,7 @@ export interface EditPetProps {
   dateOfBirth: string;
   dateOfBirthFormatted: string;
   description: string;
+  petImages: Array<string>;
 }
 defineProps<EditPetProps>();
 </script>
@@ -18,7 +19,7 @@ const API_URL = `/api/pets/`;
 export default {
   data() {
     return {
-      image: [],
+      image: null,
     };
   },
   components: { EditModal },
@@ -45,19 +46,34 @@ export default {
   <v-container fluid>
     <v-card class="pa-3 ma-3">
       <v-card>
-        <v-card class="pa-3 ma-3">
+        <v-card class="pa-1 ma-3 elevation-5 pet-carousel">
           <v-carousel hide-delimiters show-arrows="hover">
-            <v-carousel-item src="https://cdn.vuetifyjs.com/images/cards/docks.jpg" cover></v-carousel-item>
-
-            <v-carousel-item src="https://cdn.vuetifyjs.com/images/cards/hotel.jpg" cover></v-carousel-item>
-
-            <v-carousel-item src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" cover></v-carousel-item>
+            <v-carousel-item v-for="(image, index) in petImages" :key="index" :src="`/images/${image}`" cover>
+            </v-carousel-item>
           </v-carousel>
+          <div class="album-edit-overlay">
+            <v-btn class="album-edit-button">
+              <v-icon>fa:fas fa-thin fa-pen-to-square</v-icon>
+            </v-btn>
+          </div>
         </v-card>
         <v-row class="pa-3 ma-3 d-flex">
-          <v-col cols="11">
-            <v-file-input v-model="image" name="pet-image" label="File input" clearable variant="solo"></v-file-input>
+          <v-col cols="9">
+            <v-file-input
+              v-model="image"
+              name="pet-image"
+              label="Upload photos"
+              clearable
+              variant="solo"
+            ></v-file-input>
           </v-col>
+          <v-col>
+            <v-text-field label="Title"></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="9"> </v-col>
+          <v-col> </v-col>
           <v-col cols="1">
             <v-btn style="height: 60px; width: 66px" @click="uploadImage()">
               <v-icon>fa:fas fa-thin fa-arrow-up-from-arc</v-icon>
@@ -118,5 +134,25 @@ export default {
 <style lang="css" scoped>
 .overview-inline {
   display: inline;
+}
+.pet-carousel .v-window__container > .v-window__controls {
+  z-index: 2;
+}
+.album-edit-overlay {
+  position: absolute;
+  min-width: 100%;
+  min-height: 20%;
+  bottom: 0;
+  z-index: 0;
+}
+
+.album-edit-button {
+  height: 60px;
+  width: 66px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  opacity: 80%;
+  z-index: 5;
 }
 </style>

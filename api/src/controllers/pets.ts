@@ -27,7 +27,7 @@ const editPet = (request: Request<{}, {}, IPet>, response: Response) => {
     .catch((err) => response.status(500).json(err));
 };
 
-const addPetImage = (request: Request<{}, {}, IPet>, response: Response) => {
+const addPetImage = (request: Request<{ id: string }>, response: Response) => {
   const { file } = request;
   if (file) {
     const tmp_path = file.path;
@@ -42,7 +42,9 @@ const addPetImage = (request: Request<{}, {}, IPet>, response: Response) => {
     src.pipe(dest);
     src.on('end', () => {
       fs.rmSync(tmp_path);
-      response.status(200).contentType('text/plain').end('File uploaded!');
+      Pet.findByIdAndUpdate(request.params.id, { $push: { petImages: file.originalname } }, { new: true, upsert: true })
+        .then((updatedPet) => response.json(updatedPet))
+        .catch((err) => response.status(500).json(err));
     });
     src.on('error', (err) => {
       response.status(403).end('Failed to save file.');

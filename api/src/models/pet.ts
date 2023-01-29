@@ -4,6 +4,9 @@ import moment from 'moment';
 export type PetType = 'cat' | 'dog' | 'reptile' | 'amphibian' | 'fish' | 'lizard';
 export type SexType = 'male' | 'female';
 
+// Lets add some properties to our interface
+// and schema for shed, feeding, and weight
+// Arrays. Make them optional
 export interface IPet {
   _id: string;
   name: string;
@@ -13,6 +16,7 @@ export interface IPet {
   dateOfBirth: Date;
   dateOfBirthFormatted: string;
   description: string;
+  petImages: Array<string>;
 }
 
 const petSchema = new Schema<IPet>(
@@ -23,6 +27,7 @@ const petSchema = new Schema<IPet>(
     sex: { type: String, required: true },
     dateOfBirth: { type: Date, required: true },
     description: { type: String, required: true },
+    petImages: { type: [String], required: false },
   },
   { toJSON: { virtuals: true } }
 );

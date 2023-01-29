@@ -21,6 +21,7 @@ export default {
         dateOfBirth: '',
         dateOfBirthFormatted:'',
         description: '',
+        petImages: [],
       },
       tab: null,
     };
@@ -32,7 +33,7 @@ export default {
 
   methods: {
     async getPet() {
-      const url = `${API_URL}/${this.$route.params.id}`;
+      const url = `${API_URL}${this.$route.params.id}`;
       this.myPet = await (await fetch(url)).json();
     },
   },
