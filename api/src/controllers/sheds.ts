@@ -6,20 +6,20 @@ const addShed = (request: Request<{ petId: string }, {}, IShed>, response: Respo
   newShed.petId = request.params.petId;
   Shed.create(newShed)
     .then((createdShed: IShed) => response.json(createdShed))
-    .catch((err) => response.status(500).json(err));
+    .catch((err: any) => response.status(500).json(err));
 };
 
 const getAllShedsByPet = (request: Request<{ petId: string }>, response: Response) => {
   Shed.find({ petId: request.params.petId })
     .sort({ date: -1 })
-    .then((foundSheds) => response.json(foundSheds))
-    .catch((err) => response.status(422).json(err));
+    .then((foundSheds: Array<IShed>) => response.json(foundSheds))
+    .catch((err: any) => response.status(422).json(err));
 };
 
 const getSingleShed = (request: Request<{ shedId: string }>, response: Response) => {
   Shed.findById(request.params.shedId)
-    .then((foundShed) => response.json(foundShed))
-    .catch((err) => response.status(422).json(err));
+    .then((foundShed: any) => response.json(foundShed))
+    .catch((err: any) => response.status(422).json(err));
 };
 
 //needs more work!

@@ -6,20 +6,20 @@ const addFeeding = (request: Request<{ petId: string }, {}, IFeed>, response: Re
   newFeeding.petId = request.params.petId;
   Feeding.create(newFeeding)
     .then((createdFeeding: IFeed) => response.json(createdFeeding))
-    .catch((err) => response.status(500).json(err));
+    .catch((err: any) => response.status(500).json(err));
 };
 
 const getAllFeedingsByPet = (request: Request<{ petId: string }>, response: Response) => {
   Feeding.find({ petId: request.params.petId })
     .sort({ date: -1 })
-    .then((foundFeedings) => response.json(foundFeedings))
-    .catch((err) => response.status(422).json(err));
+    .then((foundFeedings: Array<IFeed>) => response.json(foundFeedings))
+    .catch((err: any) => response.status(422).json(err));
 };
 
-const getSingleFeeding = (request: Request<{ shedId: string }>, response: Response) => {
-  Feeding.findById(request.params.shedId)
-    .then((foundFeeding) => response.json(foundFeeding))
-    .catch((err) => response.status(422).json(err));
+const getSingleFeeding = (request: Request<{ feedingId: string }>, response: Response) => {
+  Feeding.findById(request.params.feedingId)
+    .then((foundFeeding: any) => response.json(foundFeeding))
+    .catch((err: any) => response.status(422).json(err));
 };
 
 //needs more work!

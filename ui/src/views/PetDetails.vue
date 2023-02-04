@@ -57,7 +57,7 @@ export default {
         <weight-tab v-bind="myPet"/>
       </v-window-item>
       <v-window-item :value="3">
-        <feeding-tab v-bind="myPet" />
+        <feeding-tab v-bind="myPet" @feedingAdded="getPet" />
       </v-window-item>
       <v-window-item :value="4">
         <shed-tab v-bind="myPet" />

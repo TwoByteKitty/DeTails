@@ -3,6 +3,7 @@ import moment from 'moment';
 import { IShed, shedSchema } from './shed';
 import { IFeed, feedingSchema } from './feeding';
 import { IWeight, weightSchema } from './weight';
+import { FEEDINGS_VIRTUAL_NAME } from '../utils/constants';
 
 export type PetType = 'cat' | 'dog' | 'reptile' | 'amphibian' | 'fish' | 'lizard';
 export type SexType = 'male' | 'female';
@@ -34,9 +35,6 @@ const petSchema = new Schema<IPet>(
     dateOfBirth: { type: Date, required: true },
     description: { type: String, required: true },
     petImages: { type: [String], required: false },
-    feedingHistory: { type: [feedingSchema], required: false },
-    shedHistory: { type: [shedSchema], required: false },
-    weightHistory: { type: [weightSchema], required: false },
   },
   { toJSON: { virtuals: true } }
 );
@@ -47,6 +45,12 @@ petSchema.virtual('dateOfBirthFormatted').get(function () {
 
 petSchema.virtual('age').get(function () {
   //return moment(this.dateOfBirth).subtract(this.d).format('YY');
+});
+
+petSchema.virtual(FEEDINGS_VIRTUAL_NAME, {
+  ref: 'Feeding',
+  localField: '_id',
+  foreignField: 'petId',
 });
 
 export const Pet = model<IPet>('Pet', petSchema);

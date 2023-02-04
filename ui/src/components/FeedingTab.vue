@@ -87,6 +87,7 @@ export default {
             const error = (data && data.message) || response.status;
             return Promise.reject(error);
           } else {
+            this.$emit('feedingAdded');
             this.alertMsg = successMsg;
             this.alertType = 'success';
             this.showAlert = true;

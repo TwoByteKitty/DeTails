@@ -6,20 +6,20 @@ const addWeight = (request: Request<{ petId: string }, {}, IWeight>, response: R
   newWeight.petId = request.params.petId;
   Weight.create(newWeight)
     .then((createdWeight: IWeight) => response.json(createdWeight))
-    .catch((err) => response.status(500).json(err));
+    .catch((err: any) => response.status(500).json(err));
 };
 
 const getAllWeightsByPet = (request: Request<{ petId: string }>, response: Response) => {
   Weight.find({ petId: request.params.petId })
     .sort({ date: -1 })
-    .then((foundWeights) => response.json(foundWeights))
-    .catch((err) => response.status(422).json(err));
+    .then((foundWeights: Array<IWeight>) => response.json(foundWeights))
+    .catch((err: any) => response.status(422).json(err));
 };
 
 const getSingleWeight = (request: Request<{ shedId: string }>, response: Response) => {
   Weight.findById(request.params.shedId)
-    .then((foundWeight) => response.json(foundWeight))
-    .catch((err) => response.status(422).json(err));
+    .then((foundWeight: any) => response.json(foundWeight))
+    .catch((err: any) => response.status(422).json(err));
 };
 
 //needs more work!
