@@ -1,28 +1,30 @@
 import { Schema, model } from 'mongoose';
 import moment from 'moment';
-// Same comments as shed.ts
-export interface IFeeding {
+
+export interface IFeed {
   _id: string;
-  feedDate: Date;
+  feedDate: string;
   preyNo: number;
-  preyType: string;
+  preyType: Array<string>;
   dOD: string;
   mealWeight: number;
-  eaten: boolean;
+  eaten: string;
   feedComments: string;
+  petId: string;
 }
 
-const feedingSchema = new Schema<IFeeding>(
+export const feedingSchema = new Schema<IFeed>(
   {
-    feedDate: { type: Date, required: true },
+    feedDate: { type: String, required: true },
     preyNo: { type: Number, required: true },
-    preyType: { type: String, required: true },
+    preyType: { type: [String], required: true },
     dOD: { type: String, required: true },
     mealWeight: { type: Number, required: true },
-    eaten: { type: Boolean, required: true },
+    eaten: { type: String, required: true },
     feedComments: { type: String, required: false },
+    petId: { type: String, required: true },
   },
   { toJSON: { virtuals: true } }
 );
 
-export const Feeding = model<IFeeding>('Pet', feedingSchema);
+export const Feeding = model<IFeed>('Feeding', feedingSchema);

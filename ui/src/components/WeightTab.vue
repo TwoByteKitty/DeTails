@@ -8,12 +8,24 @@ import { ref } from 'vue';
 </script>
 
 <script lang="ts">
+const errorMsg = 'There was an error! Uh-oh...';
+const successMsg = "Hi! I'm a success alert! Congratulations!";
+const API_URL = `/api/pets/`;
+const defaultWeigh = {
+  weighDate: '',
+  weighAmt: '0',
+  weighComments: '',
+};
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+
 export default {
   name: 'BarChart',
   components: { Bar, Datepicker },
   data() {
     return {
+      alertType: 'success',
+      alertMsg: successMsg,
+      showAlert: false,
       chart_type: 'justify',
       chartData: {
         labels: ['January', 'February', 'March'],
@@ -43,10 +55,7 @@ export default {
         },
       ],
       newWeight: {
-        weightId: 0,
-        weighDate: '',
-        weight: '0',
-        comments: '',
+        ...defaultWeigh,
       },
     };
   },
@@ -59,7 +68,43 @@ export default {
   },
   methods: {
     createWeight() {
+      const url = `${API_URL}${this.$route.params.id}/weights/add`;
       console.log(this.newWeight);
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(this.newWeight),
+      };
+      this.showAlert = false;
+
+      fetch(url, requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+
+          // check for error response
+          if (!response.ok) {
+            // get error message from body or default to response status
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+          } else {
+            this.alertMsg = successMsg;
+            this.alertType = 'success';
+            this.showAlert = true;
+
+            this.newWeight = { ...defaultWeigh };
+            setTimeout(() => {
+              this.showAlert = false;
+            }, 9000);
+          }
+          console.log(data);
+        })
+        .catch((error) => {
+          console.error(errorMsg, error);
+          this.alertMsg = errorMsg;
+          this.alertType = 'error';
+          this.showAlert = true;
+        });
     },
   },
 };
@@ -108,12 +153,12 @@ export default {
                   </v-col>
                   <v-col>
                     <label>Weight Amount (in grams)</label>
-                    <v-text-field v-model="newWeight.weight" type="number" suffix="g"></v-text-field>
+                    <v-text-field v-model="newWeight.weighAmt" type="number" suffix="g"></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
                   <v-col>
-                    <v-textarea v-model="newWeight.comments" label="Comments" rows="2"></v-textarea>
+                    <v-textarea v-model="newWeight.weighComments" label="Comments" rows="2"></v-textarea>
                   </v-col>
                 </v-row>
                 <div
@@ -122,6 +167,11 @@ export default {
                   <v-btn class="weight-btn elevation-9" size="x-large" @click="createWeight()">
                     Add New Weight Data
                   </v-btn>
+                </div>
+                <div>
+                  <v-alert v-model="showAlert" :type="alertType" variant="tonal" closable close-label="Close Alert">{{
+                    alertMsg
+                  }}</v-alert>
                 </div>
               </v-card>
             </v-col>

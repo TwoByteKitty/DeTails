@@ -1,5 +1,8 @@
 import { Schema, model } from 'mongoose';
 import moment from 'moment';
+import { IShed, shedSchema } from './shed';
+import { IFeed, feedingSchema } from './feeding';
+import { IWeight, weightSchema } from './weight';
 
 export type PetType = 'cat' | 'dog' | 'reptile' | 'amphibian' | 'fish' | 'lizard';
 export type SexType = 'male' | 'female';
@@ -17,6 +20,9 @@ export interface IPet {
   dateOfBirthFormatted: string;
   description: string;
   petImages: Array<string>;
+  feedingHistory: Array<IFeed>;
+  shedHistory: Array<IShed>;
+  weightHistory: Array<IWeight>;
 }
 
 const petSchema = new Schema<IPet>(
@@ -28,6 +34,9 @@ const petSchema = new Schema<IPet>(
     dateOfBirth: { type: Date, required: true },
     description: { type: String, required: true },
     petImages: { type: [String], required: false },
+    feedingHistory: { type: [feedingSchema], required: false },
+    shedHistory: { type: [shedSchema], required: false },
+    weightHistory: { type: [weightSchema], required: false },
   },
   { toJSON: { virtuals: true } }
 );

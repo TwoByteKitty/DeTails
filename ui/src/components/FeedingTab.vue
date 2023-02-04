@@ -8,9 +8,25 @@ import { DegreeOfDead } from '@/shared/PetType';
 </script>
 
 <script lang="ts">
+const errorMsg = 'There was an error! Uh-oh...';
+const successMsg = "Hi! I'm a success alert! Congratulations!";
+const API_URL = `/api/pets/`;
+const defaultMeal = {
+  feedDate: '',
+  preyNo: 0,
+  preyType: null,
+  dOD: '',
+  mealWeight: 0,
+  eaten: 'Not Eaten',
+  feedComments: '',
+};
+
 export default {
   data() {
     return {
+      alertType: 'success',
+      alertMsg: successMsg,
+      showAlert: false,
       freqSlider: [20, 40],
       sizeSlider: [20, 40],
       mealHistory: [
@@ -45,22 +61,49 @@ export default {
           comments: 'blah blah blah',
         },
       ],
-      newMeal: {
-        mealId: 0,
-        date: '',
-        noOfPrey: 0,
-        preyType: null,
-        dOD: '',
-        mealWeight: 0,
-        eaten: 'Not Eaten',
-        comments: '',
-      },
+      newMeal: { ...defaultMeal },
     };
   },
   components: { Calendar, Datepicker },
   methods: {
     createMeal() {
+      const url = `${API_URL}${this.$route.params.id}/feedings/add`;
       console.log(this.newMeal);
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(this.newMeal),
+      };
+      this.showAlert = false;
+
+      fetch(url, requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+
+          // check for error response
+          if (!response.ok) {
+            // get error message from body or default to response status
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+          } else {
+            this.alertMsg = successMsg;
+            this.alertType = 'success';
+            this.showAlert = true;
+
+            this.newMeal = { ...defaultMeal };
+            setTimeout(() => {
+              this.showAlert = false;
+            }, 9000);
+          }
+          console.log(data);
+        })
+        .catch((error) => {
+          console.error(errorMsg, error);
+          this.alertMsg = errorMsg;
+          this.alertType = 'error';
+          this.showAlert = true;
+        });
     },
   },
   setup() {
@@ -179,11 +222,11 @@ export default {
           <v-row class="mt-6">
             <v-col>
               <label>Date of Feeding</label>
-              <v-text-field v-model="newMeal.date" type="date"></v-text-field>
+              <Datepicker v-model="newMeal.feedDate" :enable-time-picker="false" auto-apply dark />
             </v-col>
             <v-col>
               <label>No. of Prey Item(s)</label>
-              <v-text-field v-model="newMeal.noOfPrey" type="number" variant="outlined"></v-text-field>
+              <v-text-field v-model="newMeal.preyNo" type="number" variant="outlined"></v-text-field>
             </v-col>
             <v-col>
               <label>Type of Prey Item(s)</label>
@@ -214,11 +257,16 @@ export default {
           </v-row>
           <v-row>
             <v-col>
-              <v-textarea v-model="newMeal.comments" clearable label="Comments"></v-textarea>
+              <v-textarea v-model="newMeal.feedComments" clearable label="Comments"></v-textarea>
             </v-col>
           </v-row>
           <div class="meal-btn-div d-flex justify-space-around align-center flex-column flex-md-row fill-height">
             <v-btn class="meal-btn elevation-9" size="x-large" @click="createMeal()"> Add New Meal Data </v-btn>
+          </div>
+          <div>
+            <v-alert v-model="showAlert" :type="alertType" variant="tonal" closable close-label="Close Alert">{{
+              alertMsg
+            }}</v-alert>
           </div>
         </v-card>
       </v-col>

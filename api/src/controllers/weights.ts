@@ -1,0 +1,34 @@
+import { Request, Response } from 'express';
+import { Weight, IWeight } from '../models/weight';
+
+const addWeight = (request: Request<{ petId: string }, {}, IWeight>, response: Response) => {
+  const newWeight: IWeight = request.body;
+  newWeight.petId = request.params.petId;
+  Weight.create(newWeight)
+    .then((createdWeight: IWeight) => response.json(createdWeight))
+    .catch((err) => response.status(500).json(err));
+};
+
+const getAllWeightsByPet = (request: Request<{ petId: string }>, response: Response) => {
+  Weight.find({ petId: request.params.petId })
+    .sort({ date: -1 })
+    .then((foundWeights) => response.json(foundWeights))
+    .catch((err) => response.status(422).json(err));
+};
+
+const getSingleWeight = (request: Request<{ shedId: string }>, response: Response) => {
+  Weight.findById(request.params.shedId)
+    .then((foundWeight) => response.json(foundWeight))
+    .catch((err) => response.status(422).json(err));
+};
+
+//needs more work!
+// const editWeight = (request: Request<{}, {}, IWeight>, response: Response) => {
+//   const pet: IWeight = request.body;
+//   pet.dateOfBirth = new Date(pet.dateOfBirth);
+//   Weight.findByIdAndUpdate(pet._id, pet)
+//     .then((updatedWeight) => response.json(updatedWeight))
+//     .catch((err) => response.status(500).json(err));
+// };
+
+export { getAllWeightsByPet, addWeight, getSingleWeight };

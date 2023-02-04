@@ -8,12 +8,27 @@ import { ref } from 'vue';
 </script>
 
 <script lang="ts">
+const API_URL = `/api/pets/`;
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+const defaultShed = {
+  pinkBelly: '',
+  blueEyes: '',
+  clearEyes: '',
+  shedSkin: '',
+  entire: 'Not Entire',
+  comments: '',
+};
+const errorMsg = 'There was an error! Uh-oh...';
+const successMsg = "Hi! I'm a success alert! Congratulations!";
+
 export default {
   name: 'BarChart',
   components: { Bar },
   data() {
     return {
+      alertType: 'success',
+      alertMsg: successMsg,
+      showAlert: false,
       chart_type: 'justify',
       chartData: {
         labels: ['January', 'February', 'March'],
@@ -51,15 +66,7 @@ export default {
           comments: 'bathed at apx 88F for 2 hours to resolve stuck shed. blah blah blah',
         },
       ],
-      newShed: {
-        shedId: 0,
-        pinkBelly: '',
-        blueEyes: '',
-        clearEyes: '',
-        shedSkin: '',
-        entire: 'Not Entire',
-        comments: '',
-      },
+      newShed: { ...defaultShed },
     };
   },
   components: { Datepicker },
@@ -72,7 +79,43 @@ export default {
   },
   methods: {
     createShed() {
+      const url = `${API_URL}${this.$route.params.id}/sheds/add`;
       console.log(this.newShed);
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(this.newShed),
+      };
+      this.showAlert = false;
+
+      fetch(url, requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+
+          // check for error response
+          if (!response.ok) {
+            // get error message from body or default to response status
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+          } else {
+            this.alertMsg = successMsg;
+            this.alertType = 'success';
+            this.showAlert = true;
+
+            this.newShed = { ...defaultShed };
+            setTimeout(() => {
+              this.showAlert = false;
+            }, 9000);
+          }
+          console.log(data);
+        })
+        .catch((error) => {
+          console.error(errorMsg, error);
+          this.alertMsg = errorMsg;
+          this.alertType = 'error';
+          this.showAlert = true;
+        });
     },
   },
 };
@@ -156,6 +199,11 @@ export default {
           </v-row>
           <div class="shed-btn-div d-flex justify-space-around align-center flex-column flex-md-row fill-height">
             <v-btn class="shed-btn elevation-9" size="x-large" @click="createShed()"> Add New Shed Cycle Data </v-btn>
+          </div>
+          <div>
+            <v-alert v-model="showAlert" :type="alertType" variant="tonal" closable close-label="Close Alert">{{
+              alertMsg
+            }}</v-alert>
           </div>
         </v-card>
       </v-col>
