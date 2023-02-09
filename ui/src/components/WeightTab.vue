@@ -5,15 +5,29 @@ import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, Li
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { ref } from 'vue';
+import { DateTime } from 'luxon';
+
+export interface WeightProps {
+  weightHistory: Array<{}>;
+}
+defineProps<WeightProps>();
 </script>
 
 <script lang="ts">
+interface IWeight {
+  _id: string;
+  weighDate: string;
+  weighAmt: number;
+  weighComments: string;
+}
+
 const errorMsg = 'There was an error! Uh-oh...';
 const successMsg = "Hi! I'm a success alert! Congratulations!";
 const API_URL = `/api/pets/`;
-const defaultWeigh = {
+const defaultWeigh: IWeight = {
+  _id: '',
   weighDate: '',
-  weighAmt: '0',
+  weighAmt: 0,
   weighComments: '',
 };
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
@@ -26,6 +40,10 @@ export default {
       alertType: 'success',
       alertMsg: successMsg,
       showAlert: false,
+      weightHistory: [],
+      newWeight: {
+        ...defaultWeigh,
+      },
       chart_type: 'justify',
       chartData: {
         labels: ['January', 'February', 'March'],
@@ -33,29 +51,6 @@ export default {
       },
       chartOptions: {
         responsive: true,
-      },
-      weightHistory: [
-        {
-          id: 1,
-          weighDate: '07-05-2022',
-          weight: '708',
-          comments: 'blah blah blah',
-        },
-        {
-          id: 2,
-          weighDate: '09-09-2022',
-          weight: '912',
-          comments: 'blah blah blah',
-        },
-        {
-          id: 3,
-          weighDate: '11-22-2022',
-          weight: '1002',
-          comments: 'blah blah blah',
-        },
-      ],
-      newWeight: {
-        ...defaultWeigh,
       },
     };
   },
@@ -67,6 +62,9 @@ export default {
     };
   },
   methods: {
+    formatDate(timestamp: string) {
+      return DateTime.fromISO(timestamp).toLocaleString(DateTime.DATE_SHORT);
+    },
     createWeight() {
       const url = `${API_URL}${this.$route.params.id}/weights/add`;
       console.log(this.newWeight);
@@ -178,21 +176,19 @@ export default {
           </v-row>
           <v-card class="weight-table pa-3">
             <v-card-title>Weight History</v-card-title>
-            <v-table fixed-header>
+            <v-table class="data-tbl" fixed-header>
               <thead>
                 <tr>
-                  <th class="tbl-head text-left">Record No.</th>
                   <th class="tbl-head text-left">Date</th>
                   <th class="tbl-head text-left">Weight</th>
                   <th class="tbl-head text-left">Comments</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in weightHistory" :key="item.id">
-                  <td>{{ item.id }}</td>
-                  <td>{{ item.weighDate }}</td>
-                  <td>{{ item.weight }}</td>
-                  <td>{{ item.comments }}</td>
+                <tr v-for="item in (weightHistory as Array<IWeight>)" :key="item._id">
+                  <td>{{ formatDate(item.weighDate) }}</td>
+                  <td>{{ item.weighAmt }}</td>
+                  <td>{{ item.weighComments }}</td>
                 </tr>
               </tbody>
             </v-table>

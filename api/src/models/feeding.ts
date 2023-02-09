@@ -1,5 +1,4 @@
 import { Schema, model } from 'mongoose';
-import moment from 'moment';
 
 export interface IFeed {
   _id: string;

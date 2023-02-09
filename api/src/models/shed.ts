@@ -1,5 +1,4 @@
 import { Schema, model, Date } from 'mongoose';
-import moment from 'moment';
 
 export interface IShed {
   _id: string;

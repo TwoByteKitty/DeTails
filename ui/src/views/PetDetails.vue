@@ -22,6 +22,9 @@ export default {
         dateOfBirthFormatted:'',
         description: '',
         petImages: [],
+        feedingHistory:[],
+        shedHistory:[],
+        weightHistory:[]
       },
       tab: null,
     };
@@ -45,22 +48,22 @@ export default {
     <v-card-title class="text-h2 ma-3" display: block> {{ myPet.name }} </v-card-title>
     <v-tabs v-model="tab" color="deep-purple-accent-4" align-tabs="center">
       <v-tab :value="1">Overview</v-tab>
-      <v-tab :value="2">Weight</v-tab>
-      <v-tab :value="3">Feeding</v-tab>
-      <v-tab :value="4">Shed Cycles</v-tab>
+      <v-tab :value="2">Feeding</v-tab>
+      <v-tab :value="3">Shed Cycles</v-tab>
+      <v-tab :value="4">Weight</v-tab>
     </v-tabs>
     <v-window v-model="tab">
       <v-window-item :value="1">
         <overview-tab v-bind="myPet" />
       </v-window-item>
       <v-window-item :value="2">
-        <weight-tab v-bind="myPet"/>
-      </v-window-item>
-      <v-window-item :value="3">
         <feeding-tab v-bind="myPet" @feedingAdded="getPet" />
       </v-window-item>
+      <v-window-item :value="3">
+        <shed-tab v-bind="myPet" @shedAdded="getPet" />
+      </v-window-item>
       <v-window-item :value="4">
-        <shed-tab v-bind="myPet" />
+        <weight-tab v-bind="myPet" @weightAdded="getPet"/>
       </v-window-item>
     </v-window>
   </v-card>

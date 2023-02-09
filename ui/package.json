@@ -16,7 +16,7 @@
     "@mdi/font": "^7.1.96",
     "@vuepic/vue-datepicker": "^3.6.5",
     "chart.js": "^4.1.2",
-    "moment": "^2.29.4",
+    "luxon": "^3.2.1",
     "pinia": "^2.0.21",
     "v-calendar": "^3.0.0-alpha.8",
     "vue": "^3.2.38",
@@ -27,6 +27,7 @@
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/jsdom": "^20.0.0",
+    "@types/luxon": "^3.2.0",
     "@types/node": "^16.11.56",
     "@vitejs/plugin-vue": "^3.0.3",
     "@vue/eslint-config-prettier": "^7.0.0",

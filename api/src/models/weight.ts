@@ -1,5 +1,4 @@
 import { Schema, model } from 'mongoose';
-import moment from 'moment';
 
 export interface IWeight {
   _id: string;

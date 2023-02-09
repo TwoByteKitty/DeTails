@@ -16,12 +16,21 @@ font-family: 'Spectral', serif;
 font-family: 'Trirong', serif; */
 
 #app {
-  max-width: 75%;
   margin: 0 auto;
   padding: 2rem;
 
   font-family: 'Laila', sans-serif;
   font-weight: 300;
 }
+
+.data-tbl {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.data-tbl .v-table__wrapper{
+  height: 600px;
+}
+
 
 

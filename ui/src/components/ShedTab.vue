@@ -5,9 +5,25 @@ import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, Li
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { ref } from 'vue';
+
+export interface ShedProps {
+  shedHistory: Array<{}>;
+}
+defineProps<ShedProps>();
 </script>
 
 <script lang="ts">
+// interface IMeal {
+//   _id: string;
+//   feedDate: string;
+//   preyNo: number;
+//   preyType: Array<string>;
+//   dOD: string;
+//   mealWeight: number;
+//   eaten: string;
+//   feedComments: string;
+// }
+
 const API_URL = `/api/pets/`;
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 const defaultShed = {
@@ -211,7 +227,7 @@ export default {
     <v-row>
       <v-col>
         <v-card class="shed-table">
-          <v-table fixed-header>
+          <v-table class="data-tbl" fixed-header>
             <thead>
               <tr>
                 <th class="tbl-head text-left">Record No.</th>

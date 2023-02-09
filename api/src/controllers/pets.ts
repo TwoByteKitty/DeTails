@@ -3,7 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { IPet, Pet } from '../models/pet';
-import { FEEDINGS_VIRTUAL_NAME, FILE_UPLOAD_PATH } from '../utils/constants';
+import { FEEDINGS_VIRTUAL_NAME, FILE_UPLOAD_PATH, SHEDS_VIRTUAL_NAME, WEIGHTS_VIRTUAL_NAME } from '../utils/constants';
 
 const getAllPets = (request: Request, response: Response) => {
   Pet.find()
@@ -57,6 +57,8 @@ const addPetImage = (request: Request<{ id: string }>, response: Response) => {
 const getSinglePet = (request: Request<{ id: string }>, response: Response) => {
   Pet.findById(request.params.id)
     .populate(FEEDINGS_VIRTUAL_NAME)
+    .populate(SHEDS_VIRTUAL_NAME)
+    .populate(WEIGHTS_VIRTUAL_NAME)
     .then((foundPet: any) => response.json(foundPet))
     .catch((err: any) => response.status(422).json(err));
 };

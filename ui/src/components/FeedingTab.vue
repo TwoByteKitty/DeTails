@@ -1,23 +1,40 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
-import Datepicker from '@vuepic/vue-datepicker';
-import { Calendar } from 'v-calendar';
 import '@vuepic/vue-datepicker/dist/main.css';
-import { PreyType } from '@/shared/PetType';
+import Datepicker from '@vuepic/vue-datepicker';
+import { RouterLink } from 'vue-router';
+import { Calendar } from 'v-calendar';
+import { DateTime } from 'luxon';
 import { DegreeOfDead } from '@/shared/PetType';
+import { PreyType } from '@/shared/PetType';
+
+export interface FeedingProps {
+  feedingHistory: Array<{}>;
+}
+defineProps<FeedingProps>();
 </script>
 
 <script lang="ts">
+interface IMeal {
+  _id: string;
+  feedDate: string;
+  preyNo: number;
+  preyType: Array<string>;
+  dOD: string;
+  mealWeight: number;
+  eaten: string;
+  feedComments: string;
+}
 const errorMsg = 'There was an error! Uh-oh...';
 const successMsg = "Hi! I'm a success alert! Congratulations!";
 const API_URL = `/api/pets/`;
-const defaultMeal = {
+const defaultMeal: IMeal = {
+  _id: '',
   feedDate: '',
   preyNo: 0,
-  preyType: null,
+  preyType: [],
   dOD: '',
   mealWeight: 0,
-  eaten: 'Not Eaten',
+  eaten: '',
   feedComments: '',
 };
 
@@ -29,38 +46,7 @@ export default {
       showAlert: false,
       freqSlider: [20, 40],
       sizeSlider: [20, 40],
-      mealHistory: [
-        {
-          id: 1,
-          feedingDate: '07-01-2022',
-          preyAmt: '3',
-          preyType: 'mouse',
-          preyDead: 'F/T',
-          totalWeight: 48,
-          eaten: false,
-          comments: 'blah blah blah',
-        },
-        {
-          id: 2,
-          feedingDate: '09-06-2022',
-          preyAmt: '1',
-          preyType: 'rat',
-          preyDead: 'F/T',
-          totalWeight: 102,
-          eaten: true,
-          comments: 'blah blah blah',
-        },
-        {
-          id: 3,
-          feedingDate: '12-03-2022',
-          preyAmt: '1',
-          preyType: 'mouse',
-          preyDead: 'F/T',
-          totalWeight: 72,
-          eaten: true,
-          comments: 'blah blah blah',
-        },
-      ],
+      feedingHistory: [],
       newMeal: { ...defaultMeal },
     };
   },
@@ -105,6 +91,9 @@ export default {
           this.alertType = 'error';
           this.showAlert = true;
         });
+    },
+    formatDate(timestamp: string) {
+      return DateTime.fromISO(timestamp).toLocaleString(DateTime.DATE_SHORT);
     },
   },
   setup() {
@@ -277,10 +266,9 @@ export default {
         <v-card class="meal-tbl-card">
           <v-card-title>Meal History</v-card-title>
           <v-divider></v-divider>
-          <v-table fixed-header>
+          <v-table class="data-tbl" fixed-header>
             <thead>
               <tr>
-                <th class="tbl-head text-left">Record No.</th>
                 <th class="tbl-head text-left">Date</th>
                 <th class="tbl-head text-left">No. of Prey Item(s)</th>
                 <th class="tbl-head text-left">Type of Prey</th>
@@ -291,15 +279,14 @@ export default {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in mealHistory" :key="item.id">
-                <td>{{ item.id }}</td>
-                <td>{{ item.feedingDate }}</td>
-                <td>{{ item.preyAmt }}</td>
-                <td>{{ item.preyType }}</td>
-                <td>{{ item.preyDead }}</td>
-                <td>{{ item.totalWeight }}</td>
-                <td>{{ item.eaten }}</td>
-                <td>{{ item.comments }}</td>
+              <tr v-for="item in (feedingHistory as Array<IMeal>)" :key="item._id">
+                <td>{{ formatDate(item.feedDate) }}</td>
+                <td>{{ item.preyNo }}</td>
+                <td>{{ item.preyType.toString() }}</td>
+                <td>{{ item.dOD }}</td>
+                <td>{{ item.mealWeight }}</td>
+                <td>{{ item.eaten === 'Not Eaten' ? 'N' : 'Y' }}</td>
+                <td>{{ item.feedComments }}</td>
               </tr>
             </tbody>
           </v-table>
