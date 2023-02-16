@@ -58,7 +58,7 @@ const getSinglePet = (request: Request<{ id: string }>, response: Response) => {
   Pet.findById(request.params.id)
     .populate(FEEDINGS_VIRTUAL_NAME)
     .populate(SHEDS_VIRTUAL_NAME)
-    .populate(WEIGHTS_VIRTUAL_NAME)
+    .populate({ path: WEIGHTS_VIRTUAL_NAME, options: { sort: { weighDate: 1 } } })
     .then((foundPet: any) => response.json(foundPet))
     .catch((err: any) => response.status(422).json(err));
 };

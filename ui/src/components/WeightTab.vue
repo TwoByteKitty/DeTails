@@ -1,14 +1,23 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
-import { Bar } from 'vue-chartjs';
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
+import { Line } from 'vue-chartjs';
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+} from 'chart.js';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { ref } from 'vue';
 import { DateTime } from 'luxon';
 
 export interface WeightProps {
-  weightHistory: Array<{}>;
+  weightHistory: Array<IWeight>;
 }
 defineProps<WeightProps>();
 </script>
@@ -21,8 +30,8 @@ interface IWeight {
   weighComments: string;
 }
 
-const errorMsg = 'There was an error! Uh-oh...';
-const successMsg = "Hi! I'm a success alert! Congratulations!";
+const errorMsg = 'Well... you really screwed up this time...';
+const successMsg = "I'm a success alert! Congratulations!";
 const API_URL = `/api/pets/`;
 const defaultWeigh: IWeight = {
   _id: '',
@@ -30,25 +39,20 @@ const defaultWeigh: IWeight = {
   weighAmt: 0,
   weighComments: '',
 };
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+ChartJS.register(Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement);
 
 export default {
   name: 'BarChart',
-  components: { Bar, Datepicker },
+  components: { Datepicker, Line },
   data() {
     return {
       alertType: 'success',
       alertMsg: successMsg,
       showAlert: false,
-      weightHistory: [],
       newWeight: {
         ...defaultWeigh,
       },
       chart_type: 'justify',
-      chartData: {
-        labels: ['January', 'February', 'March'],
-        datasets: [{ data: [40, 20, 12] }],
-      },
       chartOptions: {
         responsive: true,
       },
@@ -105,6 +109,30 @@ export default {
         });
     },
   },
+  computed: {
+    chartData() {
+      return {
+        labels: this.weightHistory.map(({ weighDate }) =>
+          DateTime.fromISO(weighDate).toLocaleString(DateTime.DATE_MED)
+        ),
+        datasets: [
+          {
+            label: 'weight in grams',
+            tension: 0.3,
+            data: this.weightHistory.map(({ weighAmt }) => weighAmt),
+            borderColor: 'rgba(56, 30, 114, 1)',
+            backgroundColor: 'rgba(56, 30, 114, 0.75)',
+            borderWidth: 3,
+            pointRadius: 9,
+            pointStyle: 'rectRounded',
+            rotation: 45,
+            hoverRadius: 12,
+            hitRadius: 3,
+          },
+        ],
+      };
+    },
+  },
 };
 </script>
 
@@ -116,11 +144,11 @@ export default {
           <v-row>
             <v-col>
               <v-sheet class="ma-3 pa-6">
-                <Bar id="my-chart-id" :options="chartOptions" :data="chartData" />
+                <Line id="my-chart-id" :options="chartOptions" :data="chartData" />
               </v-sheet>
             </v-col>
           </v-row>
-          <v-row>
+          <!-- <v-row>
             <v-col class="d-flex justify-center align-center">
               <v-btn-toggle v-model="chart_type" variant="outlined">
                 <v-btn value="center">
@@ -137,7 +165,7 @@ export default {
                 </v-btn>
               </v-btn-toggle>
             </v-col>
-          </v-row>
+          </v-row> -->
           <v-row>
             <v-col>
               <v-card class="elevation-6 ma-3 pa-6">

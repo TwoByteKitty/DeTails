@@ -48,7 +48,7 @@ export default {
       <v-card>
         <v-card class="pa-1 ma-3 elevation-5 pet-carousel">
           <v-carousel hide-delimiters show-arrows="hover">
-            <v-carousel-item v-for="(image, index) in petImages" :key="index" :src="`/images/${image}`" cover>
+            <v-carousel-item v-for="(image, index) in petImages" :key="index" :src="`/images/${image}`" contain>
             </v-carousel-item>
           </v-carousel>
           <div class="album-edit-overlay">

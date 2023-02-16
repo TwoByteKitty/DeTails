@@ -5,6 +5,7 @@ import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, Li
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { ref } from 'vue';
+import { DateTime } from 'luxon';
 
 export interface ShedProps {
   shedHistory: Array<{}>;
@@ -13,20 +14,20 @@ defineProps<ShedProps>();
 </script>
 
 <script lang="ts">
-// interface IMeal {
-//   _id: string;
-//   feedDate: string;
-//   preyNo: number;
-//   preyType: Array<string>;
-//   dOD: string;
-//   mealWeight: number;
-//   eaten: string;
-//   feedComments: string;
-// }
+interface IShed {
+  _id: string;
+  pinkBelly: string;
+  blueEyes: string;
+  clearEyes: string;
+  shedSkin: string;
+  entire: string;
+  comments: string;
+}
 
 const API_URL = `/api/pets/`;
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
-const defaultShed = {
+const defaultShed: IShed = {
+  _id: '',
   pinkBelly: '',
   blueEyes: '',
   clearEyes: '',
@@ -45,55 +46,55 @@ export default {
       alertType: 'success',
       alertMsg: successMsg,
       showAlert: false,
+      shedCycles: [],
+      newShed: { ...defaultShed },
       chart_type: 'justify',
-      chartData: {
-        labels: ['January', 'February', 'March'],
-        datasets: [{ data: [40, 20, 12] }],
-      },
       chartOptions: {
         responsive: true,
+        scales: {
+          y: {
+            stacked: true,
+          },
+        },
       },
-      shedCycles: [
-        {
-          id: 1,
-          pinkBelly: '07-01-2022',
-          blueEyes: '07-04-2022',
-          clearEyes: '07-15-2022',
-          shedSkin: '07-21-2022',
-          entire: true,
-          comments: 'blah blah blah',
-        },
-        {
-          id: 2,
-          pinkBelly: '10-11-2022',
-          blueEyes: '10-13-2022',
-          clearEyes: '10-22-2022',
-          shedSkin: '10-24-2022',
-          entire: true,
-          comments: 'fixed problematic belly scales. blah blah blah',
-        },
-        {
-          id: 3,
-          pinkBelly: '12-15-2022',
-          blueEyes: '12-16-2022',
-          clearEyes: '12-25-2022',
-          shedSkin: '12-30-2022',
-          entire: false,
-          comments: 'bathed at apx 88F for 2 hours to resolve stuck shed. blah blah blah',
-        },
-      ],
-      newShed: { ...defaultShed },
     };
   },
   components: { Datepicker },
   setup() {
     const date = ref(new Date());
-
     return {
       date,
     };
   },
+  // computed: {
+  //   chartData() {
+  //     return {
+  //       labels: this.weightHistory.map(({ weighDate }) =>
+  //         DateTime.fromISO(weighDate).toLocaleString(DateTime.DATE_MED)
+  //       ),
+  //       datasets: [
+  //         {
+  //           label: 'weight in grams',
+  //           tension: 0.3,
+  //           data: this.weightHistory.map(({ weighAmt }) => weighAmt),
+  //           borderColor: 'rgba(56, 30, 114, 1)',
+  //           backgroundColor: 'rgba(56, 30, 114, 0.75)',
+  //           borderWidth: 3,
+  //           pointRadius: 9,
+  //           pointStyle: 'rectRounded',
+  //           rotation: 45,
+  //           hoverRadius: 12,
+  //           hitRadius: 3,
+  //         },
+  //       ],
+  //     };
+  //   },
+  // },
   methods: {
+    formatDate(timestamp: string) {
+      return DateTime.fromISO(timestamp).toLocaleString(DateTime.DATE_SHORT);
+    },
+
     createShed() {
       const url = `${API_URL}${this.$route.params.id}/sheds/add`;
       console.log(this.newShed);
@@ -108,7 +109,6 @@ export default {
       fetch(url, requestOptions)
         .then(async (response) => {
           const data = await response.json();
-
           // check for error response
           if (!response.ok) {
             // get error message from body or default to response status
@@ -142,9 +142,9 @@ export default {
     <v-card class="ma-3 pa-6">
       <v-row>
         <v-col>
-          <v-sheet class="ma-3 pa-6">
+          <!-- <v-sheet class="ma-3 pa-6">
             <Bar id="my-chart-id" :options="chartOptions" :data="chartData" />
-          </v-sheet>
+          </v-sheet> -->
         </v-col>
       </v-row>
       <v-card class="ma-3 pa-6" flat>
@@ -230,7 +230,6 @@ export default {
           <v-table class="data-tbl" fixed-header>
             <thead>
               <tr>
-                <th class="tbl-head text-left">Record No.</th>
                 <th class="tbl-head text-left">Pink Belly</th>
                 <th class="tbl-head text-left">Blue Eyes</th>
                 <th class="tbl-head text-left">Clear Eyes</th>
@@ -240,12 +239,11 @@ export default {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in shedCycles" :key="item.id">
-                <td>{{ item.id }}</td>
-                <td>{{ item.pinkBelly }}</td>
-                <td>{{ item.blueEyes }}</td>
-                <td>{{ item.clearEyes }}</td>
-                <td>{{ item.shedSkin }}</td>
+              <tr v-for="item in (shedHistory as Array<IShed>)" :key="item._id">
+                <td>{{ formatDate(item.pinkBelly) }}</td>
+                <td>{{ formatDate(item.blueEyes) }}</td>
+                <td>{{ formatDate(item.clearEyes) }}</td>
+                <td>{{ formatDate(item.shedSkin) }}</td>
                 <td>{{ item.entire }}</td>
                 <td>{{ item.comments }}</td>
               </tr>
