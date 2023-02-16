@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
 import { Line } from 'vue-chartjs';
 import {
   Chart as ChartJS,
@@ -13,7 +12,6 @@ import {
 } from 'chart.js';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
-import { ref } from 'vue';
 import { DateTime } from 'luxon';
 
 export interface WeightProps {
@@ -24,10 +22,10 @@ defineProps<WeightProps>();
 
 <script lang="ts">
 interface IWeight {
-  _id: string;
+  _id?: string;
   weighDate: string;
   weighAmt: number;
-  weighComments: string;
+  weighComments?: string;
 }
 
 const errorMsg = 'Well... you really screwed up this time...';
@@ -56,13 +54,11 @@ export default {
       chartOptions: {
         responsive: true,
       },
-    };
-  },
-  setup() {
-    const date = ref(new Date());
-
-    return {
-      date,
+      currentSort: {
+        key: 'weighDate',
+        type: 'date',
+        order: 1,
+      },
     };
   },
   methods: {
@@ -71,8 +67,7 @@ export default {
     },
     createWeight() {
       const url = `${API_URL}${this.$route.params.id}/weights/add`;
-      console.log(this.newWeight);
-
+      delete this.newWeight._id;
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -90,6 +85,7 @@ export default {
             const error = (data && data.message) || response.status;
             return Promise.reject(error);
           } else {
+            this.$emit('weightAdded');
             this.alertMsg = successMsg;
             this.alertType = 'success';
             this.showAlert = true;
@@ -107,6 +103,58 @@ export default {
           this.alertType = 'error';
           this.showAlert = true;
         });
+    },
+    sort: function (sortKey: string, sortType: string) {
+      this.currentSort.key = sortKey;
+      this.currentSort.type = sortType;
+      this.currentSort.order *= -1;
+    },
+    sortMethods({ key, type, order }: { key: string; type: string; order: number }) {
+      switch (type) {
+        case 'string': {
+          return order === 1
+            ? (a: IWeight, b: IWeight) =>
+                b[key as keyof IWeight] > a[key as keyof IWeight]
+                  ? -1
+                  : a[key as keyof IWeight] > b[key as keyof IWeight]
+                  ? 1
+                  : 0
+            : (a: IWeight, b: IWeight) =>
+                a[key as keyof IWeight] > b[key as keyof IWeight]
+                  ? -1
+                  : b[key as keyof IWeight] > a[key as keyof IWeight]
+                  ? 1
+                  : 0;
+        }
+        case 'number': {
+          console.log('Sorting by number');
+          console.log(this.currentSort);
+          return order === 1
+            ? (a: IWeight, b: IWeight) => Number(b[key as keyof IWeight]) - Number(a[key as keyof IWeight])
+            : (a: IWeight, b: IWeight) => Number(a[key as keyof IWeight]) - Number(b[key as keyof IWeight]);
+        }
+        case 'date': {
+          console.log('Sorting by date');
+          console.log(this.currentSort);
+          if (order === 1) {
+            return (a: IWeight, b: IWeight) =>
+              DateTime.fromISO(b[key as keyof IWeight] as string) < DateTime.fromISO(a[key as keyof IWeight] as string)
+                ? 1
+                : DateTime.fromISO(b[key as keyof IWeight] as string) >
+                  DateTime.fromISO(a[key as keyof IWeight] as string)
+                ? -1
+                : 0;
+          } else {
+            return (a: IWeight, b: IWeight) =>
+              DateTime.fromISO(a[key as keyof IWeight] as string) < DateTime.fromISO(b[key as keyof IWeight] as string)
+                ? 1
+                : DateTime.fromISO(a[key as keyof IWeight] as string) >
+                  DateTime.fromISO(b[key as keyof IWeight] as string)
+                ? -1
+                : 0;
+          }
+        }
+      }
     },
   },
   computed: {
@@ -131,6 +179,9 @@ export default {
           },
         ],
       };
+    },
+    sortedHistory() {
+      return [...this.weightHistory].sort(this.sortMethods(this.currentSort));
     },
   },
 };
@@ -207,16 +258,16 @@ export default {
             <v-table class="data-tbl" fixed-header>
               <thead>
                 <tr>
-                  <th class="tbl-head text-left">Date</th>
-                  <th class="tbl-head text-left">Weight</th>
+                  <th class="tbl-head text-left"><a href="#" @click.prevent="sort('weighDate', 'date')">Date</a></th>
+                  <th class="tbl-head text-left"><a href="#" @click.prevent="sort('weighAmt', 'number')">Weight</a></th>
                   <th class="tbl-head text-left">Comments</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="item in (weightHistory as Array<IWeight>)" :key="item._id">
-                  <td>{{ formatDate(item.weighDate) }}</td>
-                  <td>{{ item.weighAmt }}</td>
-                  <td>{{ item.weighComments }}</td>
+                <tr v-for="weight in sortedHistory" :key="weight._id">
+                  <td>{{ formatDate(weight.weighDate) }}</td>
+                  <td>{{ weight.weighAmt }}</td>
+                  <td>{{ weight.weighComments }}</td>
                 </tr>
               </tbody>
             </v-table>
