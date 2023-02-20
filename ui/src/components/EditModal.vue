@@ -9,7 +9,6 @@ export interface EditPetProps {
   type: string;
   species: string;
   dateOfBirth: string;
-  dateOfBirthFormatted: string;
   description: string;
 }
 defineProps<EditPetProps>();
@@ -26,7 +25,7 @@ export default {
         _id: this._id,
         species: this.species,
         type: this.type,
-        dateOfBirth: this.dateOfBirthFormatted,
+        dateOfBirth: this.dateOfBirth,
         description: this.description,
       },
     };
@@ -53,7 +52,7 @@ export default {
     dateOfBirth: {
       immediate: true,
       handler() {
-        this.fields.dateOfBirth = this.dateOfBirthFormatted;
+        this.fields.dateOfBirth = this.dateOfBirth;
       },
     },
     description: {

@@ -2,10 +2,13 @@
 import { RouterLink } from 'vue-router';
 import { Bar } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
+import 'chartjs-plugin-style';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { ref } from 'vue';
 import { DateTime } from 'luxon';
+import 'chartjs-adapter-luxon';
 
 export interface ShedProps {
   shedHistory: Array<{}>;
@@ -25,7 +28,7 @@ interface IShed {
 }
 
 const API_URL = `/api/pets/`;
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ChartDataLabels);
 const defaultShed: IShed = {
   _id: '',
   pinkBelly: '',

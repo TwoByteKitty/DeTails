@@ -1,15 +1,8 @@
 <script setup lang="ts">
-import { Line } from 'vue-chartjs';
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-} from 'chart.js';
+import { Line, Scatter } from 'vue-chartjs';
+import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, TimeScale, LinearScale, PointElement } from 'chart.js';
+import 'chartjs-plugin-style';
+import 'chartjs-adapter-luxon';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { DateTime } from 'luxon';
@@ -37,11 +30,22 @@ const defaultWeigh: IWeight = {
   weighAmt: 0,
   weighComments: '',
 };
-ChartJS.register(Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement);
+ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, TimeScale, LinearScale);
 
+const getXAxisMinMax = (weightHistory: Array<IWeight>) => {
+  const DATE_FORMAT_STRING = 'yyyy-MM-dd';
+  const dates = weightHistory.map(({ weighDate }) => DateTime.fromISO(weighDate).toFormat(DATE_FORMAT_STRING));
+  const firstDate = DateTime.fromISO(dates[0]).minus({ months: 1 }).toFormat(DATE_FORMAT_STRING);
+  const lastDate = dates[dates.length - 1];
+
+  return {
+    firstDate,
+    lastDate,
+  };
+};
 export default {
-  name: 'BarChart',
-  components: { Datepicker, Line },
+  name: 'WeightTab',
+  components: { Datepicker, Scatter, Line },
   data() {
     return {
       alertType: 'success',
@@ -50,9 +54,40 @@ export default {
       newWeight: {
         ...defaultWeigh,
       },
-      chart_type: 'justify',
       chartOptions: {
         responsive: true,
+        scales: {
+          x: {
+            type: 'time',
+            time: {
+              unit: 'month',
+            },
+            min: getXAxisMinMax(this.weightHistory).firstDate,
+            max: getXAxisMinMax(this.weightHistory).lastDate,
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 200,
+            },
+            type: 'linear',
+            grace: 200,
+          },
+        },
+        plugins: {
+          legend: {
+            labels: {
+              usePointStyle: true,
+            },
+          },
+          title: {
+            display: true,
+            text: 'Weight Over Time',
+          },
+          tooltip: {
+            enable: false,
+          },
+        },
       },
       currentSort: {
         key: 'weighDate',
@@ -160,22 +195,26 @@ export default {
   computed: {
     chartData() {
       return {
-        labels: this.weightHistory.map(({ weighDate }) =>
-          DateTime.fromISO(weighDate).toLocaleString(DateTime.DATE_MED)
-        ),
         datasets: [
           {
             label: 'weight in grams',
-            tension: 0.3,
-            data: this.weightHistory.map(({ weighAmt }) => weighAmt),
             borderColor: 'rgba(56, 30, 114, 1)',
             backgroundColor: 'rgba(56, 30, 114, 0.75)',
-            borderWidth: 3,
-            pointRadius: 9,
-            pointStyle: 'rectRounded',
-            rotation: 45,
-            hoverRadius: 12,
-            hitRadius: 3,
+            borderWidth: 1,
+            // data: [
+            //   { x: '2022-09-03', y: 702 },
+            //   { x: '2022-09-27', y: 769 },
+            //   { x: '2022-10-10', y: 795 },
+            //   { x: '2022-10-31', y: 861 },
+            //   { x: '2022-11-15', y: 903 },
+            //   { x: '2022-11-27', y: 933 },
+            //   { x: '2022-12-09', y: 972 },
+            //   { x: '2022-12-31', y: 1002 },
+            //   { x: '2023-01-21', y: 1099 },
+            //   { x: '2023-02-12', y: 1122 },
+            //   { x: '2023-04-18', y: 1299 },
+            // ],
+            data: this.weightHistory.map(({ weighAmt, weighDate }) => ({ x: weighDate, y: weighAmt })),
           },
         ],
       };
@@ -194,9 +233,11 @@ export default {
         <v-card class="ma-3 pa-6">
           <v-row>
             <v-col>
-              <v-sheet class="ma-3 pa-6">
-                <Line id="my-chart-id" :options="chartOptions" :data="chartData" />
-              </v-sheet>
+              <div class="chartCard ma-3 pa-6">
+                <div class="chartBox">
+                  <Line id="my-chart-id" :options="chartOptions" :data="chartData" />
+                </div>
+              </div>
             </v-col>
           </v-row>
           <!-- <v-row>

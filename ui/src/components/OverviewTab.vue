@@ -6,7 +6,6 @@ export interface EditPetProps {
   type: string;
   species: string;
   dateOfBirth: string;
-  dateOfBirthFormatted: string;
   description: string;
   petImages: Array<string>;
 }
@@ -85,9 +84,7 @@ export default {
         <v-card-title class="d-flex justify-space-between">
           <span> Overview </span>
           <span>
-            <edit-modal
-              v-bind="{ _id, name, type, species, dateOfBirth, dateOfBirthFormatted, description }"
-            ></edit-modal>
+            <edit-modal v-bind="{ _id, name, type, species, dateOfBirth, description }"></edit-modal>
           </span>
         </v-card-title>
         <v-row>
@@ -113,7 +110,7 @@ export default {
         <v-row>
           <v-col>
             <v-card-subtitle class="overview-inline">Age:</v-card-subtitle>
-            <v-card-text class="overview-inline"> {{ dateOfBirthFormatted }} </v-card-text>
+            <v-card-text class="overview-inline"> {{ dateOfBirth }} </v-card-text>
           </v-col>
           <v-col>
             <v-card-subtitle class="overview-inline">Last Shed:</v-card-subtitle>
