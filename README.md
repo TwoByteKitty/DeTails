@@ -6,8 +6,8 @@ CHART.JS RESOURCES
 chart.js vid for making Gantt chart:
 https://www.youtube.com/watch?v=InMnGwP7iX4
 
-chart.js vid for making scatter-line chart:
- https://www.youtube.com/watch?v=Drt4ICASySo
+chart.js vid for making offset point line chart:
+https://www.youtube.com/watch?v=N8-p9bdYWqs
 
 chart.js vid Horizontal Scroll Bar with Fixed Y Scale:
 https://www.youtube.com/watch?v=IV6Qy5EQZlA

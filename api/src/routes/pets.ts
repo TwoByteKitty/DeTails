@@ -1,9 +1,9 @@
 import express, { Router } from 'express';
 import multer from 'multer';
 import path from 'path';
-import { addFeeding, getAllFeedingsByPet, getSingleFeeding } from '../controllers/feedings';
+import { addFeeding, getAllFeedingsByPet, getSingleFeeding } from '../controllers/herpetofauna/feedings';
 import { addPet, editPet, addPetImage, getAllPets, getSinglePet } from '../controllers/pets';
-import { addShed, getAllShedsByPet, getSingleShed } from '../controllers/sheds';
+import { addShed, getAllShedsByPet, getSingleShed } from '../controllers/herpetofauna/sheds';
 import { addWeight, getAllWeightsByPet, getSingleWeight } from '../controllers/weights';
 import { FILE_UPLOAD_PATH } from '../utils/constants';
 
@@ -27,12 +27,12 @@ router.get('/:petId/sheds/', getAllShedsByPet);
 
 //Feeding CRUD
 router.post('/:petId/feedings/add', addFeeding);
-router.get('/:petId/feedings/:shedId', getSingleFeeding);
+router.get('/:petId/feedings/:feedingId', getSingleFeeding);
 router.get('/:petId/feedings/', getAllFeedingsByPet);
 
 //Weights CRUD
 router.post('/:petId/weights/add', addWeight);
-router.get('/:petId/weights/:shedId', getSingleWeight);
+router.get('/:petId/weights/:weightId', getSingleWeight);
 router.get('/:petId/weights/', getAllWeightsByPet);
 
 export default router;

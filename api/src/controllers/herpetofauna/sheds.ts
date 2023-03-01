@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Shed, IShed } from '../models/shed';
+import { Shed, IShed } from '../../models/herpetofauna/shed';
 
 const addShed = (request: Request<{ petId: string }, {}, IShed>, response: Response) => {
   const newShed: IShed = request.body;

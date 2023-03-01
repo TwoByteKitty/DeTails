@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Feeding, IFeed } from '../models/feeding';
+import { Feeding, IFeed } from '../../models/herpetofauna/feeding';
 
 const addFeeding = (request: Request<{ petId: string }, {}, IFeed>, response: Response) => {
   const newFeeding: IFeed = request.body;

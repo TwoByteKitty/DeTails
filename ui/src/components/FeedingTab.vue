@@ -127,7 +127,7 @@ export default {
                 <v-row>
                   <v-col class="freq-col slider-col d-flex">
                     <label class="slider-label"> Meal Frequency </label>
-                    <v-range-slider class="slider freq-slider" v-model="freqSlider" :max="90" :min="1" :step="1" strict>
+                    <v-range-slider class="slider freq-slider" v-model="freqSlider" :max="45" :min="5" :step="1" strict>
                       <template v-slot:prepend>
                         <v-text-field
                           :model-value="freqSlider[0]"

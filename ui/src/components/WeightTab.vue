@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { Line, Scatter } from 'vue-chartjs';
-import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, TimeScale, LinearScale, PointElement } from 'chart.js';
-import 'chartjs-plugin-style';
-import 'chartjs-adapter-luxon';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { DateTime } from 'luxon';
+import 'chartjs-plugin-style';
 
 export interface WeightProps {
   weightHistory: Array<IWeight>;
@@ -21,8 +19,6 @@ interface IWeight {
   weighComments?: string;
 }
 
-const errorMsg = 'Well... you really screwed up this time...';
-const successMsg = "I'm a success alert! Congratulations!";
 const API_URL = `/api/pets/`;
 const defaultWeigh: IWeight = {
   _id: '',
@@ -30,19 +26,24 @@ const defaultWeigh: IWeight = {
   weighAmt: 0,
   weighComments: '',
 };
-ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, TimeScale, LinearScale);
+const DATE_FORMAT_STRING = 'yyyy-MM-dd';
+const errorMsg = 'Well... you really screwed up this time...';
+const successMsg = "I'm a success alert! Congratulations!";
 
 const getXAxisMinMax = (weightHistory: Array<IWeight>) => {
-  const DATE_FORMAT_STRING = 'yyyy-MM-dd';
-  const dates = weightHistory.map(({ weighDate }) => DateTime.fromISO(weighDate).toFormat(DATE_FORMAT_STRING));
-  const firstDate = DateTime.fromISO(dates[0]).minus({ months: 1 }).toFormat(DATE_FORMAT_STRING);
-  const lastDate = dates[dates.length - 1];
+  const dates = weightHistory.map(({ weighDate }) => DateTime.fromISO(weighDate));
+
+  const firstDate = dates[0].minus({ months: 1 });
+  const lastDate = dates[dates.length - 1].plus({ months: 1 });
+  const duration = lastDate.diff(firstDate, ['months']);
 
   return {
-    firstDate,
-    lastDate,
+    firstDate: firstDate.toFormat(DATE_FORMAT_STRING),
+    lastDate: lastDate.toFormat(DATE_FORMAT_STRING),
+    duration: Math.ceil(duration.months),
   };
 };
+
 export default {
   name: 'WeightTab',
   components: { Datepicker, Scatter, Line },
@@ -56,6 +57,7 @@ export default {
       },
       chartOptions: {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
           x: {
             type: 'time',
@@ -64,14 +66,51 @@ export default {
             },
             min: getXAxisMinMax(this.weightHistory).firstDate,
             max: getXAxisMinMax(this.weightHistory).lastDate,
+            ticks: {
+              font: {
+                weight: 'bold',
+                size: 15,
+              },
+              padding: 9,
+              backdropPadding: 3,
+            },
+            display: true,
+            title: {
+              display: true,
+              text: 'Weigh Date',
+              color: '#4A4458',
+              font: {
+                family: 'Garamond',
+                size: 30,
+                weight: 'bold',
+                lineHeight: 1.5,
+              },
+            },
           },
           y: {
             beginAtZero: true,
             ticks: {
               stepSize: 200,
+              font: {
+                size: 15,
+              },
+              padding: 9,
+              backdropPadding: 3,
             },
             type: 'linear',
             grace: 200,
+            display: true,
+            title: {
+              display: true,
+              text: 'Weight in Grams',
+              color: '#4A4458',
+              font: {
+                family: 'Garamond',
+                size: 30,
+                weight: 'bold',
+                lineHeight: 1.5,
+              },
+            },
           },
         },
         plugins: {
@@ -85,10 +124,37 @@ export default {
             text: 'Weight Over Time',
           },
           tooltip: {
-            enable: false,
+            // bevelWidth: 21,
+            // bevelHighlightColor: 'rgba(255, 255, 255, 1)',
+            // bevelShadowColor: 'rgba(0, 0, 0, 1)',
+            titleFont: {
+              size: 20,
+            },
+            bodyFont: {
+              size: 20,
+            },
+            caretPadding: 3,
+            caretSize: 9,
+            usePointStyle: true,
+            boxPadding: 3,
+            callbacks: {
+              title: (context: { parsed: { x: number } }[]) => {
+                console.log(context);
+                const d = DateTime.fromMillis(context[0].parsed.x);
+                return d.toLocaleString(DateTime.DATE_FULL);
+              },
+            },
           },
         },
+        layout: {
+          padding: 15,
+        },
       },
+      // chartPlugins: [
+      //   {
+
+      //   },
+      // ],
       currentSort: {
         key: 'weighDate',
         type: 'date',
@@ -200,27 +266,35 @@ export default {
             label: 'weight in grams',
             borderColor: 'rgba(56, 30, 114, 1)',
             backgroundColor: 'rgba(56, 30, 114, 0.75)',
-            borderWidth: 1,
-            // data: [
-            //   { x: '2022-09-03', y: 702 },
-            //   { x: '2022-09-27', y: 769 },
-            //   { x: '2022-10-10', y: 795 },
-            //   { x: '2022-10-31', y: 861 },
-            //   { x: '2022-11-15', y: 903 },
-            //   { x: '2022-11-27', y: 933 },
-            //   { x: '2022-12-09', y: 972 },
-            //   { x: '2022-12-31', y: 1002 },
-            //   { x: '2023-01-21', y: 1099 },
-            //   { x: '2023-02-12', y: 1122 },
-            //   { x: '2023-04-18', y: 1299 },
-            // ],
-            data: this.weightHistory.map(({ weighAmt, weighDate }) => ({ x: weighDate, y: weighAmt })),
+            borderWidth: 3.9,
+            pointRadius: 9,
+            pointHoverRadius: 15,
+            pointStyle: 'rectRounded',
+            rotation: 45,
+            tension: 0.39,
+            // pointShadowOffsetX: 6,
+            // pointShadowOffsetY: 6,
+            // pointShadowBlur: 30,
+            // pointShadowColor: 'rgba(220, 54, 46, 1)',
+            data: this.weightHistory.map(({ weighAmt, weighDate }) => ({
+              x: DateTime.fromISO(weighDate).toFormat(DATE_FORMAT_STRING),
+              y: weighAmt,
+            })),
           },
         ],
       };
     },
     sortedHistory() {
       return [...this.weightHistory].sort(this.sortMethods(this.currentSort));
+    },
+    chartBoxWidth() {
+      console.log(getXAxisMinMax(this.weightHistory).duration);
+      const widthObj = { width: '0px' };
+      const totalLabels = getXAxisMinMax(this.weightHistory).duration;
+      if (totalLabels > 5) {
+        widthObj.width = `${1500 + (totalLabels - 5) * 42}px`;
+      }
+      return widthObj;
     },
   },
 };
@@ -233,8 +307,8 @@ export default {
         <v-card class="ma-3 pa-6">
           <v-row>
             <v-col>
-              <div class="chartCard ma-3 pa-6">
-                <div class="chartBox">
+              <div class="chart-card">
+                <div class="chart-box" :style="chartBoxWidth">
                   <Line id="my-chart-id" :options="chartOptions" :data="chartData" />
                 </div>
               </div>
@@ -320,6 +394,17 @@ export default {
 </template>
 
 <style lang="css" scoped>
+.chart-card {
+  height: 700px;
+  width: 1800px;
+  max-width: 1500px;
+  overflow-x: scroll;
+  margin: 3px;
+  padding: 3px;
+}
+.chart-box {
+  height: 100%;
+}
 .pb-22 {
   padding-bottom: 22px;
 }

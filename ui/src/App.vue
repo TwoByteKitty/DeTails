@@ -1,4 +1,15 @@
 <script setup lang="ts">
+import {
+  Chart as ChartJS,
+  LineElement,
+  PointElement,
+  TimeScale,
+  LinearScale,
+  Tooltip,
+  CategoryScale,
+  BarElement,
+} from 'chart.js';
+import 'chartjs-adapter-luxon';
 import { RouterView } from 'vue-router';
 import { routes } from './router';
 //import RouterView from './router/RouterView.vue';
@@ -6,6 +17,8 @@ import { routes } from './router';
 </script>
 
 <script lang="ts">
+ChartJS.register(BarElement, LineElement, PointElement, TimeScale, LinearScale, CategoryScale, Tooltip);
+
 export default {
   data: () => ({
     pageTitle: 'DeTails',

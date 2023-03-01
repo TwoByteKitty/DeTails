@@ -2,10 +2,10 @@ import { Schema, model, Date } from 'mongoose';
 
 export interface IShed {
   _id: string;
-  pinkBelly: Date;
-  blueEyes: Date;
-  clearEyes: Date;
-  shedSkin: Date;
+  pinkBelly: string;
+  blueEyes: string;
+  clearEyes: string;
+  shedSkin: string;
   entire: string;
   shedComments: string;
   petId: string;
@@ -13,10 +13,10 @@ export interface IShed {
 
 export const shedSchema = new Schema<IShed>(
   {
-    pinkBelly: { type: Date, required: true },
-    blueEyes: { type: Date, required: true },
-    clearEyes: { type: Date, required: true },
-    shedSkin: { type: Date, required: true },
+    pinkBelly: { type: String, required: true },
+    blueEyes: { type: String, required: true },
+    clearEyes: { type: String, required: true },
+    shedSkin: { type: String, required: true },
     entire: { type: String, required: true },
     shedComments: { type: String, required: false },
     petId: { type: String, required: true },
