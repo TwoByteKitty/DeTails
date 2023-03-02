@@ -3,16 +3,17 @@ import { Schema, model } from 'mongoose';
 import { IShed, shedSchema } from './herpetofauna/shed';
 import { IFeed, feedingSchema } from './herpetofauna/feeding';
 import { IWeight, weightSchema } from './weight';
-import { FEEDINGS_VIRTUAL_NAME } from '../utils/constants';
-import { SHEDS_VIRTUAL_NAME } from '../utils/constants';
-import { WEIGHTS_VIRTUAL_NAME } from '../utils/constants';
+import { IVet, vetSchema } from './vetVisit';
+import {
+  WEIGHTS_VIRTUAL_NAME,
+  SHEDS_VIRTUAL_NAME,
+  FEEDINGS_VIRTUAL_NAME,
+  VISITS_VIRTUAL_NAME,
+} from '../utils/constants';
 
 export type PetType = 'cat' | 'dog' | 'reptile' | 'amphibian' | 'fish' | 'lizard';
 export type SexType = 'male' | 'female';
 
-// Lets add some properties to our interface
-// and schema for shed, feeding, and weight
-// Arrays. Make them optional
 export interface IPet {
   _id: string;
   name: string;
@@ -27,6 +28,7 @@ export interface IPet {
   feedingHistory: Array<IFeed>;
   shedHistory: Array<IShed>;
   weightHistory: Array<IWeight>;
+  vetHistory: Array<IVet>;
 }
 
 const petSchema = new Schema<IPet>(
@@ -65,6 +67,12 @@ petSchema.virtual(SHEDS_VIRTUAL_NAME, {
 
 petSchema.virtual(WEIGHTS_VIRTUAL_NAME, {
   ref: 'Weight',
+  localField: '_id',
+  foreignField: 'petId',
+});
+
+petSchema.virtual(VISITS_VIRTUAL_NAME, {
+  ref: 'VetVisit',
   localField: '_id',
   foreignField: 'petId',
 });
