@@ -1,9 +1,9 @@
-import db from './config/db';
 import express, { Application } from 'express';
 import morgan from 'morgan';
+import path from 'path';
+import db from './config/db';
 import router from './routes/index';
 import { FILE_UPLOAD_PATH } from './utils/constants';
-import path from 'path';
 
 //-- .env --------------------------------------------------------------------
 // if (process.env.NODE_ENV !== 'production') {

@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import multer from 'multer';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 import { IPet, Pet } from '../models/pet';
 import { FEEDINGS_VIRTUAL_NAME, FILE_UPLOAD_PATH, SHEDS_VIRTUAL_NAME, WEIGHTS_VIRTUAL_NAME } from '../utils/constants';
 
@@ -34,7 +33,7 @@ const addPetImage = (request: Request<{ id: string }>, response: Response) => {
 
     /** The original name of the uploaded file
       stored in the variable "originalname". **/
-    const target_path = FILE_UPLOAD_PATH + file.originalname;
+    const target_path = path.join(__dirname, '..', '..', '..', '..', FILE_UPLOAD_PATH, file.originalname);
 
     /** A better way to copy the uploaded file. **/
     const src = fs.createReadStream(tmp_path);

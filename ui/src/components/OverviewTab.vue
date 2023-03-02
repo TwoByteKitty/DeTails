@@ -1,21 +1,19 @@
-<script setup lang="ts">
-import EditModal from './EditModal.vue';
-export interface EditPetProps {
-  _id: string;
-  name: string;
-  type: string;
-  species: string;
-  dateOfBirth: string;
-  description: string;
-  petImages: Array<string>;
-}
-defineProps<EditPetProps>();
-</script>
-
 <script lang="ts">
+import EditModal from './EditModal.vue';
+
 const API_URL = `/api/pets/`;
 
 export default {
+  name: 'OverviewTab',
+  props: {
+    _id: String,
+    name: String,
+    type: String,
+    species: String,
+    dateOfBirth: String,
+    description: String,
+    petImages: Array<String>,
+  },
   data() {
     return {
       image: null,
@@ -46,7 +44,7 @@ export default {
     <v-card class="pa-3 ma-3">
       <v-card>
         <v-card class="pa-1 ma-3 elevation-5 pet-carousel">
-          <v-carousel hide-delimiters show-arrows="hover">
+          <v-carousel hide-delimiters show-arrows="hover" :model-value="0">
             <v-carousel-item v-for="(image, index) in petImages" :key="index" :src="`/images/${image}`" contain>
             </v-carousel-item>
           </v-carousel>
