@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { Line, Scatter } from 'vue-chartjs';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
-import { DateTime } from 'luxon';
 import 'chartjs-plugin-style';
+import { DateTime } from 'luxon';
+import { Line, Scatter } from 'vue-chartjs';
 
-export interface WeightProps {
+export interface WeightTabProps {
   weightHistory: Array<IWeight>;
 }
-defineProps<WeightProps>();
+defineProps<WeightTabProps>();
 </script>
 
 <script lang="ts">

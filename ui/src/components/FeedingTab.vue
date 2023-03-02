@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import '@vuepic/vue-datepicker/dist/main.css';
+import { DegreeOfDead, PreyType } from '@/shared/PetType';
+import { generateFeedingSchedule, IScheduledFeeding } from '@/utils/feedingSchedule';
 import Datepicker from '@vuepic/vue-datepicker';
-import { RouterLink } from 'vue-router';
-import { Calendar } from 'v-calendar';
+import '@vuepic/vue-datepicker/dist/main.css';
 import { DateTime } from 'luxon';
-import { DegreeOfDead } from '@/shared/PetType';
-import { PreyType } from '@/shared/PetType';
+import { Calendar } from 'v-calendar';
 
-export interface FeedingProps {
+export interface FeedingTabProps {
   feedingHistory: Array<{}>;
 }
-defineProps<FeedingProps>();
+defineProps<FeedingTabProps>();
 </script>
 
 <script lang="ts">
@@ -41,6 +40,8 @@ const defaultMeal: IMeal = {
 export default {
   data() {
     return {
+      DegreeOfDead,
+      PreyType,
       alertType: 'success',
       alertMsg: successMsg,
       showAlert: false,
@@ -48,8 +49,10 @@ export default {
       sizeSlider: [20, 40],
       feedingHistory: [],
       newMeal: { ...defaultMeal },
+      feedingSchedule: new Array<{ customData: {}; dates: Date }>(),
     };
   },
+  // eslint-disable-next-line vue/no-unused-components
   components: { Calendar, Datepicker },
   methods: {
     createMeal() {
@@ -95,13 +98,18 @@ export default {
     formatDate(timestamp: string) {
       return DateTime.fromISO(timestamp).toLocaleString(DateTime.DATE_SHORT);
     },
-  },
-  setup() {
-    const date = ref(new Date());
-
-    return {
-      date,
-    };
+    createFeedingSchedule() {
+      const schedule: Array<IScheduledFeeding> = generateFeedingSchedule(this.freqSlider, this.sizeSlider);
+      console.log(schedule);
+      this.feedingSchedule = schedule.map(({ weight, date }: IScheduledFeeding, index) => ({
+        key: index + 1,
+        customData: {
+          weight,
+        },
+        dates: new Date(date.year, date.month, date.day),
+      }));
+      console.log(this.feedingSchedule);
+    },
   },
 };
 </script>
@@ -116,7 +124,22 @@ export default {
             <v-col>
               <div class="cale-wrap d-flex align-center flex-column flex-md-row fill-height">
                 <div class="fuck-you-thats-why">
-                  <Calendar class="cale" is-dark is-expanded color="indigo"></Calendar>
+                  <Calendar class="cale" is-dark is-expanded color="indigo" :attributes="feedingSchedule">
+                    <template v-slot:day-content="{ day, attributes }">
+                      <div class="flex flex-col h-full z-10 overflow-hidden">
+                        <span class="day-label text-sm text-gray-900">{{ day.day }}</span>
+                        <div class="flex-grow overflow-y-auto overflow-x-auto">
+                          <p
+                            v-for="attr in attributes"
+                            :key="attr.key"
+                            class="text-xs leading-tight rounded-sm p-1 mt-0 mb-1"
+                          >
+                            {{ attr.customData.weight }}
+                          </p>
+                        </div>
+                      </div>
+                    </template>
+                  </Calendar>
                 </div>
               </div>
             </v-col>
@@ -193,7 +216,9 @@ export default {
                 </v-row>
                 <v-divider></v-divider>
                 <div class="guide-btn-div d-flex justify-space-around align-center flex-column flex-md-row fill-height">
-                  <v-btn class="guide-btn elevation-9" size="x-large"> Create Feeding Guide! </v-btn>
+                  <v-btn class="guide-btn elevation-9" size="x-large" @click="createFeedingSchedule">
+                    Create Feeding Guide!
+                  </v-btn>
                 </div>
               </v-card>
             </v-col>

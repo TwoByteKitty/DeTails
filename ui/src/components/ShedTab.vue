@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
-import { ref } from 'vue';
-import { DateTime } from 'luxon';
 import 'chartjs-adapter-luxon';
 import 'chartjs-plugin-style';
+import { DateTime } from 'luxon';
+import { ref } from 'vue';
 import { Bar } from 'vue-chartjs';
 
 export interface ShedProps {
