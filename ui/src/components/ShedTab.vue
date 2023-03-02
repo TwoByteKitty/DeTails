@@ -10,7 +10,6 @@ import { ref } from 'vue';
 import ShedStkBar from './charts/ShedStkBar.vue';
 
 const API_URL = `/api/pets/`;
-//ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ChartDataLabels);
 const defaultShed: IShed = {
   _id: '',
   pinkBelly: '',
@@ -22,44 +21,6 @@ const defaultShed: IShed = {
 };
 const errorMsg = 'There was an error! Uh-oh...';
 const successMsg = "Hi! I'm a success alert! Congratulations!";
-
-// const getShedCycleStartDates = (shedHistory: Array<IShed>) =>
-//   shedHistory.map(({ pinkBelly }) => DateTime.fromISO(pinkBelly).toLocaleString(DateTime.DATE_FULL));
-
-// const getShedPhaseDuration = (shedHistory: Array<IShed>, phase: string): Array<number> => {
-//   let durations = new Array<number>();
-//   console.log(phase);
-//   switch (phase) {
-//     case 'pink':
-//       durations = shedHistory.map((shed) => {
-//         const pinkDate = DateTime.fromISO(shed.pinkBelly);
-//         const blueDate = DateTime.fromISO(shed.blueEyes);
-
-//         return blueDate.diff(pinkDate, 'days', { conversionAccuracy: 'casual' }).days;
-//       });
-//       break;
-//     case 'blue':
-//       durations = shedHistory.map((shed) => {
-//         const blueDate = DateTime.fromISO(shed.blueEyes);
-//         const clearDate = DateTime.fromISO(shed.clearEyes);
-
-//         return clearDate.diff(blueDate, 'days', { conversionAccuracy: 'casual' }).days;
-//       });
-//       break;
-//     case 'clear':
-//       durations = shedHistory.map((shed) => {
-//         const clearDate = DateTime.fromISO(shed.clearEyes);
-//         const shedDate = DateTime.fromISO(shed.shedSkin);
-
-//         return shedDate.diff(clearDate, 'days', { conversionAccuracy: 'casual' }).days;
-//       });
-//       break;
-//     default:
-//       break;
-//   }
-//   console.log(durations);
-//   return durations;
-// };
 
 export default {
   name: 'ShedTab',
@@ -76,60 +37,6 @@ export default {
       newShed: {
         ...defaultShed,
       },
-      // chartOptions: {
-      //   responsive: true,
-      //   scales: {
-      //     x: {
-      //       // type: 'time',
-      //       // min: getXAxisMinMax(this.shedHistory).firstDate,
-      //       // max: getXAxisMinMax(this.shedHistory).lastDate,
-      //       stacked: true,
-      //       display: true,
-      //       title: {
-      //         display: true,
-      //         text: 'Shed Cycle Start Date',
-      //         color: '#4A4458',
-      //         font: {
-      //           family: 'Garamond',
-      //           size: 30,
-      //           weight: 'bold',
-      //           lineHeight: 1.5,
-      //         },
-      //       },
-      //       ticks: {
-      //         font: {
-      //           weight: 'bold',
-      //           size: 15,
-      //         },
-      //         padding: 15,
-      //         backdropPadding: 6,
-      //       },
-      //     },
-      //     y: {
-      //       stacked: true,
-      //       display: true,
-      //       title: {
-      //         display: true,
-      //         text: 'Number of Days',
-      //         color: '#4A4458',
-      //         font: {
-      //           family: 'Garamond',
-      //           size: 30,
-      //           weight: 'bold',
-      //           lineHeight: 1.5,
-      //         },
-      //       },
-      //       ticks: {
-      //         font: {
-      //           weight: 'bold',
-      //           size: 15,
-      //         },
-      //         padding: 12,
-      //         backdropPadding: 6,
-      //       },
-      //     },
-      //   },
-      // },
       currentSort: {
         key: 'pinkBelly',
         type: 'date',
@@ -144,28 +51,6 @@ export default {
     };
   },
   computed: {
-    // chartData() {
-    //   return {
-    //     labels: getShedCycleStartDates(this.shedHistory),
-    //     datasets: [
-    //       {
-    //         label: 'Pink Belly',
-    //         data: getShedPhaseDuration(this.shedHistory, 'pink'),
-    //         backgroundColor: 'rgb(158, 132, 152)',
-    //       },
-    //       {
-    //         label: 'Blue Eyes',
-    //         data: getShedPhaseDuration(this.shedHistory, 'blue'),
-    //         backgroundColor: 'rgb(97, 84, 106)',
-    //       },
-    //       {
-    //         label: 'Eyes Cleared',
-    //         data: getShedPhaseDuration(this.shedHistory, 'clear'),
-    //         backgroundColor: 'rgb(60, 54, 63)',
-    //       },
-    //     ],
-    //   };
-    // },
     sortedHistory() {
       return [...this.shedHistory].sort(this.sortMethods(this.currentSort));
     },
@@ -205,10 +90,8 @@ export default {
               this.showAlert = false;
             }, 9000);
           }
-          console.log(data);
         })
         .catch((error) => {
-          console.error(errorMsg, error);
           this.alertMsg = errorMsg;
           this.alertType = 'error';
           this.showAlert = true;
@@ -278,31 +161,6 @@ export default {
           </div>
         </v-col>
       </v-row>
-      <v-card class="ma-3 pa-6" flat>
-        <v-row>
-          <v-col class="d-flex justify-center align-center">
-            <!-- <v-btn-toggle v-model="chart_type" variant="outlined">
-              <v-btn value="center">
-                <span class="hidden-sm-and-down">Gantt</span>
-
-                <v-icon end> mdi-format-align-center </v-icon>
-              </v-btn>
-
-              <v-btn value="right">
-                <span class="hidden-sm-and-down">Stacked Bar</span>
-
-                <v-icon end> mdi-format-align-right </v-icon>
-              </v-btn>
-
-              <v-btn value="justify">
-                <span class="hidden-sm-and-down">Chart Type</span>
-
-                <v-icon end> mdi-format-align-justify </v-icon>
-              </v-btn>
-            </v-btn-toggle> -->
-          </v-col>
-        </v-row>
-      </v-card>
     </v-card>
     <v-row>
       <v-col class="d-flex justify-center align-center"> </v-col>

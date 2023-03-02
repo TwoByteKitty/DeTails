@@ -11,7 +11,6 @@ const getShedCycleStartDates = (shedHistory: Array<IShed>) =>
 
 const getShedPhaseDuration = (shedHistory: Array<IShed>, phase: string): Array<number> => {
   let durations = new Array<number>();
-  console.log('phase', phase);
   switch (phase) {
     case 'pink':
       durations = shedHistory.map((shed) => {
@@ -40,13 +39,11 @@ const getShedPhaseDuration = (shedHistory: Array<IShed>, phase: string): Array<n
     default:
       break;
   }
-  console.log(durations);
   return durations;
 };
 
 const getXAxisMinMax = (shedHistory: Array<IShed>) => {
   if (!shedHistory.length) {
-    console.log('No Shed History');
     return { duration: 0 };
   }
   const dates = shedHistory.map(({ pinkBelly }) => DateTime.fromISO(pinkBelly));
@@ -148,7 +145,6 @@ export default {
       };
     },
     chartBoxWidth() {
-      console.log('Labels', getXAxisMinMax(this.shedHistory).duration);
       const widthObj = { width: '1500px' };
       const totalLabels = getXAxisMinMax(this.shedHistory).duration;
       if (totalLabels > 5) {
