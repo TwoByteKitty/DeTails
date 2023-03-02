@@ -1,17 +1,17 @@
 <script lang="ts">
-import { DateTime } from 'luxon';
+import type { IShed } from '@/shared/IShed';
 import 'chartjs-adapter-luxon';
 import 'chartjs-plugin-style';
-import { Bar } from 'vue-chartjs';
-import type { IShed } from '@/shared/IShed';
+import { DateTime } from 'luxon';
 import type { PropType } from 'vue';
+import { Bar } from 'vue-chartjs';
 
 const getShedCycleStartDates = (shedHistory: Array<IShed>) =>
   shedHistory.map(({ pinkBelly }) => DateTime.fromISO(pinkBelly).toLocaleString(DateTime.DATE_FULL));
 
 const getShedPhaseDuration = (shedHistory: Array<IShed>, phase: string): Array<number> => {
   let durations = new Array<number>();
-  console.log(phase);
+  console.log('phase', phase);
   switch (phase) {
     case 'pink':
       durations = shedHistory.map((shed) => {
@@ -44,25 +44,27 @@ const getShedPhaseDuration = (shedHistory: Array<IShed>, phase: string): Array<n
   return durations;
 };
 
-// const getXAxisMinMax = (shedHistory: Array<IShed>) => {
-//   const dates = shedHistory.map(({ pinkBelly }) => DateTime.fromISO(pinkBelly));
+const getXAxisMinMax = (shedHistory: Array<IShed>) => {
+  if (!shedHistory.length) {
+    console.log('No Shed History');
+    return { duration: 0 };
+  }
+  const dates = shedHistory.map(({ pinkBelly }) => DateTime.fromISO(pinkBelly));
 
-//   const firstDate = dates[0].minus({ months: 1 });
-//   const lastDate = dates[dates.length - 1].plus({ months: 1 });
-//   const duration = lastDate.diff(firstDate, ['months']);
+  const firstDate = dates[0].minus({ months: 1 });
+  const lastDate = dates[dates.length - 1].plus({ months: 1 });
+  const duration = lastDate.diff(firstDate, ['months']);
 
-//   return {
-//     firstDate: firstDate.toFormat(DATE_FORMAT_STRING),
-//     lastDate: lastDate.toFormat(DATE_FORMAT_STRING),
-//     duration: Math.ceil(duration.months),
-//   };
-// };
+  return {
+    duration: Math.ceil(duration.months),
+  };
+};
 
 export default {
   name: 'ShedStkBar',
   components: { Bar },
   props: {
-    shedHistory: Array as PropType<Array<IShed>>,
+    shedHistory: { type: Array as PropType<Array<IShed>>, required: true },
   },
   data() {
     return {
@@ -145,16 +147,17 @@ export default {
         ],
       };
     },
-    // chartBoxWidth() {
-    //   console.log(getXAxisMinMax(this.shedHistory).duration);
-    //   const widthObj = { width: '0px' };
-    //   const totalLabels = getXAxisMinMax(this.shedHistory).duration;
-    //   if (totalLabels > 5) {
-    //     widthObj.width = `${1500 + (totalLabels - 5) * 42}px`;
-    //   }
-    //   return widthObj;
-    // },
+    chartBoxWidth() {
+      console.log('Labels', getXAxisMinMax(this.shedHistory).duration);
+      const widthObj = { width: '1500px' };
+      const totalLabels = getXAxisMinMax(this.shedHistory).duration;
+      if (totalLabels > 5) {
+        widthObj.width = `${1500 + (totalLabels - 5) * 42}px`;
+      }
+      return widthObj;
+    },
   },
+  watch: {},
 };
 </script>
 

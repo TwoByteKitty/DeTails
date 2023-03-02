@@ -1,13 +1,12 @@
 <script lang="ts">
+import type { IShed } from '@/shared/IShed';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import 'chartjs-adapter-luxon';
 import 'chartjs-plugin-style';
 import { DateTime } from 'luxon';
-import { ref } from 'vue';
-import { Bar } from 'vue-chartjs';
-import type { IShed } from '@/shared/IShed';
 import type { PropType } from 'vue';
+import { ref } from 'vue';
 import ShedStkBar from './charts/ShedStkBar.vue';
 
 const API_URL = `/api/pets/`;
@@ -66,7 +65,7 @@ export default {
   name: 'ShedTab',
   components: { Datepicker, ShedStkBar },
   props: {
-    shedHistory: Array as PropType<Array<IShed>>,
+    shedHistory: { type: Array as PropType<Array<IShed>>, required: true },
   },
   data() {
     return {
