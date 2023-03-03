@@ -1,12 +1,13 @@
 <script lang="ts">
-import EditModal from './EditModal.vue';
+import EditModal from "./EditModal.vue";
 
 const API_URL = `/api/pets/`;
 
 export default {
-  name: 'OverviewTab',
+  name: "OverviewTab",
   props: {
-    _id: String,
+    // eslint-disable-next-line vue/prop-name-casing
+    _id: { type: String, required: true, default:'' },
     name: String,
     type: String,
     species: String,
@@ -16,7 +17,7 @@ export default {
   },
   data() {
     return {
-      image: null,
+      image: undefined,
     };
   },
   components: { EditModal },
@@ -24,16 +25,16 @@ export default {
     async uploadImage() {
       const imageToUpload: File = this.image[0];
       const data = new FormData();
-      data.append('petImage', imageToUpload, imageToUpload.name);
+      data.append("petImage", imageToUpload, imageToUpload.name);
 
       // send fetch along with cookies
       const response = await fetch(`${API_URL}/${this._id}/addImage`, {
-        method: 'POST',
+        method: "POST",
         body: data,
       });
 
       // server responded with http response != 200
-      if (response.status != 200) throw new Error('HTTP response code != 200');
+      if (response.status != 200) throw new Error("HTTP response code != 200");
     },
   },
 };
@@ -44,9 +45,17 @@ export default {
     <v-card class="pa-3 ma-3">
       <v-card>
         <v-card class="pa-1 ma-3 elevation-5 pet-carousel">
-          <v-carousel hide-delimiters show-arrows="hover" :model-value="0">
-            <v-carousel-item v-for="(image, index) in petImages" :key="index" :src="`/images/${image}`" contain>
-            </v-carousel-item>
+          <v-carousel
+            hide-delimiters
+            show-arrows="hover"
+            :model-value="0"
+          >
+            <v-carousel-item
+              v-for="(image, index) in petImages"
+              :key="index"
+              :src="`/images/${image}`"
+              contain
+            />
           </v-carousel>
           <div class="album-edit-overlay">
             <v-btn class="album-edit-button">
@@ -62,17 +71,20 @@ export default {
               label="Upload photos"
               clearable
               variant="solo"
-            ></v-file-input>
+            />
           </v-col>
           <v-col>
-            <v-text-field label="Title"></v-text-field>
+            <v-text-field label="Title" />
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="9"> </v-col>
-          <v-col> </v-col>
+          <v-col cols="9" />
+          <v-col />
           <v-col cols="1">
-            <v-btn style="height: 60px; width: 66px" @click="uploadImage()">
+            <v-btn
+              style="height: 60px; width: 66px"
+              @click="uploadImage()"
+            >
               <v-icon>fa:fas fa-thin fa-arrow-up-from-arc</v-icon>
             </v-btn>
           </v-col>
@@ -82,37 +94,63 @@ export default {
         <v-card-title class="d-flex justify-space-between">
           <span> Overview </span>
           <span>
-            <edit-modal v-bind="{ _id, name, type, species, dateOfBirth, description }"></edit-modal>
+            <edit-modal
+              v-bind="{ _id, name, type, species, dateOfBirth, description }"
+            />
           </span>
         </v-card-title>
         <v-row>
           <v-col>
-            <v-card-subtitle class="overview-inline">Type:</v-card-subtitle>
-            <v-card-text class="overview-inline"> {{ type }} </v-card-text>
+            <v-card-subtitle class="overview-inline">
+              Type:
+            </v-card-subtitle>
+            <v-card-text class="overview-inline">
+              {{ type }}
+            </v-card-text>
           </v-col>
           <v-col>
-            <v-card-subtitle class="overview-inline">Weight:</v-card-subtitle>
-            <v-card-text class="overview-inline"> {{ type }} </v-card-text>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-card-subtitle class="overview-inline">Species:</v-card-subtitle>
-            <v-card-text class="overview-inline"> {{ species }} </v-card-text>
-          </v-col>
-          <v-col>
-            <v-card-subtitle class="overview-inline">Last Meal:</v-card-subtitle>
-            <v-card-text class="overview-inline"> {{ type }} </v-card-text>
+            <v-card-subtitle class="overview-inline">
+              Weight:
+            </v-card-subtitle>
+            <v-card-text class="overview-inline">
+              {{ type }}
+            </v-card-text>
           </v-col>
         </v-row>
         <v-row>
           <v-col>
-            <v-card-subtitle class="overview-inline">Age:</v-card-subtitle>
-            <v-card-text class="overview-inline"> {{ dateOfBirth }} </v-card-text>
+            <v-card-subtitle class="overview-inline">
+              Species:
+            </v-card-subtitle>
+            <v-card-text class="overview-inline">
+              {{ species }}
+            </v-card-text>
           </v-col>
           <v-col>
-            <v-card-subtitle class="overview-inline">Last Shed:</v-card-subtitle>
-            <v-card-text class="overview-inline"> {{ type }} </v-card-text>
+            <v-card-subtitle class="overview-inline">
+              Last Meal:
+            </v-card-subtitle>
+            <v-card-text class="overview-inline">
+              {{ type }}
+            </v-card-text>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-card-subtitle class="overview-inline">
+              Age:
+            </v-card-subtitle>
+            <v-card-text class="overview-inline">
+              {{ dateOfBirth }}
+            </v-card-text>
+          </v-col>
+          <v-col>
+            <v-card-subtitle class="overview-inline">
+              Last Shed:
+            </v-card-subtitle>
+            <v-card-text class="overview-inline">
+              {{ type }}
+            </v-card-text>
           </v-col>
         </v-row>
         <v-row class="pb-3">
