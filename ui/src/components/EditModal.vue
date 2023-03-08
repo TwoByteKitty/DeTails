@@ -1,9 +1,10 @@
 <script setup lang="ts">
 /*@ts-ignore */
-import { PetType } from '@/shared/PetType';
-import { ref } from 'vue';
+import { PetType } from '@/shared/SelectLists.js';
+
 
 export interface EditPetProps {
+  // eslint-disable-next-line vue/prop-name-casing
   _id: string;
   name: string;
   type: string;
@@ -96,8 +97,10 @@ export default {
 <template>
   <v-row justify="center">
     <v-dialog v-model="dialog" persistent>
-      <template v-slot:activator="{ props }">
-        <v-btn style="height: 66px; width: 66px" v-bind="props"><v-icon>fa:fas fa-thin fa-pen-to-square</v-icon></v-btn>
+      <template #activator="{ props }">
+        <v-btn style="height: 66px; width: 66px" v-bind="props">
+          <v-icon>fa:fas fa-thin fa-pen-to-square</v-icon>
+        </v-btn>
       </template>
       <v-card>
         <v-card-title>
@@ -107,24 +110,44 @@ export default {
           <v-container>
             <v-row>
               <v-col cols="12" sm="6">
-                <v-select :items="PetType" v-model="fields.type" label="Type"></v-select>
+                <v-select
+                  :items="PetType"
+                  v-model="fields.type"
+                  label="Type"
+                />
               </v-col>
               <v-col cols="12" sm="6">
-                <v-text-field v-model="fields.species" label="Species"></v-text-field>
+                <v-text-field v-model="fields.species" label="Species" />
               </v-col>
               <v-col cols="12">
-                <v-text-field v-model="fields.dateOfBirth" label="Date of Birth" type="date"></v-text-field>
+                <v-text-field
+                  v-model="fields.dateOfBirth"
+                  label="Date of Birth"
+                  type="date"
+                />
               </v-col>
               <v-col cols="12">
-                <v-textarea v-model="fields.description" label="Description"></v-textarea>
+                <v-textarea v-model="fields.description" label="Description" />
               </v-col>
             </v-row>
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue-darken-1" variant="text" @click="dialog = false"> Close </v-btn>
-          <v-btn color="blue-darken-1" variant="text" @click="editPet"> Save </v-btn>
+          <v-spacer />
+          <v-btn
+            color="blue-darken-1"
+            variant="text"
+            @click="dialog = false"
+          >
+            Close
+          </v-btn>
+          <v-btn
+            color="blue-darken-1"
+            variant="text"
+            @click="editPet"
+          >
+            Save
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

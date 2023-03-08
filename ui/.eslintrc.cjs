@@ -9,6 +9,16 @@ module.exports = {
     'plugin:vue/vue3-essential',
     'plugin:vue/vue3-strongly-recommended',
   ],
+ rules: {
+  "vue/max-attributes-per-line": ["error", {
+    "singleline": {
+      "max": 2
+    },      
+    "multiline": {
+      "max": 1
+    }
+  }]
+ },
   parserOptions: {
     ecmaVersion: 'latest',
   },

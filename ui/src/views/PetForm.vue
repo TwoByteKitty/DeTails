@@ -29,24 +29,63 @@ export default {
 </script>
 
 <template>
-  <form class="add-pet-form" :action="url" method="POST">
+  <form
+    class="add-pet-form"
+    :action="url"
+    method="POST"
+  >
     <v-icon icon="fas fa-plus" />
     <v-icon icon="mdi:mdi-minus" />
-    <input v-model="myPet.name" type="text" placeholder="Name" name="name" />
+    <input
+      v-model="myPet.name"
+      type="text"
+      placeholder="Name"
+      name="name"
+    >
     <!--TODO: Populate from api-->
-    <select v-model="myPet.type" placeholder="Type" name="type"></select>
-    <input v-model="myPet.species" type="text" placeholder="Species" name="species" />
+    <select
+      v-model="myPet.type"
+      placeholder="Type"
+      name="type"
+    />
+    <input
+      v-model="myPet.species"
+      type="text"
+      placeholder="Species"
+      name="species"
+    >
     <!--TODO: Populate from api-->
 
-    <v-radio-group v-model="myPet.sex" row>
-      <v-radio label="Female" value="female"></v-radio>
-      <v-radio label="Male" value="male"></v-radio>
+    <v-radio-group
+      v-model="myPet.sex"
+      row
+    >
+      <v-radio
+        label="Female"
+        value="female"
+      />
+      <v-radio
+        label="Male"
+        value="male"
+      />
     </v-radio-group>
 
-    <input v-model="myPet.dateOfBirth" type="date" placeholder="Date of Birth" name="dateOfBirth" />
-    <textarea v-model="myPet.description" type="text" placeholder="Description" name="species"></textarea>
+    <input
+      v-model="myPet.dateOfBirth"
+      type="date"
+      placeholder="Date of Birth"
+      name="dateOfBirth"
+    >
+    <textarea
+      v-model="myPet.description"
+      type="text"
+      placeholder="Description"
+      name="species"
+    />
     <!-- POSSIBLE TODO: make this redirect to MyPetsView on success and handle error as well -->
-    <button type="submit">Add This Pet</button>
+    <button type="submit">
+      Add This Pet
+    </button>
   </form>
 </template>
 

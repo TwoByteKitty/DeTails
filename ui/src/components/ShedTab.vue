@@ -19,18 +19,20 @@ const defaultShed: IShed = {
   entire: 'Not Entire',
   shedComments: '',
 };
-const errorMsg = 'There was an error! Uh-oh...';
-const successMsg = "Hi! I'm a success alert! Congratulations!";
+const errorMsg = 'Well... you really screwed up this time...';
+const successMsg = "I'm a success alert! Congratulations!";
 
 export default {
   name: 'ShedTab',
   components: { Datepicker, ShedStkBar },
+  emits: [ 'shedAdded' ],
   props: {
     shedHistory: { type: Array as PropType<Array<IShed>>, required: true },
   },
   data() {
     return {
       alertType: 'success',
+      alertIsError: false,
       alertMsg: successMsg,
       showAlert: false,
       shedCycles: [],
@@ -74,7 +76,7 @@ export default {
       fetch(url, requestOptions)
         .then(async (response) => {
           const data = await response.json();
-          // check for error response
+
           if (!response.ok) {
             // get error message from body or default to response status
             const error = (data && data.message) || response.status;
@@ -82,7 +84,7 @@ export default {
           } else {
             this.$emit('shedAdded');
             this.alertMsg = successMsg;
-            this.alertType = 'success';
+            this.alertIsError = false;
             this.showAlert = true;
 
             this.newShed = { ...defaultShed };
@@ -92,12 +94,13 @@ export default {
           }
         })
         .catch((error) => {
+          console.error(errorMsg, error);
           this.alertMsg = errorMsg;
-          this.alertType = 'error';
+          this.alertIsError = true;
           this.showAlert = true;
         });
     },
-    sort: function (sortKey: string, sortType: string) {
+    sort(sortKey: string, sortType: string) {
       this.currentSort.key = sortKey;
       this.currentSort.type = sortType;
       this.currentSort.order *= -1;
@@ -157,13 +160,13 @@ export default {
       <v-row>
         <v-col>
           <div class="chart-card">
-            <shed-stk-bar :shedHistory="shedHistory" />
+            <shed-stk-bar :shed-history="shedHistory" />
           </div>
         </v-col>
       </v-row>
     </v-card>
     <v-row>
-      <v-col class="d-flex justify-center align-center"> </v-col>
+      <v-col class="d-flex justify-center align-center" />
     </v-row>
     <v-row>
       <v-col>
@@ -176,7 +179,6 @@ export default {
                 v-model="newShed.pinkBelly"
                 model-type="yyyy-MM-dd"
                 :enable-time-picker="false"
-                auto-apply
                 dark
               />
             </v-col>
@@ -186,7 +188,6 @@ export default {
                 v-model="newShed.blueEyes"
                 model-type="yyyy-MM-dd"
                 :enable-time-picker="false"
-                auto-apply
                 dark
               />
             </v-col>
@@ -196,7 +197,6 @@ export default {
                 v-model="newShed.clearEyes"
                 model-type="yyyy-MM-dd"
                 :enable-time-picker="false"
-                auto-apply
                 dark
               />
             </v-col>
@@ -206,7 +206,6 @@ export default {
                 v-model="newShed.shedSkin"
                 model-type="yyyy-MM-dd"
                 :enable-time-picker="false"
-                auto-apply
                 dark
               />
             </v-col>
@@ -218,21 +217,39 @@ export default {
                 false-value="Not Entire"
                 :label="`${newShed.entire}`"
                 inset
-              ></v-switch>
+              />
             </v-col>
           </v-row>
           <v-row>
             <v-col>
-              <v-textarea v-model="newShed.shedComments" label="Comments" variant="outlined"></v-textarea>
+              <v-textarea
+                v-model="newShed.shedComments"
+                label="Comments"
+                variant="outlined"
+              />
             </v-col>
           </v-row>
           <div class="shed-btn-div d-flex justify-space-around align-center flex-column flex-md-row fill-height">
-            <v-btn class="shed-btn elevation-9" size="x-large" @click="createShed()"> Add New Shed Cycle Data </v-btn>
+            <v-btn
+              class="shed-btn elevation-9"
+              size="x-large"
+              @click="createShed"
+            >
+              Add New Shed Cycle Data
+            </v-btn>
           </div>
           <div>
-            <v-alert v-model="showAlert" :type="alertType" variant="tonal" closable close-label="Close Alert">{{
-              alertMsg
-            }}</v-alert>
+            <v-alert
+              v-model="showAlert"
+              :type="alertIsError ? 'error': 'success'"
+              variant="tonal"
+              closable
+              close-label="Close Alert"
+            >
+              {{
+                alertMsg
+              }}
+            </v-alert>
           </div>
         </v-card>
       </v-col>
@@ -244,19 +261,23 @@ export default {
             <thead>
               <tr>
                 <th class="tbl-head text-left">
-                  <a href="#" @click.prevent="sort('pinkBelly', 'date')">Pink Belly</a>
+                  <a href="#" @click.prevent="$event => sort('pinkBelly', 'date')">Pink Belly</a>
                 </th>
                 <th class="tbl-head text-left">
-                  <a href="#" @click.prevent="sort('blueEyes', 'date')">Blue Eyes</a>
+                  <a href="#" @click.prevent="$event => sort('blueEyes', 'date')">Blue Eyes</a>
                 </th>
                 <th class="tbl-head text-left">
-                  <a href="#" @click.prevent="sort('clearEyes', 'date')">Clear Eyes</a>
+                  <a href="#" @click.prevent="$event => sort('clearEyes', 'date')">Clear Eyes</a>
                 </th>
                 <th class="tbl-head text-left">
-                  <a href="#" @click.prevent="sort('shedSkin', 'date')">Skin Shed</a>
+                  <a href="#" @click.prevent="$event => sort('shedSkin', 'date')">Skin Shed</a>
                 </th>
-                <th class="tbl-head text-left"><a href="#" @click.prevent="sort('entire', 'string')">Entire?</a></th>
-                <th class="tbl-head text-left">Comments</th>
+                <th class="tbl-head text-left">
+                  <a href="#" @click.prevent="$event => sort('entire', 'string')">Entire?</a>
+                </th>
+                <th class="tbl-head text-left">
+                  Comments
+                </th>
               </tr>
             </thead>
             <tbody>

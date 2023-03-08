@@ -159,6 +159,10 @@ export default {
 
 <template>
   <div class="chart-box ma-3 pa-6" :style="chartBoxWidth">
-    <Bar id="shed-chart" :options="chartOptions" :data="chartData" />
+    <Bar
+      id="shed-chart"
+      :options="chartOptions"
+      :data="chartData"
+    />
   </div>
 </template>

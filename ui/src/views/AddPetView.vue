@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PetType } from '@/shared/PetType';
+import { PetType } from '@/shared/SelectListsists.js';
 </script>
 <script lang="ts">
 const API_URL = `/api/pets/add/`;
@@ -49,7 +49,11 @@ export default {
 </script>
 
 <template>
-  <v-card elevation="3" variant="tonal" title="Add a New Pet">
+  <v-card
+    elevation="3"
+    variant="tonal"
+    title="Add a New Pet"
+  >
     <!-- <v-snackbar v-model="snackbar" absolute top right color="success">
       <span>Registration successful!</span>
       <v-icon dark> mdi-checkbox-marked-circle </v-icon>
@@ -58,46 +62,85 @@ export default {
       <v-container fluid>
         <v-row>
           <v-col>
-            <v-text-field v-model="myPet.name" label="Name"></v-text-field>
+            <v-text-field v-model="myPet.name" label="Name" />
           </v-col>
         </v-row>
         <v-row>
           <v-col>
-            <v-text-field v-model="myPet.dateOfBirth" type="date" min="2000-01-01" label="Date of Birth"></v-text-field>
+            <v-text-field
+              v-model="myPet.dateOfBirth"
+              type="date"
+              min="2000-01-01"
+              label="Date of Birth"
+            />
           </v-col>
         </v-row>
         <v-row>
           <v-col>
-            <v-select v-model="myPet.type" label="Type" :items="PetType" variant="solo"></v-select>
+            <v-select
+              v-model="myPet.type"
+              label="Type"
+              :items="PetType"
+              variant="solo"
+            />
           </v-col>
         </v-row>
         <v-row>
           <v-col>
-            <v-text-field v-model="myPet.species" label="Species"></v-text-field>
+            <v-text-field v-model="myPet.species" label="Species" />
           </v-col>
         </v-row>
         <v-row>
-          <v-radio-group v-model="myPet.sex" inline style="padding: 0 10px">
-            <v-radio label="Female" value="female" style="padding-right: 12px"></v-radio>
-            <v-radio label="Male" value="male" style="padding-right: 15px"></v-radio>
-            <v-radio label="Unknown" value="unknown"></v-radio>
+          <v-radio-group
+            v-model="myPet.sex"
+            inline
+            style="padding: 0 10px"
+          >
+            <v-radio
+              label="Female"
+              value="female"
+              style="padding-right: 12px"
+            />
+            <v-radio
+              label="Male"
+              value="male"
+              style="padding-right: 15px"
+            />
+            <v-radio label="Unknown" value="unknown" />
           </v-radio-group>
         </v-row>
         <v-row>
           <v-col>
-            <v-textarea v-model="myPet.description" auto-grow label="Description"> </v-textarea>
+            <v-textarea
+              v-model="myPet.description"
+              auto-grow
+              label="Description"
+            />
           </v-col>
         </v-row>
         <v-row>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-col>
-            <v-btn size="x-large" color="success" prepend-icon="mdi-check" @click="createPet()"> Create </v-btn>
+            <v-btn
+              size="x-large"
+              color="success"
+              prepend-icon="mdi-check"
+              @click="createPet()"
+            >
+              Create
+            </v-btn>
           </v-col>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-col>
-            <v-btn size="x-large" color="error" prepend-icon="mdi-cancel"> Cancel </v-btn>
+            <v-btn
+              size="x-large"
+              color="error"
+              prepend-icon="mdi-cancel"
+            >
+              Cancel
+            </v-btn>
           </v-col>
-          <v-spacer></v-spacer>
+          <v-spacer />
         </v-row>
       </v-container>
     </form>

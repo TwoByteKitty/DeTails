@@ -29,7 +29,7 @@ export default {
   <v-container fluid nogutters>
     <v-toolbar flat>
       <v-toolbar-title> My Pets </v-toolbar-title>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <div d-flex>
         <v-btn class="ma-2 pa-1" icon>
           <v-icon> fa:fas fa-thin fa-magnifying-glass </v-icon>
@@ -55,8 +55,8 @@ export default {
                 max-width="500"
                 src="https://picsum.photos/id/11/100/60"
               >
-                <template v-slot:placeholder>
-                  <div class="d-flex align-center justify-center fill-height"></div>
+                <template #placeholder>
+                  <div class="d-flex align-center justify-center fill-height" />
                 </template>
               </v-img>
             </v-col>
@@ -66,10 +66,14 @@ export default {
                 <v-card-subtitle>{{ species }}</v-card-subtitle>
               </v-card-item>
             </v-col>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-col class="d-flex justify-end align-center">
               <router-link :to="{ name: 'pet-details', params: { id: _id } }">
-                <v-btn class="ma-2 pa-1" variant="flat" icon>
+                <v-btn
+                  class="ma-2 pa-1"
+                  variant="flat"
+                  icon
+                >
                   <v-icon> fa:fas fa-duotone fa-memo-circle-info</v-icon>
                 </v-btn>
               </router-link>

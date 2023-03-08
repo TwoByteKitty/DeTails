@@ -4,7 +4,7 @@ const SCHEDULE_LENGTH: number = 90;
 const START_DATE: DateTime = DateTime.now();
 
 export interface IScheduledFeeding {
-  date: DateTime;
+  date: string;
   weight: number;
 }
 
@@ -14,6 +14,7 @@ export const generateFeedingSchedule = (
 ) => {
   const schedule: Array<IScheduledFeeding> = new Array();
   let date: DateTime = START_DATE;
+  console.log(date.toLocaleString());
 
   for (let i = 1; i <= SCHEDULE_LENGTH; ) {
     const nextDate: number = Math.floor(Math.random() * (freqUpperBound - freqLowerBound) + freqLowerBound);
@@ -21,7 +22,7 @@ export const generateFeedingSchedule = (
 
     date = date.plus({ days: nextDate });
 
-    const feeding: IScheduledFeeding = { date, weight };
+    const feeding: IScheduledFeeding = { date: date.toLocaleString(), weight };
 
     schedule.push(feeding);
     i += nextDate;

@@ -8,16 +8,16 @@ export default {
   props: {
     // eslint-disable-next-line vue/prop-name-casing
     _id: { type: String, required: true, default:'' },
-    name: String,
-    type: String,
-    species: String,
-    dateOfBirth: String,
-    description: String,
-    petImages: Array<String>,
+    name: { type: String, required: true, default:'' },
+    type: { type: String, required: true, default:'' },
+    species: { type: String, required: true, default:'' },
+    dateOfBirth: { type: String, required: true, default:'' },
+    description: { type: String, required: false, default:'' },
+    petImages: { type: Array<String>, required: false, default:'' },
   },
   data() {
     return {
-      image: undefined,
+      image: [],
     };
   },
   components: { EditModal },
@@ -51,9 +51,9 @@ export default {
             :model-value="0"
           >
             <v-carousel-item
-              v-for="(image, index) in petImages"
+              v-for="(currentImg, index) in petImages"
               :key="index"
-              :src="`/images/${image}`"
+              :src="`/images/${currentImg}`"
               contain
             />
           </v-carousel>
