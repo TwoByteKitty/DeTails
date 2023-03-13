@@ -47,6 +47,11 @@ export default {
       this.drawerVisibleRight = false;
     },
   },
+  computed:{
+    navMenu(){
+      return routes.filter((route)=>{return route.showInMenu})
+    }
+  }
 };
 </script>
 
@@ -56,14 +61,14 @@ export default {
       <v-app-bar-nav-icon
         icon="fa:fas fa-duotone fa-bars"
         variant="text"
-        @click.stop="drawerVisibleLeft = !drawerVisibleLeft"
+        @click.stop="$event => drawerVisibleLeft = !drawerVisibleLeft"
       />
       <v-toolbar-title>{{ pageTitle }}</v-toolbar-title>
       <v-spacer />
       <v-app-bar-nav-icon
         icon="fa:fas fa-duotone fa-ellipsis-vertical"
         variant="text"
-        @click.stop="drawerVisibleRight = !drawerVisibleRight"
+        @click.stop="$event => drawerVisibleRight = !drawerVisibleRight"
       />
     </v-app-bar>
     <v-navigation-drawer
@@ -72,7 +77,10 @@ export default {
       temporary
     >
       <v-list>
-        <v-list-item v-for="route in routes" :key="route.pageTitle">
+        <v-list-item
+          v-for="route in navMenu"
+          :key="route.pageTitle"
+        >
           <router-link :to="route.path">
             {{ route.pageTitle }}
           </router-link>

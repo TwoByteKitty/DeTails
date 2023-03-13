@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 const SCHEDULE_LENGTH: number = 90;
 const START_DATE: DateTime = DateTime.now();
 
-export interface IScheduledFeeding {
+export interface IMealSchedule {
   date: string;
   weight: number;
 }
@@ -12,7 +12,7 @@ export const generateFeedingSchedule = (
   [freqLowerBound, freqUpperBound]: Array<number>,
   [weightLowerBound, weightUpperBound]: Array<number>
 ) => {
-  const schedule: Array<IScheduledFeeding> = new Array();
+  const schedule: Array<IMealSchedule> = new Array();
   let date: DateTime = START_DATE;
   console.log(date.toLocaleString());
 
@@ -22,7 +22,7 @@ export const generateFeedingSchedule = (
 
     date = date.plus({ days: nextDate });
 
-    const feeding: IScheduledFeeding = { date: date.toLocaleString(), weight };
+    const feeding: IMealSchedule = { date: date.toLocaleString(), weight };
 
     schedule.push(feeding);
     i += nextDate;

@@ -1,5 +1,5 @@
 <script lang="ts">
-import EditModal from "./EditModal.vue";
+import EditModal from "../EditModal.vue";
 
 const API_URL = `/api/pets/`;
 
@@ -64,7 +64,7 @@ export default {
           </div>
         </v-card>
         <v-row class="pa-3 ma-3 d-flex">
-          <v-col cols="9">
+          <v-col cols="6">
             <v-file-input
               v-model="image"
               name="pet-image"
@@ -76,14 +76,10 @@ export default {
           <v-col>
             <v-text-field label="Title" />
           </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="9" />
-          <v-col />
           <v-col cols="1">
             <v-btn
               style="height: 60px; width: 66px"
-              @click="uploadImage()"
+              @click="uploadImage"
             >
               <v-icon>fa:fas fa-thin fa-arrow-up-from-arc</v-icon>
             </v-btn>

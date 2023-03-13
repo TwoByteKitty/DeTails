@@ -1,8 +1,8 @@
 <script lang="ts">
-import OverviewTab from '../components/OverviewTab.vue';
-import WeightTab from '../components/WeightTab.vue';
-import FeedingTab from '../components/FeedingTab.vue';
-import ShedTab from '../components/ShedTab.vue';
+import OverviewTab from '../components/tabs/OverviewTab.vue';
+import WeightTab from '../components/tabs/WeightTab.vue';
+import FeedingTab from '../components/tabs/FeedingTab.vue';
+import ShedTab from '../components/tabs/ShedTab.vue';
 import MoreTab from '@/components/tabs/MoreTab.vue';
 
 const API_URL = `/api/pets/`;

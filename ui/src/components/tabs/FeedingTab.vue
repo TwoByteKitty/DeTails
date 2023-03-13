@@ -2,7 +2,7 @@
 import type { IMeal } from '@/shared/IMeal';
 import { DegreeOfDead, PreyType } from '@/shared/SelectLists.js';
 import { generateFeedingSchedule } from '@/utils/feedingSchedule';
-import type { IScheduledFeeding } from '@/utils/feedingSchedule';
+import type { IMealSchedule } from '@/utils/feedingSchedule';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { DateTime } from 'luxon';
@@ -68,8 +68,7 @@ export default {
     createMeal() {
       const url = `${API_URL}${this.$route.params.id}/feedings/add`;
       delete this.newMeal._id;
-      console.log(this.newMeal);
-
+      
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -106,9 +105,9 @@ export default {
     },
 
     createFeedingSchedule() {
-      const schedule: Array<IScheduledFeeding> = generateFeedingSchedule(this.freqSlider, this.sizeSlider);
+      const schedule: Array<IMealSchedule> = generateFeedingSchedule(this.freqSlider, this.sizeSlider);
       console.log(schedule);
-      this.feedingSchedule = schedule.map(({ weight, date }: IScheduledFeeding, index) => ({
+      this.feedingSchedule = schedule.map(({ weight, date }: IMealSchedule, index) => ({
         key: index + 1,
         customData: {
           weight,
@@ -118,6 +117,31 @@ export default {
         bar: 'purple'
       }));
       console.log(this.feedingSchedule);
+      this.editFeedingSchedule(schedule);
+    },
+
+    async editFeedingSchedule(mealSchedule: Array<IMealSchedule>) {
+      const url = `${API_URL}/${this.$route.params.id}/feeding-schedule`;
+
+      const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ _id: this.$route.params.id, mealSchedule }),
+      };
+
+      fetch(url, requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+            console.log(data);
+          if (!response.ok) {
+            // get error message from body or default to response status
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+          }
+        })
+        .catch((error) => {
+          console.error('There was an error!', error);
+        });
     },
 
     // sort(sortKey: string, sortType: string) {

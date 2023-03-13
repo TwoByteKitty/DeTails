@@ -7,7 +7,7 @@ import 'chartjs-plugin-style';
 import { DateTime } from 'luxon';
 import type { PropType } from 'vue';
 import { ref } from 'vue';
-import ShedStkBar from './charts/ShedStkBar.vue';
+import ShedStkBar from '../charts/ShedStkBar.vue';
 
 const API_URL = `/api/pets/`;
 const defaultShed: IShed = {
@@ -31,7 +31,7 @@ export default {
   },
   data() {
     return {
-      alertType: 'success',
+      // alertType: 'success',
       alertIsError: false,
       alertMsg: successMsg,
       showAlert: false,
@@ -241,14 +241,12 @@ export default {
           <div>
             <v-alert
               v-model="showAlert"
-              :type="alertIsError ? 'error': 'success'"
+              :type="alertIsError ? 'error' : 'success'"
               variant="tonal"
               closable
               close-label="Close Alert"
             >
-              {{
-                alertMsg
-              }}
+              {{ alertMsg }}
             </v-alert>
           </div>
         </v-card>

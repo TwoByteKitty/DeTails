@@ -3,7 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import { addFeeding, getAllFeedingsByPet, getSingleFeeding } from '../controllers/herpetofauna/feedings';
 import { addShed, getAllShedsByPet, getSingleShed } from '../controllers/herpetofauna/sheds';
-import { addPet, addPetImage, editPet, getAllPets, getSinglePet } from '../controllers/pets';
+import { addPet, addPetImage, editPet, getAllPets, getSinglePet, addMealSchedule } from '../controllers/pets';
 import { addWeight, getAllWeightsByPet, getSingleWeight } from '../controllers/weights';
 import { FILE_UPLOAD_PATH } from '../utils/constants';
 
@@ -17,6 +17,7 @@ const upload = multer({
 router.get('/', getAllPets);
 router.get('/:id', getSinglePet);
 router.put('/:id', editPet);
+router.put('/:id/feeding-schedule', addMealSchedule);
 router.post('/:id/addImage', upload.single('petImage'), addPetImage);
 router.post('/add', addPet);
 

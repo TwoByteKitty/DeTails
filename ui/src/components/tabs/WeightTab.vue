@@ -6,7 +6,7 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import 'chartjs-plugin-style';
 import { DateTime } from 'luxon';
 import type { PropType } from 'vue';
-import WeightLineChart from './charts/WeightLineChart.vue';
+import WeightLineChart from '../charts/WeightLineChart.vue';
 
 const API_URL = `/api/pets/`;
 const defaultWeigh: IWeight = {
@@ -69,9 +69,8 @@ export default {
         .then(async (response) => {
           const data = await response.json();
 
-          // check for error response
+
           if (!response.ok) {
-            // get error message from body or default to response status
             const error = (data && data.message) || response.status;
             return Promise.reject(error);
           } else {

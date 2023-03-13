@@ -1,9 +1,8 @@
 import { Schema, model } from 'mongoose';
-// import moment from 'moment';
-import { IShed, shedSchema } from './herpetofauna/shed';
-import { IFeed, feedingSchema } from './herpetofauna/feeding';
-import { IWeight, weightSchema } from './weight';
-import { IVet, vetSchema } from './vetVisit';
+import { IShed } from './herpetofauna/shed';
+import { IFeed } from './herpetofauna/feeding';
+import { IWeight } from './weight';
+import { IVet } from './vetVisit';
 import {
   WEIGHTS_VIRTUAL_NAME,
   SHEDS_VIRTUAL_NAME,
@@ -24,7 +23,7 @@ export interface IPet {
   dateOfBirthFormatted: string;
   description: string;
   petImages: Array<string>;
-  feedingSchedule: Array<{}>;
+  mealSchedule: Array<{}>;
   feedingHistory: Array<IFeed>;
   shedHistory: Array<IShed>;
   weightHistory: Array<IWeight>;
@@ -40,18 +39,10 @@ const petSchema = new Schema<IPet>(
     dateOfBirth: { type: Date, required: true },
     description: { type: String, required: true },
     petImages: { type: [String], required: false },
-    feedingSchedule: { type: [{}], required: false },
+    mealSchedule: { type: [{}], required: false },
   },
   { toJSON: { virtuals: true } }
 );
-
-petSchema.virtual('dateOfBirthFormatted').get(function () {
-  // return moment(this.dateOfBirth).format('yyyy-MM-DD');
-});
-
-petSchema.virtual('age').get(function () {
-  //return moment(this.dateOfBirth).subtract(this.d).format('YY');
-});
 
 petSchema.virtual(FEEDINGS_VIRTUAL_NAME, {
   ref: 'Feeding',

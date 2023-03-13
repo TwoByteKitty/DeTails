@@ -6,11 +6,13 @@ export const routes = [
     name: 'home',
     pageTitle: 'Home',
     component: HomeView,
+    showInMenu: true,
   },
   {
     path: '/my-pets',
     name: 'my-pets',
     pageTitle: 'My Pets',
+    showInMenu: true,
     // route level code-splitting
     // this generates a separate chunk (About.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -19,7 +21,8 @@ export const routes = [
   {
     path: '/my-pets/:id',
     name: 'pet-details',
-    pageTitle: 'My Pets',
+    pageTitle: 'My Pet Details',
+    showInMenu: false,
     // route level code-splitting
     // this generates a separate chunk (About.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -29,6 +32,7 @@ export const routes = [
     path: '/my-pets/add',
     name: 'add-pet',
     pageTitle: 'Add New Pet',
+    showInMenu: true,
     // route level code-splitting
     // this generates a separate chunk (About.[hash].js) for this route
     // which is lazy-loaded when the route is visited.

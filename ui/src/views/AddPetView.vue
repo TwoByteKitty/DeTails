@@ -1,19 +1,31 @@
-<script setup lang="ts">
-import { PetType } from '@/shared/SelectListsists.js';
-</script>
 <script lang="ts">
+import { PetType } from '@/shared/SelectLists.js';
+import type { IPet } from '@/shared/IPet';
+import { RouterLink } from 'vue-router';
+
 const API_URL = `/api/pets/add/`;
-// There are two approaches, async or postback, either way the form needs to be validated
+const defaultPet: IPet = {
+  name: '',
+  type: null,
+  species: '',
+  sex: 'unknown',
+  dateOfBirth: '',
+  description: '',
+};
+const errorMsg = 'Failed to register new pet.';
+const successMsg = 'New pet registration succeeded!  ';
+
 export default {
+  components: { RouterLink },
   data: () => ({
+    PetType,
+    showRegResult: false,
+    resultIsError: false,
+    alertMsg: successMsg,
     myPet: {
-      name: '',
-      type: null,
-      species: '',
-      sex: 'unknown',
-      dateOfBirth: new Date(),
-      description: '',
+      ...defaultPet,
     },
+    createdPetId: ''
   }),
 
   watch: {},
@@ -27,6 +39,7 @@ export default {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(this.myPet),
       };
+      this.showRegResult = false;
 
       fetch(url, requestOptions)
         .then(async (response) => {
@@ -37,11 +50,21 @@ export default {
             // get error message from body or default to response status
             const error = (data && data.message) || response.status;
             return Promise.reject(error);
+          } else {
+            this.alertMsg = successMsg;
+            this.resultIsError = false;
+            this.showRegResult = true;
+            this.myPet = { ...defaultPet };
+
+            this.createdPetId = data._id;
           }
           console.log(data);
         })
         .catch((error) => {
-          console.error('There was an error!', error);
+          console.error(errorMsg, error);
+          this.alertMsg = errorMsg;
+          this.resultIsError = true;
+          this.showRegResult = true;
         });
     },
   },
@@ -50,64 +73,82 @@ export default {
 
 <template>
   <v-card
+    class="pa-6 ma-6"
     elevation="3"
     variant="tonal"
     title="Add a New Pet"
   >
-    <!-- <v-snackbar v-model="snackbar" absolute top right color="success">
-      <span>Registration successful!</span>
-      <v-icon dark> mdi-checkbox-marked-circle </v-icon>
-    </v-snackbar> -->
+    <v-alert 
+      v-model="showRegResult" 
+      :type="resultIsError ? 'error' : 'success'"
+      variant="tonal"
+      closable
+      close-label="Close Alert"
+    >
+      {{ alertMsg }}
+      <router-link :to="{ name: 'pet-details', params: { id: createdPetId } }">
+        <v-btn
+          prepend-icon="fa:fas fa-light fa-arrow-up-right"
+        >
+          Go To Newly Registered Pet's Details  
+          <v-icon>fa:fas fa-light fa-arrow-up-right</v-icon>
+        </v-btn>
+      </router-link>
+    </v-alert>
     <form>
       <v-container fluid>
-        <v-row>
-          <v-col>
-            <v-text-field v-model="myPet.name" label="Name" />
+        <v-row no-gutters>
+          <v-col class="pa-1 mt-3">
+            <label>Name</label>
+            <v-text-field v-model="myPet.name" />
           </v-col>
         </v-row>
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="myPet.dateOfBirth"
-              type="date"
-              min="2000-01-01"
-              label="Date of Birth"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
+        <v-row no-gutters>
+          <v-col class="pa-1">
+            <label>Type</label>
             <v-select
               v-model="myPet.type"
-              label="Type"
               :items="PetType"
               variant="solo"
             />
           </v-col>
         </v-row>
-        <v-row>
-          <v-col>
-            <v-text-field v-model="myPet.species" label="Species" />
+        <v-row no-gutters>
+          <v-col class="pa-1">
+            <label>Species</label>
+            <v-text-field v-model="myPet.species" />
+          </v-col>
+        </v-row>
+        <v-row no-gutters>
+          <v-col class="pa-1">
+            <label>Date of Birth</label>
+            <Datepicker
+              v-model="myPet.dateOfBirth"
+              model-type="yyyy-MM-dd"
+              :enable-time-picker="false"
+              dark
+            />
           </v-col>
         </v-row>
         <v-row>
-          <v-radio-group
-            v-model="myPet.sex"
-            inline
-            style="padding: 0 10px"
-          >
-            <v-radio
-              label="Female"
-              value="female"
-              style="padding-right: 12px"
-            />
-            <v-radio
-              label="Male"
-              value="male"
-              style="padding-right: 15px"
-            />
-            <v-radio label="Unknown" value="unknown" />
-          </v-radio-group>
+          <v-col class="mt-5">
+            <v-radio-group
+              v-model="myPet.sex"
+              inline
+            >
+              <v-radio
+                label="Female"
+                value="female"
+                class="pr-6"
+              />
+              <v-radio
+                label="Male"
+                value="male"
+                class="pr-6"
+              />
+              <v-radio label="Unknown" value="unknown" />
+            </v-radio-group>
+          </v-col>
         </v-row>
         <v-row>
           <v-col>
@@ -119,20 +160,26 @@ export default {
           </v-col>
         </v-row>
         <v-row>
-          <v-spacer />
-          <v-col>
+          <v-col
+            class="pa-3 ma-3"
+            style="text-align: center;"
+          >
             <v-btn
+              style="width: 60%;"
               size="x-large"
               color="success"
               prepend-icon="mdi-check"
-              @click="createPet()"
+              @click="createPet"
             >
               Create
             </v-btn>
           </v-col>
-          <v-spacer />
-          <v-col>
+          <v-col
+            class="pa-3 ma-3"
+            style="text-align: center;"
+          >
             <v-btn
+              style="width: 60%;"
               size="x-large"
               color="error"
               prepend-icon="mdi-cancel"
@@ -140,7 +187,21 @@ export default {
               Cancel
             </v-btn>
           </v-col>
-          <v-spacer />
+        </v-row>
+        <v-row>
+          <v-col 
+            class="pa-3 ma-3" 
+            style="text-align: center;"
+          >
+            <v-btn
+              style="width: 75%; margin:auto;"
+              size="x-large"
+              color="primary"
+              prepend-icon="fa:fas fa-light fa-arrow-turn-down-left"
+            >
+              Return to My Pets
+            </v-btn>
+          </v-col>
         </v-row>
       </v-container>
     </form>

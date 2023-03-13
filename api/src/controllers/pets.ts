@@ -26,6 +26,13 @@ const editPet = (request: Request<{}, {}, IPet>, response: Response) => {
     .catch((err: any) => response.status(500).json(err));
 };
 
+const addMealSchedule = (request: Request<{}, {}, { _id: string; mealSchedule: Array<{}> }>, response: Response) => {
+  const { _id, mealSchedule } = request.body;
+  Pet.findByIdAndUpdate(_id, { $set: { mealSchedule } })
+    .then((updatedPet: any) => response.json(updatedPet))
+    .catch((err: any) => response.status(500).json(err));
+};
+
 const addPetImage = (request: Request<{ id: string }>, response: Response) => {
   const { file } = request;
   if (file) {
@@ -62,4 +69,4 @@ const getSinglePet = (request: Request<{ id: string }>, response: Response) => {
     .catch((err: any) => response.status(422).json(err));
 };
 
-export { getAllPets, addPet, editPet, getSinglePet, addPetImage };
+export { getAllPets, addPet, editPet, getSinglePet, addPetImage, addMealSchedule };
