@@ -19,7 +19,7 @@ export default {
 
         setTimeout(() => (this.loading = false), 2000)
       },
-      required (v) {
+      required (v: string) {
         return !!v || 'Field is required'
       },
     },
