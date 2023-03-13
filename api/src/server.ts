@@ -4,13 +4,14 @@ import path from 'path';
 import db from './config/db';
 import router from './routes/index';
 import { FILE_UPLOAD_PATH } from './utils/constants';
-
+const ENV_PATH = path.resolve(__dirname, '..', '..', '.env');
 //-- .env --------------------------------------------------------------------
-// if (process.env.NODE_ENV !== 'production') {
-//   require('dotenv').config({
-//     path: path.resolve(__dirname, '.env')
-//   });
-// }
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({
+    path: ENV_PATH,
+  });
+  console.log(process.env.MONGODB_URI);
+}
 
 //-- Dependencies ------------------------------------------------------------
 // const { passport } = require('./lib/passport');
