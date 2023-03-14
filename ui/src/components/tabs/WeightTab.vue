@@ -13,7 +13,7 @@ const defaultWeigh: IWeight = {
   _id: '',
   weighDate: '',
   weighAmt: 0,
-  weighUnit: '',
+  weighUnits: '',
   weighComments: '',
 };
 const errorMsg = 'Well... you really screwed up this time...';
@@ -68,7 +68,6 @@ export default {
       fetch(url, requestOptions)
         .then(async (response) => {
           const data = await response.json();
-
 
           if (!response.ok) {
             const error = (data && data.message) || response.status;
@@ -150,109 +149,112 @@ export default {
 
 <template>
   <v-container fluid>
-    <v-row>
-      <v-col>
-        <v-card class="ma-3 pa-6">
-          <v-row>
-            <v-col>
-              <weight-line-chart :weight-history="weightHistory" />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-card class="elevation-6 ma-3 pa-6">
-                <v-card-title>Add New Weight Data</v-card-title>
-                <v-row class="d-flex justify-center align-center">
-                  <v-col>
-                    <label>Weighing Date</label>
-                    <div class="pb-22">
-                      <Datepicker
-                        v-model="newWeight.weighDate"
-                        model-type="yyyy-MM-dd"
-                        auto-apply
-                        dark
-                      />
-                    </div>
-                  </v-col>
-                  <v-col>
-                    <label>Weight Amount</label>
-                    <v-text-field
-                      v-model="newWeight.weighAmt"
-                      type="number"
-                    />
-                  </v-col>
-                  <v-col>
-                    <label>Weight Units</label>
-                    <v-select
-                      v-model="newWeight.weighUnit"
-                      :items="WeighUnits"
-                    />
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col>
-                    <v-textarea
-                      v-model="newWeight.weighComments"
-                      label="Comments"
-                      rows="3"
-                    />
-                  </v-col>
-                </v-row>
-                <div
-                  class="weight-btn-div d-flex justify-space-around align-center flex-column flex-md-row fill-height"
-                >
-                  <v-btn
-                    class="weight-btn elevation-9"
-                    size="x-large"
-                    @click="createWeight"
-                  >
-                    Add New Weight Data
-                  </v-btn>
-                </div>
-                <div>
-                  <v-alert
-                    v-model="showAlert"
-                    :type="alertIsError ? 'error': 'success'"
-                    variant="tonal"
-                    closable
-                    close-label="Close Alert"
-                  >
-                    {{
-                      alertMsg
-                    }}
-                  </v-alert>
-                </div>
-              </v-card>
-            </v-col>
-          </v-row>
-          <v-card class="weight-table pa-3">
-            <v-card-title>Weight History</v-card-title>
-            <v-table class="data-tbl" fixed-header>
-              <thead>
-                <tr>
-                  <th class="tbl-head text-left">
-                    <a href="#" @click.prevent="$event => sort('weighDate', 'date')">Date</a>
-                  </th>
-                  <th class="tbl-head text-left">
-                    <a href="#" @click.prevent="$event => sort('weighAmt', 'number')">Weight</a>
-                  </th>
-                  <th class="tbl-head text-left">
-                    Comments
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="weight in sortedHistory" :key="weight._id">
-                  <td>{{ formatDate(weight.weighDate) }}</td>
-                  <td>{{ weight.weighAmt }}</td>
-                  <td>{{ weight.weighComments }}</td>
-                </tr>
-              </tbody>
-            </v-table>
-          </v-card>
-        </v-card>
-      </v-col>
-    </v-row>
+    <v-card class="ma-3 pa-6">
+      <v-card class="chart-card">
+        <v-row>
+          <v-col>
+            <weight-line-chart :weight-history="weightHistory" />
+          </v-col>
+        </v-row>
+      </v-card>
+      <v-card class="new-weigh-card elevation-6 ma-3 pa-6">
+        <v-card-title>Add New Weight Data</v-card-title>
+        <v-row class="d-flex justify-center align-center">
+          <v-col>
+            <label>Weighing Date</label>
+            <div class="pb-22">
+              <Datepicker
+                v-model="newWeight.weighDate"
+                model-type="yyyy-MM-dd"
+                auto-apply
+                dark
+              />
+            </div>
+          </v-col>
+          <v-col>
+            <label>Weight Amount</label>
+            <v-text-field
+              v-model="newWeight.weighAmt"
+              type="number"
+            />
+          </v-col>
+          <v-col>
+            <label>Weight Units</label>
+            <v-select
+              v-model="newWeight.weighUnits"
+              :items="WeighUnits"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-textarea
+              v-model="newWeight.weighComments"
+              label="Comments"
+              rows="3"
+            />
+          </v-col>
+        </v-row>
+        <div
+          class="weight-btn-div d-flex justify-space-around align-center flex-column flex-md-row fill-height"
+        >
+          <v-btn
+            class="weight-btn elevation-9"
+            size="x-large"
+            @click="createWeight"
+          >
+            Add New Weight Data
+          </v-btn>
+        </div>
+        <div>
+          <v-alert
+            v-model="showAlert"
+            :type="alertIsError ? 'error': 'success'"
+            variant="tonal"
+            closable
+            close-label="Close Alert"
+          >
+            {{
+              alertMsg
+            }}
+          </v-alert>
+        </div>
+      </v-card>
+      <v-card class="weight-table pa-3">
+        <v-card-title>Weight History</v-card-title>
+        <v-table class="data-tbl" fixed-header>
+          <thead>
+            <tr>
+              <th class="tbl-head text-left">
+                <a href="#" @click.prevent="$event => sort('weighDate', 'date')">Date</a>
+              </th>
+              <th class="tbl-head text-left">
+                <a href="#" @click.prevent="$event => sort('weighAmt', 'number')">Weight</a>
+              </th>
+              <th class="tbl-head text-left">
+                Weight Units
+              </th>
+              <th class="tbl-head text-left">
+                Comments
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="weight in sortedHistory" :key="weight._id">
+              <td>{{ formatDate(weight.weighDate) }}</td>
+              <td>{{ weight.weighAmt }}</td>
+              <td>{{ weight.weighUnits }}</td>
+              <td>{{ weight.weighComments }}</td>
+              <td>
+                <edit-weight-modal
+                  v-bind="weight"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </v-table>
+      </v-card>
+    </v-card>
   </v-container>
 </template>
 
