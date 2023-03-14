@@ -1,37 +1,34 @@
+import dotenv from 'dotenv';
 import express, { Application } from 'express';
 import morgan from 'morgan';
 import path from 'path';
-import db from './config/db';
-//import { passport } from './config/passport';
+import db, { DB_CONNECTION_STRING } from './config/db';
 import router from './routes/index';
 import { FILE_UPLOAD_PATH } from './utils/constants';
 
 //-- Constants ---------------------------------------------------------------
-
 const LOG_MODE: string = process.env.NODE_ENV === 'production' ? 'common' : 'dev';
+const ENV_PATH = path.resolve(__dirname, '..', '..', '.env');
+const IMAGE_UPLOAD_PATH = path.join(__dirname, '..', '..', '..', FILE_UPLOAD_PATH);
+
+//-- .env --------------------------------------------------------------------
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config({
+    path: ENV_PATH,
+  });
+}
 
 //-- Express -----------------------------------------------------------------
 const app: Application = express();
 
-//-- TODO Mongoose Setup ----------------------------------------------------------
-db.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1/DeTail');
-db.connection.on('error', (err: any) => {
-  console.log(`Mongoose connection err:\n${err}`);
-});
+//-- Mongoose Setup ----------------------------------------------------------
+db.connect(DB_CONNECTION_STRING);
 
 //-- Middleware --------------------------------------------------------------
 app.use(morgan(LOG_MODE));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use('/images', express.static(path.join(__dirname, '..', '..', '..', FILE_UPLOAD_PATH)));
-//app.use(passport.initialize());
-
-//-- Static Server (Production) ----------------------------------------------
-// if (process.env.NODE_ENV === 'production') {
-//   const clientBuildPath = path.join(__dirname, '..', 'client', 'build');
-//   console.log(`Client build path: ${clientBuildPath}\n`);
-//   app.use(express.static(clientBuildPath));
-// }
+app.use('/images', express.static(IMAGE_UPLOAD_PATH));
 
 //-- Controller Routes -------------------------------------------------------
 app.use('/api', router);
