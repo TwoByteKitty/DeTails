@@ -38,7 +38,7 @@ export default {
             class="mb-2"
             clearable
             label="User Name"
-          ></v-text-field>
+          />
 
           <v-text-field
             v-model="password"
@@ -47,7 +47,7 @@ export default {
             clearable
             label="Password"
             placeholder="Enter your password"
-          ></v-text-field>
+          />
 
           <br>
 

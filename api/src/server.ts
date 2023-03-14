@@ -2,20 +2,9 @@ import express, { Application } from 'express';
 import morgan from 'morgan';
 import path from 'path';
 import db from './config/db';
+//import { passport } from './config/passport';
 import router from './routes/index';
 import { FILE_UPLOAD_PATH } from './utils/constants';
-const ENV_PATH = path.resolve(__dirname, '..', '..', '.env');
-//-- .env --------------------------------------------------------------------
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config({
-    path: ENV_PATH,
-  });
-  console.log(process.env.MONGODB_URI);
-}
-
-//-- Dependencies ------------------------------------------------------------
-// const { passport } = require('./lib/passport');
-// const { db } = require('./lib/db');
 
 //-- Constants ---------------------------------------------------------------
 
@@ -35,7 +24,7 @@ app.use(morgan(LOG_MODE));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use('/images', express.static(path.join(__dirname, '..', '..', '..', FILE_UPLOAD_PATH)));
-// app.use(passport.initialize());
+//app.use(passport.initialize());
 
 //-- Static Server (Production) ----------------------------------------------
 // if (process.env.NODE_ENV === 'production') {
@@ -46,10 +35,5 @@ app.use('/images', express.static(path.join(__dirname, '..', '..', '..', FILE_UP
 
 //-- Controller Routes -------------------------------------------------------
 app.use('/api', router);
-
-//-- React catch-all ---------------------------------------------------------
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client/build/index.html'));
-// });
 
 export default app;

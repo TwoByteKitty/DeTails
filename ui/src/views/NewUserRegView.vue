@@ -1,28 +1,53 @@
 <script lang="ts">
+const API_URL = `/api/user/create/`;
 
 export default {
-    data() {
-      return{
-        form: false,
-        userName: null,
-        password: null,
-        passwordConfirm: null,
-        loading: false,
+   data:() =>({
+      isValid: false,
+      form: { userName:'', password: '' },
+      passwordConfirm: '',
+      userNameRules: [
+         (value: string)=>(!!value || 'Username is required'),
+         (value: string)=>{
+            if (value?.length > 3) return true
+            return 'User name must be at least 3 characters.'
+         }
+       ],
+       passwordRules:[
+         (value: string)=>(!!value || 'Password is required'),
+         (value: string)=>{
+            if (value?.length >= 6) return true
+            return 'Password must be at least 6 characters.'
+         }
+       ],
+       loading: false,
+     }
+   ),
+   methods: {
+     async register() {
+      const form = this.$refs.registrationForm as any
+      const { valid } = await form.validate();
+      this.isValid == valid;
+      if(valid){
+         //this.loading = true;
+         const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(this.form),
+      };
+      fetch(API_URL, requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+          console.log(data)
+        });
       }
-    },
-
-    methods: {
-      onSubmit () {
-        if (!this.form) return
-
-        this.loading = true
-
-        setTimeout(() => (this.loading = false), 2000)
-      },
-      required (v: string) {
-        return !!v || 'Field is required'
-      },
-    },
+     },
+   },
+   computed: {
+     passwordMatch(){
+        return (this.form.password === this.passwordConfirm)|| 'Passwords do not match';
+     }
+   }
 };
 </script>
 
@@ -30,20 +55,22 @@ export default {
   <v-container>
     <v-responsive
       class="mx-auto"
-      max-width="500"
+      max-width="1080"
     >
       <v-card title="New User Registration">
         <v-card>
-          <v-form         
-            v-model="form"
-            @submit.prevent="onSubmit"
+          <v-form
+            ref="registrationForm"
+            v-model="isValid"
+            lazy-validation
+            @submit.prevent="register"
           >
             <v-row>
               <v-col>
                 <v-text-field
-                  v-model="userName"
+                  v-model="form.userName"
                   :readonly="loading"
-                  :rules="[required]"
+                  :rules="userNameRules"
                   class="mb-2"
                   clearable
                   label="User Name"
@@ -53,9 +80,9 @@ export default {
             <v-row>
               <v-col>
                 <v-text-field
-                  v-model="password"
+                  v-model="form.password"
                   :readonly="loading"
-                  :rules="[required]"
+                  :rules="passwordRules"
                   clearable
                   label="Password"
                   placeholder="Enter your password"
@@ -67,7 +94,7 @@ export default {
                 <v-text-field
                   v-model="passwordConfirm"
                   :readonly="loading"
-                  :rules="[required]"
+                  :rules="[passwordMatch]"
                   clearable
                   label="Confirm Password"
                   placeholder="Re-enter your password"
@@ -77,7 +104,6 @@ export default {
             <v-row>
               <v-col>
                 <v-btn
-                  :disabled="!form"
                   :loading="loading"
                   block
                   color="success"
@@ -85,7 +111,7 @@ export default {
                   type="submit"
                   variant="elevated"
                 >
-                  Sign In
+                  Register
                 </v-btn>
               </v-col>
             </v-row>

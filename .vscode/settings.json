@@ -3,7 +3,8 @@
     "codepaths",
     "linebreak",
     "pinia",
-    "tsbuildinfo"
+    "tsbuildinfo",
+    "vuetify"
   ],
   "emmet.triggerExpansionOnTab": true,
   "eslint.format.enable": true,

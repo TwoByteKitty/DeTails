@@ -43,4 +43,4 @@ const logout = (request: Request<{}, {}, {}>, response: Response) => {
   });
 };
 
-export {registerUser, login, logout};
+export { registerUser, login, logout };

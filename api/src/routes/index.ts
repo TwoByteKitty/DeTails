@@ -1,5 +1,4 @@
 import express, { Router } from 'express';
-import { JWTVerifier } from '../config/passport';
 import petsRouter from './pets';
 import userRouter from './user';
 
