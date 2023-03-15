@@ -7,6 +7,7 @@ import 'chartjs-plugin-style';
 import { DateTime } from 'luxon';
 import type { PropType } from 'vue';
 import WeightLineChart from '../charts/WeightLineChart.vue';
+import EditWeightModal from '../modals/EditWeightModal.vue';
 
 const API_URL = `/api/pets/`;
 const defaultWeigh: IWeight = {
@@ -21,7 +22,7 @@ const successMsg = "I'm a success alert! Congratulations!";
 
 export default {
   name: 'WeightTab',
-  components: { Datepicker, WeightLineChart },
+  components: { Datepicker, WeightLineChart, EditWeightModal },
   emits: [ 'weightAdded' ],
   props: {
     weightHistory: { type: Array as PropType<Array<IWeight>>, required: true },
@@ -150,7 +151,7 @@ export default {
 <template>
   <v-container fluid>
     <v-card class="ma-3 pa-6">
-      <v-card class="chart-card">
+      <v-card v-if="weightHistory.length" class="chart-card">
         <v-row>
           <v-col>
             <weight-line-chart :weight-history="weightHistory" />
@@ -237,6 +238,7 @@ export default {
               <th class="tbl-head text-left">
                 Comments
               </th>
+              <th class="tbl-head text-left" />
             </tr>
           </thead>
           <tbody>
@@ -247,7 +249,11 @@ export default {
               <td>{{ weight.weighComments }}</td>
               <td>
                 <edit-weight-modal
-                  v-bind="weight"
+                  :_id="weight._id? weight._id : '' "
+                  :weigh-date="weight.weighDate"
+                  :weigh-amt="weight.weighAmt"
+                  :weigh-units="weight.weighUnits"
+                  :weigh-comments="weight.weighComments? weight.weighComments : '' "
                 />
               </td>
             </tr>

@@ -4,13 +4,12 @@ import path from 'path';
 import { addFeeding, getAllFeedingsByPet, getSingleFeeding } from '../controllers/herpetofauna/feedings';
 import { addShed, getAllShedsByPet, getSingleShed } from '../controllers/herpetofauna/sheds';
 import { addPet, addPetImage, editPet, getAllPets, getSinglePet, addMealSchedule } from '../controllers/pets';
-import { addWeight, getAllWeightsByPet, getSingleWeight } from '../controllers/weights';
+import { addWeight, editWeight, getAllWeightsByPet, getSingleWeight } from '../controllers/weights';
 import { FILE_UPLOAD_PATH } from '../utils/constants';
 
 const router: Router = express.Router();
 const upload = multer({
   dest: path.join(__dirname, '..', '..', '..', '..', FILE_UPLOAD_PATH),
-  // you might also want to set some limits: https://github.com/expressjs/multer#limits
 });
 
 // Pets CRUD
@@ -35,5 +34,6 @@ router.get('/:petId/feedings/', getAllFeedingsByPet);
 router.post('/:petId/weights/add', addWeight);
 router.get('/:petId/weights/:weightId', getSingleWeight);
 router.get('/:petId/weights/', getAllWeightsByPet);
+router.put('/weights/:weightId', editWeight);
 
 export default router;

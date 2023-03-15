@@ -1,25 +1,32 @@
 <script lang="ts">
-import type { IWeight } from '@/shared/IWeight';
 import { WeighUnits } from '@/shared/SelectLists';
-import type { PropType } from 'vue';
+import Datepicker from '@vuepic/vue-datepicker';
+import { DateTime } from 'luxon';
 
-
-const API_URL = `/api/pets/`;
+const DATE_FORMAT_STRING = 'yyyy-MM-dd';
+const API_URL = `/api/pets/weights`;
 
 export default {
-    props: {
-        weight: { type: {} as PropType<IWeight>, required: true }
-    },
+  name: 'EditWeightModal',
+  components:{ Datepicker },
+  props: {
+      // eslint-disable-next-line vue/prop-name-casing
+      _id: { type: String, required: true },
+      weighDate: { type: String, required: true },
+      weighAmt: { type: Number, required: true },
+      weighUnits: { type: String, required: true },
+      weighComments: { type: String, required: true },
+  },
   data() {
     return {
       WeighUnits,
       dialog: false,
       fields: {
-        _id: this.weight._id,
-        weighDate: this.weight.weighDate,
-        weighAmt: this.weight.weighAmt,
-        weighUnits: this.weight.weighUnits,
-        weighComments: this.weight.weighComments,
+        _id: this.id,
+        weighDate: this.formatDate(this.weighDate),
+        weighAmt: this.weighAmt,
+        weighUnits: this.weighUnits,
+        weighComments: this.weighComments,
       },
     };
   },
@@ -33,7 +40,7 @@ export default {
     weighDate: {
       immediate: true,
       handler(newVal) {
-        this.fields.weighDate = newVal;
+        this.fields.weighDate = this.formatDate(newVal);
       },
     },
     weighAmt: {
@@ -57,7 +64,7 @@ export default {
   },
   methods: {
     async editPet() {
-      const url = `${API_URL}/${this.weight._id}`;
+      const url = `${API_URL}/${this._id}`;
 
       const requestOptions = {
         method: 'PUT',
@@ -81,6 +88,9 @@ export default {
         .catch((error) => {
           console.error('There was an error!', error);
         });
+    },
+    formatDate(timestamp: string) {
+      return DateTime.fromISO(timestamp).toFormat(DATE_FORMAT_STRING);
     },
   },
 };

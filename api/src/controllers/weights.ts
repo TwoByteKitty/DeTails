@@ -23,12 +23,11 @@ const getSingleWeight = (request: Request<{ shedId: string }>, response: Respons
 };
 
 //needs more work!
-// const editWeight = (request: Request<{}, {}, IWeight>, response: Response) => {
-//   const pet: IWeight = request.body;
-//   pet.dateOfBirth = new Date(pet.dateOfBirth);
-//   Weight.findByIdAndUpdate(pet._id, pet)
-//     .then((updatedWeight) => response.json(updatedWeight))
-//     .catch((err) => response.status(500).json(err));
-// };
+const editWeight = (request: Request<{}, {}, IWeight>, response: Response) => {
+  const petWeight: IWeight = request.body;
+  Weight.findByIdAndUpdate(petWeight._id, petWeight)
+    .then((updatedWeight) => response.json(updatedWeight))
+    .catch((err) => response.status(500).json(err));
+};
 
-export { getAllWeightsByPet, addWeight, getSingleWeight };
+export { getAllWeightsByPet, addWeight, getSingleWeight, editWeight };
