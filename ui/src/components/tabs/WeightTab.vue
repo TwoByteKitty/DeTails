@@ -151,7 +151,10 @@ export default {
 <template>
   <v-container fluid>
     <v-card class="ma-3 pa-6">
-      <v-card v-if="weightHistory.length" class="chart-wrap">
+      <v-card
+        v-if="weightHistory.length"
+        class="chart-wrap"
+      >
         <v-row>
           <v-col>
             <weight-line-chart :weight-history="weightHistory" />
@@ -167,7 +170,7 @@ export default {
               <Datepicker
                 v-model="newWeight.weighDate"
                 model-type="yyyy-MM-dd"
-                auto-apply
+                :enable-time-picker="false"
                 dark
               />
             </div>
@@ -221,16 +224,25 @@ export default {
           </v-alert>
         </div>
       </v-card>
-      <v-card class="weight-table pa-3">
+      <v-card class="tbl-wrap weight-tbl pa-3">
         <v-card-title>Weight History</v-card-title>
-        <v-table class="data-tbl" fixed-header>
+        <v-table
+          class="data-tbl"
+          fixed-header
+        >
           <thead>
             <tr>
               <th class="tbl-head text-left">
-                <a href="#" @click.prevent="$event => sort('weighDate', 'date')">Date</a>
+                <a
+                  href="#"
+                  @click.prevent="$event => sort('weighDate', 'date')"
+                >Date</a>
               </th>
               <th class="tbl-head text-left">
-                <a href="#" @click.prevent="$event => sort('weighAmt', 'number')">Weight</a>
+                <a
+                  href="#"
+                  @click.prevent="$event => sort('weighAmt', 'number')"
+                >Weight</a>
               </th>
               <th class="tbl-head text-left">
                 Weight Units
@@ -242,13 +254,17 @@ export default {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="weight in sortedHistory" :key="weight._id">
+            <tr
+              v-for="weight in sortedHistory"
+              :key="weight._id"
+            >
               <td>{{ formatDate(weight.weighDate) }}</td>
               <td>{{ weight.weighAmt }}</td>
               <td>{{ weight.weighUnits }}</td>
               <td>{{ weight.weighComments }}</td>
               <td>
                 <edit-weight-modal
+                  @weight-edited="$event => $emit('weightAdded')"
                   :_id="weight._id? weight._id : '' "
                   :weigh-date="weight.weighDate"
                   :weigh-amt="weight.weighAmt"
@@ -287,9 +303,5 @@ export default {
   margin: 12px;
   width: 600px;
   height: 60px;
-}
-.weight-table,
-.tbl-head {
-  background-color: #4a454e !important;
 }
 </style>

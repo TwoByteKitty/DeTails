@@ -1,8 +1,6 @@
 <script lang="ts">
 import { WeighUnits } from '@/shared/SelectLists';
-import Datepicker from '@vuepic/vue-datepicker';
 import { DateTime } from 'luxon';
-
 
 const API_URL = `/api/pets/weights`;
 const DATE_FORMAT_STRING = 'yyyy-MM-dd';
@@ -12,8 +10,8 @@ const successMsg = "I'm a success alert! Congratulations!";
 
 export default {
   name: 'EditWeightModal',
-  components:{ Datepicker },
-  emits: [ 'weightAdded' ],
+  components:{ },
+  emits: [ 'weightEdited' ],
   props: {
       // eslint-disable-next-line vue/prop-name-casing
       _id: { type: String, required: true },
@@ -91,7 +89,7 @@ export default {
             return Promise.reject(error);
           } else {
             console.log(data);
-            this.$emit('weightAdded');
+            this.$emit('weightEdited');
             this.alertMsg = successMsg;
             this.alertIsError = false;
             this.showAlert = true;
@@ -118,25 +116,35 @@ export default {
 
 <template>
   <v-row justify="center">
-    <v-dialog v-model="modalIsOpen" persistent>
+    <v-dialog
+      v-model="modalIsOpen"
+      persistent
+    >
       <template #activator="{ props }">
-        <v-btn style="height: 51px; width: 51px" v-bind="props">
+        <v-btn
+          class="edit-tbl-data-btn"
+          v-bind="props"
+        >
           <v-icon>fa:fas fa-thin fa-pencil</v-icon>
         </v-btn>
       </template>
       <v-card title="Edit Weight Data">
         <v-card>
           <v-row>
-            <v-col cols="12" sm="6">
-              <Datepicker
+            <v-col
+              cols="12"
+              sm="6"
+            >
+              <v-text-field
+                type="date"
                 v-model="fields.weighDate"
-                model-type="yyyy-MM-dd"
-                auto-apply
-                dark
                 label="Date"
               />
             </v-col>
-            <v-col cols="12" sm="6">
+            <v-col
+              cols="12"
+              sm="6"
+            >
               <v-text-field
                 v-model="fields.weighAmt"
                 type="number"
@@ -193,4 +201,6 @@ export default {
   </v-row>
 </template>
 
-<style lang="css" scoped></style>
+<style lang="css" scoped>
+
+</style>

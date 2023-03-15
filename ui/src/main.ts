@@ -1,13 +1,12 @@
 import '@fortawesome/fontawesome-pro/css/all.css';
 import '@mdi/font/css/materialdesignicons.css';
 import 'vuetify/styles';
-import './styles/main.css';
 import 'v-calendar/dist/style.css';
-
-import { SetupCalendar, Calendar } from 'v-calendar';
-import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { fa } from 'vuetify/iconsets/fa';
+
+import SetupCalendar from 'v-calendar';
+import Datepicker from '@vuepic/vue-datepicker';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { createVuetify } from 'vuetify';
@@ -17,8 +16,9 @@ import * as directives from 'vuetify/directives';
 
 import App from './App.vue';
 import router from './router';
-import lightTheme from './styles/themes/light';
-import darkTheme from './styles/themes/dark';
+// import lightTheme from './styles/themes/light';
+// import darkTheme from './styles/themes/dark';
+import './styles/main.css';
 
 const app = createApp(App);
 const vuetify = createVuetify({
@@ -36,7 +36,7 @@ const vuetify = createVuetify({
     },
   },
 });
-app.component('Datepicker', Datepicker);
+// app.component('Datepicker', Datepicker);
 
 app.use(createPinia());
 app.use(SetupCalendar, {});
