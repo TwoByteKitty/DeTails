@@ -151,7 +151,7 @@ export default {
 <template>
   <v-container fluid>
     <v-card class="ma-3 pa-6">
-      <v-card v-if="weightHistory.length" class="chart-card">
+      <v-card v-if="weightHistory.length" class="chart-wrap">
         <v-row>
           <v-col>
             <weight-line-chart :weight-history="weightHistory" />
@@ -265,12 +265,15 @@ export default {
 </template>
 
 <style lang="css" scoped>
+.chart-wrap {
+  margin:auto;
+}
 .chart-card {
   height: 700px;
   width: 1800px;
   max-width: 1500px;
   overflow-x: scroll;
-  margin: 3px;
+  margin: 3px auto;
   padding: 3px;
 }
 .chart-box {

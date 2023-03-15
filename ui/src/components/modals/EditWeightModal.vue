@@ -3,12 +3,17 @@ import { WeighUnits } from '@/shared/SelectLists';
 import Datepicker from '@vuepic/vue-datepicker';
 import { DateTime } from 'luxon';
 
-const DATE_FORMAT_STRING = 'yyyy-MM-dd';
+
 const API_URL = `/api/pets/weights`;
+const DATE_FORMAT_STRING = 'yyyy-MM-dd';
+const errorMsg = 'Well... you really screwed up this time...';
+const successMsg = "I'm a success alert! Congratulations!";
+
 
 export default {
   name: 'EditWeightModal',
   components:{ Datepicker },
+  emits: [ 'weightAdded' ],
   props: {
       // eslint-disable-next-line vue/prop-name-casing
       _id: { type: String, required: true },
@@ -20,7 +25,11 @@ export default {
   data() {
     return {
       WeighUnits,
-      dialog: false,
+      modalIsOpen: false,
+      alertType: 'success',
+      alertIsError: false,
+      alertMsg: successMsg,
+      showAlert: false,
       fields: {
         _id: this.id,
         weighDate: this.formatDate(this.weighDate),
@@ -78,15 +87,26 @@ export default {
 
           // check for error response
           if (!response.ok) {
-            // get error message from body or default to response status
             const error = (data && data.message) || response.status;
             return Promise.reject(error);
+          } else {
+            console.log(data);
+            this.$emit('weightAdded');
+            this.alertMsg = successMsg;
+            this.alertIsError = false;
+            this.showAlert = true;
+
+            setTimeout(() => {
+              this.showAlert = false;
+              this.modalIsOpen = false;
+            }, 1000);
           }
-          console.log(data);
-          this.dialog = false;
         })
         .catch((error) => {
-          console.error('There was an error!', error);
+          console.error(errorMsg, error);
+          this.alertMsg = errorMsg;
+          this.alertIsError = true;
+          this.showAlert = true;
         });
     },
     formatDate(timestamp: string) {
@@ -98,7 +118,7 @@ export default {
 
 <template>
   <v-row justify="center">
-    <v-dialog v-model="dialog" persistent>
+    <v-dialog v-model="modalIsOpen" persistent>
       <template #activator="{ props }">
         <v-btn style="height: 51px; width: 51px" v-bind="props">
           <v-icon>fa:fas fa-thin fa-pencil</v-icon>
@@ -143,7 +163,7 @@ export default {
           <v-btn
             color="error"
             variant="text"
-            @click="($event: any) => dialog = false"
+            @click="($event: any) => modalIsOpen = false"
           >
             Close
           </v-btn>
@@ -155,6 +175,19 @@ export default {
             Save
           </v-btn>
         </v-card-actions>
+        <div>
+          <v-alert
+            v-model="showAlert"
+            :type="alertIsError ? 'error': 'success'"
+            variant="tonal"
+            closable
+            close-label="Close Alert"
+          >
+            {{
+              alertMsg
+            }}
+          </v-alert>
+        </div>
       </v-card>
     </v-dialog>
   </v-row>

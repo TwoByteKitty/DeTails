@@ -154,7 +154,7 @@ export default {
     chartBoxWidth() {
       console.log(getXAxisMinMax(this.weightHistory).duration);
       // This is the problem
-      const widthObj = { width: '0px' };
+      const widthObj = { width: '1500px' };
       const totalLabels = getXAxisMinMax(this.weightHistory).duration;
       if (totalLabels > 5) {
         widthObj.width = `${1500 + (totalLabels - 5) * 42}px`;
