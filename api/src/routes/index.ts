@@ -5,7 +5,7 @@ import userRouter from './user';
 
 const router: Router = express.Router();
 
-router.use('/pets', JWTVerifier, petsRouter);
+router.use('/pets', petsRouter);
 router.use('/user', userRouter);
 
 export default router;

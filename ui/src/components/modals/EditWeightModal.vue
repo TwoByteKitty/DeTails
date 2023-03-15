@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { IWeight } from '@/shared/IWeight';
+import { WeighUnits } from '@/shared/SelectLists';
 import type { PropType } from 'vue';
 
 
@@ -11,13 +12,14 @@ export default {
     },
   data() {
     return {
+      WeighUnits,
       dialog: false,
       fields: {
-        _id: this._id,
-        species: this.species,
-        type: this.type,
-        dateOfBirth: this.dateOfBirth,
-        description: this.description,
+        _id: this.weight._id,
+        weighDate: this.weight.weighDate,
+        weighAmt: this.weight.weighAmt,
+        weighUnits: this.weight.weighUnits,
+        weighComments: this.weight.weighComments,
       },
     };
   },
@@ -28,34 +30,34 @@ export default {
         this.fields._id = newVal;
       },
     },
-    species: {
+    weighDate: {
       immediate: true,
       handler(newVal) {
-        this.fields.species = newVal;
+        this.fields.weighDate = newVal;
       },
     },
-    type: {
+    weighAmt: {
       immediate: true,
       handler(newVal) {
-        this.fields.type = newVal;
+        this.fields.weighAmt = newVal;
       },
     },
-    dateOfBirth: {
-      immediate: true,
-      handler() {
-        this.fields.dateOfBirth = this.dateOfBirth;
-      },
-    },
-    description: {
+    weighUnits: {
       immediate: true,
       handler(newVal) {
-        this.fields.description = newVal;
+        this.fields.weighUnits = newVal;
+      },
+    },
+    weighComments: {
+      immediate: true,
+      handler(newVal) {
+        this.fields.weighComments = newVal;
       },
     },
   },
   methods: {
     async editPet() {
-      const url = `${API_URL}/${this.$route.params.id}`;
+      const url = `${API_URL}/${this.weight._id}`;
 
       const requestOptions = {
         method: 'PUT',
@@ -88,51 +90,55 @@ export default {
   <v-row justify="center">
     <v-dialog v-model="dialog" persistent>
       <template #activator="{ props }">
-        <v-btn style="height: 66px; width: 66px" v-bind="props">
-          <v-icon>fa:fas fa-thin fa-pen-to-square</v-icon>
+        <v-btn style="height: 51px; width: 51px" v-bind="props">
+          <v-icon>fa:fas fa-thin fa-pencil</v-icon>
         </v-btn>
       </template>
-      <v-card>
-        <v-card-title>
-          <span class="text-h5">Edit {{ name }}'s Info</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12" sm="6">
-                <v-select
-                  :items="PetType"
-                  v-model="fields.type"
-                  label="Type"
-                />
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-text-field v-model="fields.species" label="Species" />
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="fields.dateOfBirth"
-                  label="Date of Birth"
-                  type="date"
-                />
-              </v-col>
-              <v-col cols="12">
-                <v-textarea v-model="fields.description" label="Description" />
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
+      <v-card title="Edit Weight Data">
+        <v-card>
+          <v-row>
+            <v-col cols="12" sm="6">
+              <Datepicker
+                v-model="fields.weighDate"
+                model-type="yyyy-MM-dd"
+                auto-apply
+                dark
+                label="Date"
+              />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field
+                v-model="fields.weighAmt"
+                type="number"
+                label="Weigh Amount"
+              />
+            </v-col>
+            <v-col cols="12">
+              <v-select
+                v-model="fields.weighUnits"
+                label="Weight Units"
+                :items="WeighUnits"
+              />
+            </v-col>
+            <v-col cols="12">
+              <v-textarea 
+                v-model="fields.weighComments" 
+                label="Comments" 
+              />
+            </v-col>
+          </v-row>
+        </v-card>
         <v-card-actions>
           <v-spacer />
           <v-btn
-            color="blue-darken-1"
+            color="error"
             variant="text"
-            @click="dialog = false"
+            @click="($event: any) => dialog = false"
           >
             Close
           </v-btn>
           <v-btn
-            color="blue-darken-1"
+            color="info"
             variant="text"
             @click="editPet"
           >
