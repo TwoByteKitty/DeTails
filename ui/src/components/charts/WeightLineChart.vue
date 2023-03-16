@@ -2,8 +2,8 @@
 import type { IWeight } from '@/shared/IWeight';
 import 'chartjs-plugin-style';
 import { DateTime } from 'luxon';
-import { Line } from 'vue-chartjs';
 import type { PropType } from 'vue';
+import { Line } from 'vue-chartjs';
 
 const DATE_FORMAT_STRING = 'yyyy-MM-dd';
 
@@ -153,7 +153,8 @@ export default {
     },
     chartBoxWidth() {
       console.log(getXAxisMinMax(this.weightHistory).duration);
-      const widthObj = { width: '0px' };
+      // This is the problem
+      const widthObj = { width: '1500px' };
       const totalLabels = getXAxisMinMax(this.weightHistory).duration;
       if (totalLabels > 5) {
         widthObj.width = `${1500 + (totalLabels - 5) * 42}px`;

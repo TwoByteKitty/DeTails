@@ -2,7 +2,7 @@ export interface IWeight {
     _id?: string;
     weighDate: string;
     weighAmt: number;
-    weighUnit: string;
+    weighUnits: string;
     weighComments?: string;
   }
   

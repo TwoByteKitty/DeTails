@@ -2,18 +2,18 @@ import { Schema, model } from 'mongoose';
 
 export interface IWeight {
   _id: string;
-  weighDate: Date;
+  weighDate: string;
   weighAmt: number;
-  weighUnit: string;
+  weighUnits: string;
   weighComments: string;
   petId: string;
 }
 
 export const weightSchema = new Schema<IWeight>(
   {
-    weighDate: { type: Date, required: true },
+    weighDate: { type: String, required: true },
     weighAmt: { type: Number, required: true },
-    weighUnit: { type: String, required: false },
+    weighUnits: { type: String, required: false },
     weighComments: { type: String, required: false },
     petId: { type: String, required: true },
   },

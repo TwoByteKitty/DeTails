@@ -434,7 +434,10 @@ export default {
         <v-card class="meal-tbl-card">
           <v-card-title>Meal History</v-card-title>
           <v-divider />
-          <v-table class="data-tbl" fixed-header>
+          <v-table
+            class="data-tbl"
+            fixed-header
+          >
             <thead>
               <tr>
                 <th class="tbl-head text-left">
@@ -461,7 +464,10 @@ export default {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in (feedingHistory as Array<IMeal>)" :key="item._id">
+              <tr
+                v-for="item in (feedingHistory as Array<IMeal>)"
+                :key="item._id"
+              >
                 <td>{{ formatDate(item.feedDate) }}</td>
                 <td>{{ item.preyNo }}</td>
                 <td>{{ item.preyType.toString() }}</td>
