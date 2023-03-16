@@ -1,6 +1,7 @@
 <script lang="ts">
-import { PetType } from '@/shared/SelectLists.js';
 import type { IPet } from '@/shared/IPet';
+import { PetType } from '@/shared/SelectLists.js';
+import { useAuthStore } from '@/stores/auth.store';
 import { RouterLink } from 'vue-router';
 
 const API_URL = `/api/pets/add/`;
@@ -33,10 +34,10 @@ export default {
   methods: {
     async createPet() {
       const url = `${API_URL}`;
-
+      const authStore = useAuthStore();
       const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-access-token': authStore.user.token },
         body: JSON.stringify(this.myPet),
       };
       this.showRegResult = false;
@@ -78,8 +79,8 @@ export default {
     variant="tonal"
     title="Add a New Pet"
   >
-    <v-alert 
-      v-model="showRegResult" 
+    <v-alert
+      v-model="showRegResult"
       :type="resultIsError ? 'error' : 'success'"
       variant="tonal"
       closable
@@ -90,7 +91,7 @@ export default {
         <v-btn
           prepend-icon="fa:fas fa-light fa-arrow-up-right"
         >
-          Go To Newly Registered Pet's Details  
+          Go To Newly Registered Pet's Details
           <v-icon>fa:fas fa-light fa-arrow-up-right</v-icon>
         </v-btn>
       </router-link>
@@ -189,8 +190,8 @@ export default {
           </v-col>
         </v-row>
         <v-row>
-          <v-col 
-            class="pa-3 ma-3" 
+          <v-col
+            class="pa-3 ma-3"
             style="text-align: center;"
           >
             <v-btn

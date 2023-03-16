@@ -1,13 +1,8 @@
 <script setup lang="ts">
 import {
-  Chart as ChartJS,
-  LineElement,
-  PointElement,
-  TimeScale,
-  LinearScale,
-  Tooltip,
-  CategoryScale,
-  BarElement,
+BarElement, CategoryScale, Chart as ChartJS, LinearScale, LineElement,
+PointElement,
+TimeScale, Tooltip
 } from 'chart.js';
 import 'chartjs-adapter-luxon';
 import { RouterView } from 'vue-router';
@@ -49,7 +44,7 @@ export default {
   },
   computed:{
     navMenu(){
-      return routes.filter((route)=>{return route.showInMenu})
+      return routes.filter((route)=>{return route.meta.showInMenu})
     }
   }
 };

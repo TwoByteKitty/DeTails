@@ -1,9 +1,10 @@
 <script lang="ts">
-import OverviewTab from '../components/tabs/OverviewTab.vue';
-import WeightTab from '../components/tabs/WeightTab.vue';
-import FeedingTab from '../components/tabs/FeedingTab.vue';
-import ShedTab from '../components/tabs/ShedTab.vue';
 import MoreTab from '@/components/tabs/MoreTab.vue';
+import { useAuthStore } from '@/stores/auth.store';
+import FeedingTab from '../components/tabs/FeedingTab.vue';
+import OverviewTab from '../components/tabs/OverviewTab.vue';
+import ShedTab from '../components/tabs/ShedTab.vue';
+import WeightTab from '../components/tabs/WeightTab.vue';
 
 const API_URL = `/api/pets/`;
 export default {
@@ -36,7 +37,12 @@ export default {
   methods: {
     async getPet() {
       const url = `${API_URL}${this.$route.params.id}`;
-      this.myPet = await (await fetch(url)).json();
+      const authStore = useAuthStore();
+      const requestOptions = {
+         method: 'GET',
+         headers: { 'x-access-token': authStore.user.token },
+      };
+      this.myPet = await (await fetch(url, requestOptions)).json();
     },
   },
 };
