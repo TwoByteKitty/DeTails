@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts">
 import {
 BarElement, CategoryScale, Chart as ChartJS, LinearScale, LineElement,
 PointElement,
@@ -7,14 +7,14 @@ TimeScale, Tooltip
 import 'chartjs-adapter-luxon';
 import { RouterView } from 'vue-router';
 import { routes } from './router';
+import { useAuthStore } from '@/stores/auth.store';
 //import RouterView from './router/RouterView.vue';
 //import AppBar from './components/AppBar.vue';
-</script>
 
-<script lang="ts">
 ChartJS.register(BarElement, LineElement, PointElement, TimeScale, LinearScale, CategoryScale, Tooltip);
 
 export default {
+  components:{ RouterView },
   data: () => ({
     pageTitle: 'DeTails',
     drawerVisibleLeft: false,
@@ -24,15 +24,21 @@ export default {
     itemsRight: [
       {
         title: 'Account',
-        value: 'foo',
+        type:'link',
+        url: '/foo',
+        action: ()=>{},
       },
       {
         title: 'Settings',
-        value: 'bar',
+        type:'link',
+        url:'/bar',
+        action: ()=>{},
       },
       {
         title: 'Sign Off',
-        value: 'fizz',
+        type: 'action',
+        url:'',
+        action: ()=> useAuthStore().logout(),
       },
     ],
   }),
@@ -52,7 +58,10 @@ export default {
 
 <template>
   <v-app>
-    <v-app-bar color="primary" prominent>
+    <v-app-bar
+      color="primary"
+      prominent
+    >
       <v-app-bar-nav-icon
         icon="fa:fas fa-duotone fa-bars"
         variant="text"
@@ -89,7 +98,21 @@ export default {
       color="grey-lighten-1"
       temporary
     >
-      <v-list :items="itemsRight" />
+      <v-list-item
+        v-for="item in itemsRight"
+        :key="item.title"
+      >
+        <!-- Other -->
+        <a
+          v-if="item.type === 'link'"
+          :href="item.url"
+        >{{ item.title }}</a>
+        <!-- Logout -->
+        <a
+          v-if="item.type === 'action'"
+          @click.prevent="$event => item.action()"
+        >{{ item.title }}</a>
+      </v-list-item>
     </v-navigation-drawer>
     <v-main>
       <RouterView />

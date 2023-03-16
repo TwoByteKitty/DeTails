@@ -19,8 +19,6 @@ export const useAuthStore = defineStore({
           };
 
            const user = await(await fetch(LOGIN_URL, requestOptions)).json();
-           console.log(user.userName)
-           console.log(user.token)
            // update pinia state
            this.user = user;
 
