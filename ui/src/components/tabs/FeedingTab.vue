@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { IMeal } from '@/shared/IMeal';
 import { DegreeOfDead, PreyType } from '@/shared/SelectLists.js';
+import { useAuthStore } from '@/stores/auth.store';
 import { generateFeedingSchedule } from '@/utils/feedingSchedule';
 import type { IMealSchedule } from '@/utils/feedingSchedule';
 import Datepicker from '@vuepic/vue-datepicker';
@@ -17,7 +18,7 @@ const defaultMeal: IMeal = {
   preyType: [],
   dOD: '',
   mealWeight: 0,
-  eaten: '',
+  eaten: 'Not Eaten',
   feedComments: '',
 };
 const errorMsg = 'Well... you really screwed up this time...';
@@ -69,9 +70,14 @@ export default {
       const url = `${API_URL}${this.$route.params.id}/feedings/add`;
       delete this.newMeal._id;
       
+      const authStore = useAuthStore();
       const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-access-token': authStore.user.token
+        
+        },
         body: JSON.stringify(this.newMeal),
       };
       this.showAlert = false;
@@ -243,7 +249,7 @@ export default {
                     <v-range-slider
                       class="slider freq-slider"
                       v-model="freqSlider"
-                      :max="45"
+                      :max="60"
                       :min="5"
                       :step="1"
                       strict
@@ -255,9 +261,7 @@ export default {
                           single-line
                           type="number"
                           variant="outlined"
-                          density="compact"
-                          style="width: 70px"
-                          @change="$set(freqSlider, 0, $event)"
+                          style="width: 75px"
                         />
                       </template>
                       <template #append>
@@ -267,9 +271,7 @@ export default {
                           single-line
                           type="number"
                           variant="outlined"
-                          style="width: 70px"
-                          density="compact"
-                          @change="$set(freqSlider, 1, $event)"
+                          style="width: 75px"
                         />
                       </template>
                     </v-range-slider>
@@ -280,8 +282,8 @@ export default {
                       class="slider size-slider"
                       v-model="sizeSlider"
                       :max="500"
-                      :min="0"
-                      :step="0.25"
+                      :min="3"
+                      :step="1"
                       strict
                     >
                       <template #prepend>
@@ -291,9 +293,7 @@ export default {
                           single-line
                           type="number"
                           variant="outlined"
-                          density="compact"
-                          style="width: 70px"
-                          @change="$set(sizeSlider, 0, $event)"
+                          style="width: 75px"
                         />
                       </template>
                       <template #append>
@@ -303,9 +303,7 @@ export default {
                           single-line
                           type="number"
                           variant="outlined"
-                          style="width: 70px"
-                          density="compact"
-                          @change="$set(sizeSlider, 1, $event)"
+                          style="width: 75px"
                         />
                       </template>
                     </v-range-slider>

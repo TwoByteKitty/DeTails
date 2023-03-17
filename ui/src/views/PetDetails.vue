@@ -51,7 +51,7 @@ export default {
 <template>
   <v-card>
     <v-card-title
-      class="text-h2 ma-3"
+      class="text-h2 mt-9 mr-3 ml-3 mb-3"
       display:
       block
     >
@@ -80,16 +80,28 @@ export default {
     </v-tabs>
     <v-window v-model="tab">
       <v-window-item :value="1">
-        <overview-tab v-bind="myPet" />
+        <overview-tab 
+          v-bind="myPet"
+          @overview-edited="getPet"
+        />
       </v-window-item>
       <v-window-item :value="2">
-        <feeding-tab v-bind="myPet" @feeding-added="getPet" />
+        <feeding-tab
+          v-bind="myPet"
+          @feeding-added="getPet"
+        />
       </v-window-item>
       <v-window-item :value="3">
-        <shed-tab v-bind="myPet" @shed-added="getPet" />
+        <shed-tab
+          v-bind="myPet"
+          @shed-added="getPet"
+        />
       </v-window-item>
       <v-window-item :value="4">
-        <weight-tab v-bind="myPet" @weight-added="getPet" />
+        <weight-tab
+          v-bind="myPet"
+          @weight-added="getPet"
+        />
       </v-window-item>
       <v-window-item :value="5">
         <more-tab v-bind="myPet" />

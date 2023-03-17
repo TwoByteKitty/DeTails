@@ -8,6 +8,7 @@ import { DateTime } from 'luxon';
 import type { PropType } from 'vue';
 import WeightLineChart from '../charts/WeightLineChart.vue';
 import EditWeightModal from '../modals/EditWeightModal.vue';
+import { useAuthStore } from '@/stores/auth.store';
 
 const API_URL = `/api/pets/`;
 const defaultWeigh: IWeight = {
@@ -59,9 +60,13 @@ export default {
       const url = `${API_URL}${this.$route.params.id}/weights/add`;
       delete this.newWeight._id;
 
+      const authStore = useAuthStore();
       const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-access-token': authStore.user.token 
+         },
         body: JSON.stringify(this.newWeight),
       };
       this.showAlert = false;

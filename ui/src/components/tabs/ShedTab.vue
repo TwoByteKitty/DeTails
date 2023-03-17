@@ -8,6 +8,7 @@ import { DateTime } from 'luxon';
 import type { PropType } from 'vue';
 import { ref } from 'vue';
 import ShedStkBar from '../charts/ShedStkBar.vue';
+import { useAuthStore } from '@/stores/auth.store';
 
 const API_URL = `/api/pets/`;
 const defaultShed: IShed = {
@@ -66,9 +67,13 @@ export default {
       const url = `${API_URL}${this.$route.params.id}/sheds/add`;
       delete this.newShed._id;
 
+      const authStore = useAuthStore();
       const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-access-token': authStore.user.token 
+        },
         body: JSON.stringify(this.newShed),
       };
       this.showAlert = false;
@@ -255,23 +260,41 @@ export default {
     <v-row>
       <v-col>
         <v-card class="shed-table">
-          <v-table class="data-tbl" fixed-header>
+          <v-table
+            class="data-tbl"
+            fixed-header
+          >
             <thead>
               <tr>
                 <th class="tbl-head text-left">
-                  <a href="#" @click.prevent="$event => sort('pinkBelly', 'date')">Pink Belly</a>
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('pinkBelly', 'date')"
+                  >Pink Belly</a>
                 </th>
                 <th class="tbl-head text-left">
-                  <a href="#" @click.prevent="$event => sort('blueEyes', 'date')">Blue Eyes</a>
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('blueEyes', 'date')"
+                  >Blue Eyes</a>
                 </th>
                 <th class="tbl-head text-left">
-                  <a href="#" @click.prevent="$event => sort('clearEyes', 'date')">Clear Eyes</a>
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('clearEyes', 'date')"
+                  >Clear Eyes</a>
                 </th>
                 <th class="tbl-head text-left">
-                  <a href="#" @click.prevent="$event => sort('shedSkin', 'date')">Skin Shed</a>
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('shedSkin', 'date')"
+                  >Skin Shed</a>
                 </th>
                 <th class="tbl-head text-left">
-                  <a href="#" @click.prevent="$event => sort('entire', 'string')">Entire?</a>
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('entire', 'string')"
+                  >Entire?</a>
                 </th>
                 <th class="tbl-head text-left">
                   Comments
@@ -279,7 +302,10 @@ export default {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in (sortedHistory as Array<IShed>)" :key="item._id">
+              <tr
+                v-for="item in (sortedHistory as Array<IShed>)"
+                :key="item._id"
+              >
                 <td>{{ formatDate(item.pinkBelly) }}</td>
                 <td>{{ formatDate(item.blueEyes) }}</td>
                 <td>{{ formatDate(item.clearEyes) }}</td>
