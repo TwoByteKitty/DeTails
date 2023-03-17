@@ -34,11 +34,11 @@ export default {
   methods: {
     async createPet() {
       const url = `${API_URL}`;
-      const authStore = useAuthStore();
+      const { user: {userName, token} } = useAuthStore();
       const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-access-token': authStore.user.token },
-        body: JSON.stringify(this.myPet),
+        headers: { 'Content-Type': 'application/json', 'x-access-token': token },
+        body: JSON.stringify({...this.myPet, userName}),
       };
       this.showRegResult = false;
 
@@ -147,7 +147,10 @@ export default {
                 value="male"
                 class="pr-6"
               />
-              <v-radio label="Unknown" value="unknown" />
+              <v-radio
+                label="Unknown"
+                value="unknown"
+              />
             </v-radio-group>
           </v-col>
         </v-row>
