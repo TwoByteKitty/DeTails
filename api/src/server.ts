@@ -2,21 +2,23 @@ import dotenv from 'dotenv';
 import express, { Application } from 'express';
 import morgan from 'morgan';
 import path from 'path';
-import db, { DB_CONNECTION_STRING } from './config/db';
+import db from './config/db';
 import router from './routes/index';
 import { FILE_UPLOAD_PATH } from './utils/constants';
 
-//-- Constants ---------------------------------------------------------------
-const LOG_MODE: string = process.env.NODE_ENV === 'production' ? 'common' : 'dev';
 const ENV_PATH = path.resolve(__dirname, '..', '..', '.env');
-const IMAGE_UPLOAD_PATH = path.join(__dirname, '..', '..', '..', FILE_UPLOAD_PATH);
-
-//-- .env --------------------------------------------------------------------
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config({
     path: ENV_PATH,
   });
 }
+
+//-- Constants ---------------------------------------------------------------
+const LOG_MODE: string = process.env.NODE_ENV === 'production' ? 'common' : 'dev';
+const IMAGE_UPLOAD_PATH = path.join(__dirname, '..', '..', '..', FILE_UPLOAD_PATH);
+
+//-- .env --------------------------------------------------------------------
+const DB_CONNECTION_STRING = process.env.MONGODB_URI || 'mongodb://127.0.0.1/DeTail';
 
 //-- Express -----------------------------------------------------------------
 const app: Application = express();

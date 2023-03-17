@@ -8,6 +8,7 @@ import { DateTime } from 'luxon';
 import type { PropType } from 'vue';
 import { ref } from 'vue';
 import ShedStkBar from '../charts/ShedStkBar.vue';
+import { useAuthStore } from '@/stores/auth.store';
 
 const API_URL = `/api/pets/`;
 const defaultShed: IShed = {
@@ -31,7 +32,6 @@ export default {
   },
   data() {
     return {
-      // alertType: 'success',
       alertIsError: false,
       alertMsg: successMsg,
       showAlert: false,
@@ -66,9 +66,13 @@ export default {
       const url = `${API_URL}${this.$route.params.id}/sheds/add`;
       delete this.newShed._id;
 
+      const authStore = useAuthStore();
       const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-access-token': authStore.user.token 
+        },
         body: JSON.stringify(this.newShed),
       };
       this.showAlert = false;
@@ -159,9 +163,16 @@ export default {
     <v-card class="ma-3 pa-6">
       <v-row>
         <v-col>
-          <div class="chart-card">
-            <shed-stk-bar :shed-history="shedHistory" />
-          </div>
+          <v-card
+            v-if="shedHistory.length"
+            class="chart-wrap"
+          >
+            <v-row>
+              <v-col>
+                <shed-stk-bar :shed-history="shedHistory" />
+              </v-col>
+            </v-row>
+          </v-card>
         </v-col>
       </v-row>
     </v-card>
@@ -170,7 +181,7 @@ export default {
     </v-row>
     <v-row>
       <v-col>
-        <v-card class="elevation-6 ma-6 pa-6">
+        <v-card class="new-data-form elevation-6 ma-6 pa-6">
           <v-card-title>Add New Shed Cycle Data</v-card-title>
           <v-row class="d-flex justify-center align-center">
             <v-col>
@@ -254,24 +265,43 @@ export default {
     </v-row>
     <v-row>
       <v-col>
-        <v-card class="shed-table">
-          <v-table class="data-tbl" fixed-header>
+        <v-card class="tbl-wrap shed-tbl">
+          <v-card-title>Shed History</v-card-title>
+          <v-table
+            class="data-tbl"
+            fixed-header
+          >
             <thead>
               <tr>
                 <th class="tbl-head text-left">
-                  <a href="#" @click.prevent="$event => sort('pinkBelly', 'date')">Pink Belly</a>
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('pinkBelly', 'date')"
+                  >Pink Belly</a>
                 </th>
                 <th class="tbl-head text-left">
-                  <a href="#" @click.prevent="$event => sort('blueEyes', 'date')">Blue Eyes</a>
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('blueEyes', 'date')"
+                  >Blue Eyes</a>
                 </th>
                 <th class="tbl-head text-left">
-                  <a href="#" @click.prevent="$event => sort('clearEyes', 'date')">Clear Eyes</a>
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('clearEyes', 'date')"
+                  >Clear Eyes</a>
                 </th>
                 <th class="tbl-head text-left">
-                  <a href="#" @click.prevent="$event => sort('shedSkin', 'date')">Skin Shed</a>
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('shedSkin', 'date')"
+                  >Skin Shed</a>
                 </th>
                 <th class="tbl-head text-left">
-                  <a href="#" @click.prevent="$event => sort('entire', 'string')">Entire?</a>
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('entire', 'string')"
+                  >Entire?</a>
                 </th>
                 <th class="tbl-head text-left">
                   Comments
@@ -279,7 +309,10 @@ export default {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in (sortedHistory as Array<IShed>)" :key="item._id">
+              <tr
+                v-for="item in (sortedHistory as Array<IShed>)"
+                :key="item._id"
+              >
                 <td>{{ formatDate(item.pinkBelly) }}</td>
                 <td>{{ formatDate(item.blueEyes) }}</td>
                 <td>{{ formatDate(item.clearEyes) }}</td>
@@ -296,19 +329,8 @@ export default {
 </template>
 
 <style lang="css" scoped>
-.chart-card {
-  height: 700px;
-  width: 1800px;
-  max-width: 1500px;
-  overflow-x: scroll;
-  margin: 3px;
-  padding: 3px;
-}
-.chart-box {
-  height: 100%;
-}
-.v-card {
-  padding: 6px;
+.chart-wrap {
+  margin:auto;
 }
 .shed-btn {
   background-color: var(--md-ref-palette-tertiary50);
@@ -316,8 +338,5 @@ export default {
   width: 600px;
   height: 60px;
 }
-.shed-table,
-.tbl-head {
-  background-color: #4a454e !important;
-}
+
 </style>

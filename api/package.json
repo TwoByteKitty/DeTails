@@ -10,7 +10,7 @@
     "build": "npx tsc",
     "test": "test",
     "start": "node dist/index.js",
-    "dev": "set NODE_ENV=development && concurrently \"npx tsc --watch\" \"nodemon -q dist/**\""
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/**\""
   },
   "author": "",
   "license": "ISC",

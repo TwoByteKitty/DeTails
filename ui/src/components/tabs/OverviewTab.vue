@@ -1,26 +1,35 @@
 <script lang="ts">
-import EditModal from "../EditModal.vue";
+import type { PropType } from "vue";
+import EditOverviewModal from "../modals/EditOverviewModal.vue";
+import type { IShed } from "@/shared/IShed";
+import type { IMeal } from "@/shared/IMeal";
+import type { IWeight } from "@/shared/IWeight";
 
 const API_URL = `/api/pets/`;
 
 export default {
   name: "OverviewTab",
+  emits: [ 'overviewEdited' ],
   props: {
     // eslint-disable-next-line vue/prop-name-casing
-    _id: { type: String, required: true, default:'' },
-    name: { type: String, required: true, default:'' },
-    type: { type: String, required: true, default:'' },
-    species: { type: String, required: true, default:'' },
-    dateOfBirth: { type: String, required: true, default:'' },
-    description: { type: String, required: false, default:'' },
-    petImages: { type: Array<String>, required: false, default:'' },
-  },
+    _id: { type: String, required: true, default: '' },
+    name: { type: String, required: true, default: '' },
+    type: { type: String, required: true, default: '' },
+    species: { type: String, required: true, default: '' },
+    sex: { type: String, required: true, default: '' },
+    dateOfBirth: { type: String, required: true, default: '' },
+    description: { type: String, required: false, default: '' },
+    petImages: { type: Array<String>, required: false, default: '' },
+    shedHistory: { type: Array as PropType<Array<IShed>>, required: true },
+    feedingHistory: { type: Array as PropType<Array<IMeal>>, required: true },
+    weightHistory: { type: Array as PropType<Array<IWeight>>, required: true },
+    },
   data() {
     return {
       image: [],
     };
   },
-  components: { EditModal },
+  components: { EditOverviewModal },
   methods: {
     async uploadImage() {
       const imageToUpload: File = this.image[0];
@@ -90,29 +99,12 @@ export default {
         <v-card-title class="d-flex justify-space-between">
           <span> Overview </span>
           <span>
-            <edit-modal
-              v-bind="{ _id, name, type, species, dateOfBirth, description }"
+            <edit-overview-modal
+              v-bind="{ _id, name, sex, species, dateOfBirth, description }"
+              @overview-edited="$event => $emit('overviewEdited')"
             />
           </span>
         </v-card-title>
-        <v-row>
-          <v-col>
-            <v-card-subtitle class="overview-inline">
-              Type:
-            </v-card-subtitle>
-            <v-card-text class="overview-inline">
-              {{ type }}
-            </v-card-text>
-          </v-col>
-          <v-col>
-            <v-card-subtitle class="overview-inline">
-              Weight:
-            </v-card-subtitle>
-            <v-card-text class="overview-inline">
-              {{ type }}
-            </v-card-text>
-          </v-col>
-        </v-row>
         <v-row>
           <v-col>
             <v-card-subtitle class="overview-inline">
@@ -124,10 +116,28 @@ export default {
           </v-col>
           <v-col>
             <v-card-subtitle class="overview-inline">
+              Weight:
+            </v-card-subtitle>
+            <v-card-text class="overview-inline">
+              {{ weightHistory.length? `${weightHistory[weightHistory.length - 1].weighAmt} ${weightHistory[0].weighUnits}` : 'No Record' }}
+            </v-card-text>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-card-subtitle class="overview-inline">
+              Sex:
+            </v-card-subtitle>
+            <v-card-text class="overview-inline">
+              {{ sex }}
+            </v-card-text>
+          </v-col>
+          <v-col>
+            <v-card-subtitle class="overview-inline">
               Last Meal:
             </v-card-subtitle>
             <v-card-text class="overview-inline">
-              {{ type }}
+              {{ feedingHistory.length? feedingHistory[feedingHistory.length - 1].feedDate : 'No Record' }}
             </v-card-text>
           </v-col>
         </v-row>
@@ -145,7 +155,7 @@ export default {
               Last Shed:
             </v-card-subtitle>
             <v-card-text class="overview-inline">
-              {{ type }}
+              {{ shedHistory.length? shedHistory[shedHistory.length - 1].shedSkin : 'No Record' }}
             </v-card-text>
           </v-col>
         </v-row>
