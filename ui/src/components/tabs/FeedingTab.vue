@@ -39,7 +39,6 @@ export default {
       },
       DegreeOfDead,
       PreyType,
-      alertType: 'success',
       alertIsError: false,
       alertMsg: successMsg,
       showAlert: false,
@@ -129,9 +128,13 @@ export default {
     async editFeedingSchedule(mealSchedule: Array<IMealSchedule>) {
       const url = `${API_URL}/${this.$route.params.id}/feeding-schedule`;
 
+      const authStore = useAuthStore();
       const requestOptions = {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-access-token': authStore.user.token
+        },
         body: JSON.stringify({ _id: this.$route.params.id, mealSchedule }),
       };
 
@@ -330,7 +333,7 @@ export default {
     </v-row>
     <v-row>
       <v-col>
-        <v-card class="elevation-6 ma-9 pa-9">
+        <v-card class="new-data-form elevation-6 ma-9 pa-9">
           <v-card-title>Enter New Meal Data</v-card-title>
           <v-divider />
           <v-row class="mt-6">
@@ -340,7 +343,6 @@ export default {
                 v-model="newMeal.feedDate"
                 :enable-time-picker="false"
                 model-type="yyyy-MM-dd"
-                auto-apply
                 dark
               />
             </v-col>
@@ -429,7 +431,7 @@ export default {
     </v-row>
     <v-row>
       <v-col>
-        <v-card class="meal-tbl-card">
+        <v-card class="tbl-wrap meal-tbl">
           <v-card-title>Meal History</v-card-title>
           <v-divider />
           <v-table
@@ -560,8 +562,5 @@ export default {
   width: 600px;
   height: 60px;
 }
-.meal-tbl-card {
-  background-color: var(--md-sys-color-inverse-on-surface-dark);
-  padding: 6px;
-}
+
 </style>

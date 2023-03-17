@@ -158,11 +158,30 @@ export default {
 </script>
 
 <template>
-  <div class="chart-box ma-3 pa-6" :style="chartBoxWidth">
-    <Bar
-      id="shed-chart"
-      :options="chartOptions"
-      :data="chartData"
-    />
+  <div class="chart-card">
+    <div
+      class="chart-box ma-3 pa-6"
+      :style="chartBoxWidth"
+    >
+      <Bar
+        id="shed-chart"
+        :options="chartOptions"
+        :data="chartData"
+      />
+    </div>
   </div>
 </template>
+
+<style lang="css">
+.chart-card {
+  height: 700px;
+  width: 1800px;
+  max-width: 1500px;
+  overflow-x: scroll;
+  margin: 3px auto;
+  padding: 3px;
+}
+.chart-box {
+  height: 100%;
+}
+</style>

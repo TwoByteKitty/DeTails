@@ -119,7 +119,7 @@ export default {
               Weight:
             </v-card-subtitle>
             <v-card-text class="overview-inline">
-              {{ weightHistory.length? `${weightHistory[0].weighAmt} ${weightHistory[0].weighUnits}` : 'No Record' }}
+              {{ weightHistory.length? `${weightHistory[weightHistory.length - 1].weighAmt} ${weightHistory[0].weighUnits}` : 'No Record' }}
             </v-card-text>
           </v-col>
         </v-row>
@@ -137,7 +137,7 @@ export default {
               Last Meal:
             </v-card-subtitle>
             <v-card-text class="overview-inline">
-              {{ feedingHistory.length? feedingHistory[0].feedDate : 'No Record' }}
+              {{ feedingHistory.length? feedingHistory[feedingHistory.length - 1].feedDate : 'No Record' }}
             </v-card-text>
           </v-col>
         </v-row>
@@ -155,7 +155,7 @@ export default {
               Last Shed:
             </v-card-subtitle>
             <v-card-text class="overview-inline">
-              {{ shedHistory.length? shedHistory[0].shedSkin : 'No Record' }}
+              {{ shedHistory.length? shedHistory[shedHistory.length - 1].shedSkin : 'No Record' }}
             </v-card-text>
           </v-col>
         </v-row>

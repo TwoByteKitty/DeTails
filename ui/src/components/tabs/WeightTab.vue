@@ -31,7 +31,6 @@ export default {
   data() {
     return {
       WeighUnits,
-      alertType: 'success',
       alertIsError: false,
       alertMsg: successMsg,
       showAlert: false,
@@ -166,7 +165,7 @@ export default {
           </v-col>
         </v-row>
       </v-card>
-      <v-card class="new-weigh-card elevation-6 ma-3 pa-6">
+      <v-card class="new-data-form elevation-6 ma-3 pa-6">
         <v-card-title>Add New Weight Data</v-card-title>
         <v-row class="d-flex justify-center align-center">
           <v-col>
@@ -229,7 +228,7 @@ export default {
           </v-alert>
         </div>
       </v-card>
-      <v-card class="tbl-wrap weight-tbl pa-3">
+      <v-card class="tbl-wrap weight-tbl">
         <v-card-title>Weight History</v-card-title>
         <v-table
           class="data-tbl"
@@ -288,17 +287,6 @@ export default {
 <style lang="css" scoped>
 .chart-wrap {
   margin:auto;
-}
-.chart-card {
-  height: 700px;
-  width: 1800px;
-  max-width: 1500px;
-  overflow-x: scroll;
-  margin: 3px auto;
-  padding: 3px;
-}
-.chart-box {
-  height: 100%;
 }
 .pb-22 {
   padding-bottom: 22px;

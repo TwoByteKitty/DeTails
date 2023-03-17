@@ -167,7 +167,10 @@ export default {
 
 <template>
   <div class="chart-card">
-    <div class="chart-box" :style="chartBoxWidth">
+    <div
+      class="chart-box"
+      :style="chartBoxWidth"
+    >
       <Line
         id="my-chart-id"
         :options="chartOptions"
@@ -183,7 +186,7 @@ export default {
   width: 1800px;
   max-width: 1500px;
   overflow-x: scroll;
-  margin: 3px;
+  margin: 3px auto;
   padding: 3px;
 }
 .chart-box {
