@@ -2,20 +2,37 @@ import { Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
 import { IPet, Pet } from '../models/pet';
+import { User } from '../models/user';
 import { FEEDINGS_VIRTUAL_NAME, FILE_UPLOAD_PATH, SHEDS_VIRTUAL_NAME, WEIGHTS_VIRTUAL_NAME } from '../utils/constants';
 
-const getAllPets = (request: Request, response: Response) => {
-  Pet.find()
-    .sort({ date: -1 })
-    .then((foundPets: Array<IPet>) => response.json(foundPets))
-    .catch((err: any) => response.status(422).json(err));
+interface IPetRequestBody {
+  userName: string;
+}
+interface IAddPetRequestBody extends IPet {
+  userName: string;
+}
+
+const getAllPets = async (request: Request<{}, {}, IPetRequestBody>, response: Response) => {
+  const { userName } = request.body;
+  try {
+    const user = await User.findOne({ userName });
+    const foundPets = await Pet.find({ ownerId: user?._id }).sort({ date: -1 });
+    response.json(foundPets);
+  } catch (error) {
+    response.status(422).json(error);
+  }
 };
 
-const addPet = (request: Request<{}, {}, IPet>, response: Response) => {
+const addPet = async (request: Request<{}, {}, IAddPetRequestBody>, response: Response) => {
   const newPet: IPet = request.body;
-  Pet.create(newPet)
-    .then((createdPet: IPet) => response.json(createdPet))
-    .catch((err: any) => response.status(500).json(err));
+  const { userName } = request.body;
+  try {
+    const user = await User.findOne({ userName });
+    const createdPet = Pet.create({ ...newPet, ownerId: user?._id });
+    response.json(createdPet);
+  } catch (error: any) {
+    response.status(500).json(error);
+  }
 };
 
 const editPet = (request: Request<{}, {}, IPet>, response: Response) => {

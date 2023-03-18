@@ -19,11 +19,12 @@ export default {
 
   methods: {
     async fetchData() {
-      const authStore = useAuthStore();
+      const { user: {userName, token} } = useAuthStore();
       const url = `${API_URL}`;
       const requestOptions = {
          method: 'GET',
-         headers: { 'x-access-token': authStore.user.token },
+         headers: { 'x-access-token': token },
+         body: JSON.stringify({ userName}),
       };
       this.myPets = await (await fetch(url, requestOptions)).json();
     },
@@ -32,25 +33,40 @@ export default {
 </script>
 
 <template>
-  <v-container fluid nogutters>
+  <v-container
+    fluid
+    nogutters
+  >
     <v-toolbar flat>
       <v-toolbar-title> My Pets </v-toolbar-title>
       <v-spacer />
       <div d-flex>
-        <v-btn class="ma-2 pa-1" icon>
+        <v-btn
+          class="ma-2 pa-1"
+          icon
+        >
           <v-icon> fa:fas fa-thin fa-magnifying-glass </v-icon>
         </v-btn>
-        <v-btn class="ma-2 pa-1" icon>
+        <v-btn
+          class="ma-2 pa-1"
+          icon
+        >
           <v-icon> fa:fas fa-thin fa-list </v-icon>
         </v-btn>
-        <v-btn class="ma-2 pa-1" icon>
+        <v-btn
+          class="ma-2 pa-1"
+          icon
+        >
           <v-icon> fa:fas fa-thin fa-circle-sort </v-icon>
         </v-btn>
       </div>
     </v-toolbar>
 
     <v-list lines="two">
-      <v-list-item v-for="{ name, _id, species } in myPets" :key="_id">
+      <v-list-item
+        v-for="{ name, _id, species } in myPets"
+        :key="_id"
+      >
         <v-card class="ma-2">
           <v-row>
             <v-col>

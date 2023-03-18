@@ -1,14 +1,14 @@
-import { Schema, model } from 'mongoose';
-import { IShed } from './herpetofauna/shed';
-import { IFeed } from './herpetofauna/feeding';
-import { IWeight } from './weight';
-import { IVet } from './vetVisit';
+import { model, Schema } from 'mongoose';
 import {
-  WEIGHTS_VIRTUAL_NAME,
-  SHEDS_VIRTUAL_NAME,
   FEEDINGS_VIRTUAL_NAME,
+  SHEDS_VIRTUAL_NAME,
   VISITS_VIRTUAL_NAME,
+  WEIGHTS_VIRTUAL_NAME,
 } from '../utils/constants';
+import { IFeed } from './herpetofauna/feeding';
+import { IShed } from './herpetofauna/shed';
+import { IVet } from './vetVisit';
+import { IWeight } from './weight';
 
 export type PetType = 'cat' | 'dog' | 'reptile' | 'amphibian' | 'fish' | 'lizard';
 export type SexType = 'male' | 'female';
@@ -28,6 +28,7 @@ export interface IPet {
   shedHistory: Array<IShed>;
   weightHistory: Array<IWeight>;
   vetHistory: Array<IVet>;
+  ownerId: string;
 }
 
 const petSchema = new Schema<IPet>(
@@ -40,6 +41,7 @@ const petSchema = new Schema<IPet>(
     description: { type: String, required: true },
     petImages: { type: [String], required: false },
     mealSchedule: { type: [{}], required: false },
+    ownerId: { type: String, required: true },
   },
   { toJSON: { virtuals: true } }
 );
