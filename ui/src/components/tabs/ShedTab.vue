@@ -167,7 +167,7 @@ export default {
             v-if="shedHistory.length"
             class="chart-wrap"
           >
-            <v-row>
+            <v-row v-if="shedHistory.length">
               <v-col>
                 <shed-stk-bar :shed-history="shedHistory" />
               </v-col>

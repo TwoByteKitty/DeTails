@@ -3,6 +3,8 @@ import type { IPet } from '@/shared/IPet';
 import { PetType } from '@/shared/SelectLists.js';
 import { useAuthStore } from '@/stores/auth.store';
 import { RouterLink } from 'vue-router';
+import Datepicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 
 const API_URL = `/api/pets/add/`;
 const defaultPet: IPet = {
@@ -17,7 +19,7 @@ const errorMsg = 'Failed to register new pet.';
 const successMsg = 'New pet registration succeeded!  ';
 
 export default {
-  components: { RouterLink },
+  components: { RouterLink, Datepicker },
   data: () => ({
     PetType,
     showRegResult: false,
@@ -35,11 +37,13 @@ export default {
     async createPet() {
       const url = `${API_URL}`;
       const { user: {userName, token} } = useAuthStore();
+      console.log(this.myPet)
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-access-token': token },
-        body: JSON.stringify({...this.myPet, userName}),
+        body: JSON.stringify({pet:this.myPet, userName}),
       };
+      console.log(requestOptions.body)
       this.showRegResult = false;
 
       fetch(url, requestOptions)

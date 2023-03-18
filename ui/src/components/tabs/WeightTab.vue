@@ -159,7 +159,7 @@ export default {
         v-if="weightHistory.length"
         class="chart-wrap"
       >
-        <v-row>
+        <v-row v-if="weightHistory.length">
           <v-col>
             <weight-line-chart :weight-history="weightHistory" />
           </v-col>

@@ -13,7 +13,7 @@ const upload = multer({
 });
 
 // Pets CRUD
-router.get('/', getAllPets);
+router.post('/', getAllPets);
 router.get('/:id', getSinglePet);
 router.put('/:id', editPet);
 router.put('/:id/feeding-schedule', addMealSchedule);
