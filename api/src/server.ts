@@ -28,14 +28,15 @@ const app: Application = express();
 db.connect(DB_CONNECTION_STRING);
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(cors());
+  app.use(cors({ origin: true }));
+  app.options('*', cors());
+  console.log('Cors Enabled');
 }
 
 //-- Middleware --------------------------------------------------------------
 app.use(morgan(LOG_MODE));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.options('*', cors());
 
 //-- Controller Routes -------------------------------------------------------
 app.use('/images', express.static(IMAGE_UPLOAD_PATH));
