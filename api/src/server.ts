@@ -1,3 +1,4 @@
+import cors from 'cors';
 import dotenv from 'dotenv';
 import express, { Application } from 'express';
 import morgan from 'morgan';
@@ -25,6 +26,10 @@ const app: Application = express();
 
 //-- Mongoose Setup ----------------------------------------------------------
 db.connect(DB_CONNECTION_STRING);
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(cors());
+}
 
 //-- Middleware --------------------------------------------------------------
 app.use(morgan(LOG_MODE));

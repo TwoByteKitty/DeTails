@@ -1,6 +1,7 @@
 <script lang="ts">
 import { useAuthStore } from '@/stores/auth.store';
-const API_URL = `/api/user/create/`;
+import { getApiUrl } from '@/utils/constants';
+const API_URL = `api/user/create/`;
 
 export default {
    data:() =>({
@@ -37,7 +38,7 @@ export default {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(this.form),
          };
-         fetch(API_URL, requestOptions)
+         fetch(getApiUrl(API_URL), requestOptions)
            .then(async (response) => {
              const data = await response.json();
              console.log(data);

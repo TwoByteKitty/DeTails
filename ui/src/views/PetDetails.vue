@@ -1,12 +1,13 @@
 <script lang="ts">
 import MoreTab from '@/components/tabs/MoreTab.vue';
 import { useAuthStore } from '@/stores/auth.store';
+import { getApiUrl } from '@/utils/constants';
 import FeedingTab from '../components/tabs/FeedingTab.vue';
 import OverviewTab from '../components/tabs/OverviewTab.vue';
 import ShedTab from '../components/tabs/ShedTab.vue';
 import WeightTab from '../components/tabs/WeightTab.vue';
 
-const API_URL = `/api/pets/`;
+const API_URL = `api/pets/`;
 export default {
   components: { OverviewTab, WeightTab, FeedingTab, ShedTab, MoreTab },
   data (){
@@ -43,7 +44,7 @@ export default {
          method: 'GET',
          headers: { 'x-access-token': authStore.user.token },
       };
-      this.myPet = await (await fetch(url, requestOptions)).json();
+      this.myPet = await (await fetch(getApiUrl(url), requestOptions)).json();
     },
   },
 };

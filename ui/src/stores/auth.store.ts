@@ -1,7 +1,8 @@
 import router from '@/router';
+import { getApiUrl } from '@/utils/constants';
 import { defineStore } from 'pinia';
 
-const LOGIN_URL = '/api/user/login';
+const LOGIN_URL = 'api/user/login';
 
 export const useAuthStore = defineStore({
    id: 'auth',
@@ -18,7 +19,7 @@ export const useAuthStore = defineStore({
             body: JSON.stringify({userName, password}),
           };
 
-           const user = await(await fetch(LOGIN_URL, requestOptions)).json();
+           const user = await(await fetch(getApiUrl(LOGIN_URL), requestOptions)).json();
            // update pinia state
            this.user = user;
 

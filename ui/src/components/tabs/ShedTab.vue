@@ -1,5 +1,7 @@
 <script lang="ts">
 import type { IShed } from '@/shared/IShed';
+import { useAuthStore } from '@/stores/auth.store';
+import { getApiUrl } from '@/utils/constants';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import 'chartjs-adapter-luxon';
@@ -8,9 +10,8 @@ import { DateTime } from 'luxon';
 import type { PropType } from 'vue';
 import { ref } from 'vue';
 import ShedStkBar from '../charts/ShedStkBar.vue';
-import { useAuthStore } from '@/stores/auth.store';
 
-const API_URL = `/api/pets/`;
+const API_URL = `api/pets/`;
 const defaultShed: IShed = {
   _id: '',
   pinkBelly: '',
@@ -69,15 +70,15 @@ export default {
       const authStore = useAuthStore();
       const requestOptions = {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'x-access-token': authStore.user.token 
+          'x-access-token': authStore.user.token
         },
         body: JSON.stringify(this.newShed),
       };
       this.showAlert = false;
 
-      fetch(url, requestOptions)
+      fetch(getApiUrl(url), requestOptions)
         .then(async (response) => {
           const data = await response.json();
 
