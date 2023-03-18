@@ -53,8 +53,6 @@ export default {
   <v-card>
     <v-card-title
       class="text-h2 mt-9 mr-3 ml-3 mb-3"
-      display:
-      block
     >
       {{ myPet.name }}
     </v-card-title>
