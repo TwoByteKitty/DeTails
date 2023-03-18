@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth.store';
+import { getApiUrl } from '@/utils/constants';
 import { RouterLink } from 'vue-router';
 </script>
 <script lang="ts">
-const API_URL = `/api/pets`;
+const API_URL = `api/pets`;
 
 export default {
   data: () => ({
@@ -27,7 +28,7 @@ export default {
          body: JSON.stringify({ userName }),
       };
       console.log(requestOptions.body)
-      this.myPets = await (await fetch(url, requestOptions)).json();
+      this.myPets = await (await fetch(getApiUrl(url), requestOptions)).json();
     },
   },
 };

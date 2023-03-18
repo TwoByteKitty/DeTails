@@ -1,9 +1,10 @@
 <script lang="ts">
 import { WeighUnits } from '@/shared/SelectLists';
 import { useAuthStore } from '@/stores/auth.store';
+import { getApiUrl } from '@/utils/constants';
 import { DateTime } from 'luxon';
 
-const API_URL = `/api/pets/weights`;
+const API_URL = `api/pets/weights`;
 const DATE_FORMAT_STRING = 'yyyy-MM-dd';
 const errorMsg = 'Well... you really screwed up this time...';
 const successMsg = "I'm a success alert! Congratulations!";
@@ -101,14 +102,14 @@ export default {
 
       const requestOptions = {
         method: 'PUT',
-        headers: { 
-          'Content-Type': 'application/json', 
-          'x-access-token': authStore.user.token  
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': authStore.user.token
         },
         body: JSON.stringify({ ...this.fields }),
       };
 
-      fetch(url, requestOptions)
+      fetch(getApiUrl(url), requestOptions)
         .then(this.editSuccess)
         .catch(this.editError);
     },
@@ -164,9 +165,9 @@ export default {
               />
             </v-col>
             <v-col cols="12">
-              <v-textarea 
-                v-model="fields.weighComments" 
-                label="Comments" 
+              <v-textarea
+                v-model="fields.weighComments"
+                label="Comments"
               />
             </v-col>
           </v-row>

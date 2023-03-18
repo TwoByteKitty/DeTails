@@ -2,11 +2,12 @@
 import type { IPet } from '@/shared/IPet';
 import { PetType } from '@/shared/SelectLists.js';
 import { useAuthStore } from '@/stores/auth.store';
-import { RouterLink } from 'vue-router';
+import { getApiUrl } from '@/utils/constants';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
+import { RouterLink } from 'vue-router';
 
-const API_URL = `/api/pets/add/`;
+const API_URL = `api/pets/add/`;
 const defaultPet: IPet = {
   name: '',
   type: null,
@@ -46,7 +47,7 @@ export default {
       console.log(requestOptions.body)
       this.showRegResult = false;
 
-      fetch(url, requestOptions)
+      fetch(getApiUrl(url), requestOptions)
         .then(async (response) => {
           const data = await response.json();
 

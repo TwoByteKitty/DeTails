@@ -1,8 +1,9 @@
 <script lang="ts">
 import { useAuthStore } from '@/stores/auth.store';
+import { getApiUrl } from '@/utils/constants';
 
 
-const API_URL = `/api/pets/`;
+const API_URL = `api/pets/`;
 const errorMsg = 'Well... you really screwed up this time...';
 const successMsg = "I'm a success alert! Congratulations!";
 
@@ -76,18 +77,18 @@ export default {
   methods: {
     async editPet() {
       const url = `${API_URL}/${this.$route.params.id}`;
-      
+
       const authStore = useAuthStore();
       const requestOptions = {
         method: 'PUT',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'x-access-token': authStore.user.token 
+          'x-access-token': authStore.user.token
         },
         body: JSON.stringify({ ...this.fields }),
       };
 
-      fetch(url, requestOptions)
+      fetch(getApiUrl(url), requestOptions)
         .then(async (response) => {
           const data = await response.json();
 

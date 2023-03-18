@@ -2,6 +2,7 @@
 import type { IMeal } from '@/shared/IMeal';
 import { DegreeOfDead, PreyType } from '@/shared/SelectLists.js';
 import { useAuthStore } from '@/stores/auth.store';
+import { getApiUrl } from '@/utils/constants';
 import type { IMealSchedule } from '@/utils/feedingSchedule';
 import { generateFeedingSchedule } from '@/utils/feedingSchedule';
 import Datepicker from '@vuepic/vue-datepicker';
@@ -10,7 +11,7 @@ import { DateTime } from 'luxon';
 import { Calendar } from 'v-calendar';
 import type { PropType } from 'vue';
 
-const API_URL = `/api/pets/`;
+const API_URL = `api/pets/`;
 const defaultMeal: IMeal = {
   _id: '',
   feedDate: '',
@@ -144,7 +145,7 @@ computed:{
         body: JSON.stringify({ _id: this.$route.params.id, mealSchedule }),
       };
 
-      fetch(url, requestOptions)
+      fetch(getApiUrl(url), requestOptions)
         .then(async (response) => {
           const data = await response.json();
             console.log(data);

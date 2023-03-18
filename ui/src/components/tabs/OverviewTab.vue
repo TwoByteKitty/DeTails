@@ -1,11 +1,12 @@
 <script lang="ts">
+import type { IMeal } from "@/shared/IMeal";
+import type { IShed } from "@/shared/IShed";
+import type { IWeight } from "@/shared/IWeight";
+import { getApiUrl } from "@/utils/constants";
 import type { PropType } from "vue";
 import EditOverviewModal from "../modals/EditOverviewModal.vue";
-import type { IShed } from "@/shared/IShed";
-import type { IMeal } from "@/shared/IMeal";
-import type { IWeight } from "@/shared/IWeight";
 
-const API_URL = `/api/pets/`;
+const API_URL = `api/pets/`;
 
 export default {
   name: "OverviewTab",
@@ -37,7 +38,7 @@ export default {
       data.append("petImage", imageToUpload, imageToUpload.name);
 
       // send fetch along with cookies
-      const response = await fetch(`${API_URL}/${this._id}/addImage`, {
+      const response = await fetch(getApiUrl(`${API_URL}/${this._id}/addImage`), {
         method: "POST",
         body: data,
       });
