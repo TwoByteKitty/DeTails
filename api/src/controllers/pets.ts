@@ -9,6 +9,7 @@ interface IPetRequestBody {
   userName: string;
 }
 interface IAddPetRequestBody extends IPet {
+  pet: IPet;
   userName: string;
 }
 
@@ -16,6 +17,9 @@ const getAllPets = async (request: Request<{}, {}, IPetRequestBody>, response: R
   const { userName } = request.body;
   try {
     const user = await User.findOne({ userName });
+    if (user === null) {
+      throw new Error('User not found');
+    }
     const foundPets = await Pet.find({ ownerId: user?._id }).sort({ date: -1 });
     response.json(foundPets);
   } catch (error) {
@@ -24,11 +28,14 @@ const getAllPets = async (request: Request<{}, {}, IPetRequestBody>, response: R
 };
 
 const addPet = async (request: Request<{}, {}, IAddPetRequestBody>, response: Response) => {
-  const newPet: IPet = request.body;
   const { userName } = request.body;
+  const { pet } = request.body;
   try {
     const user = await User.findOne({ userName });
-    const createdPet = Pet.create({ ...newPet, ownerId: user?._id });
+    if (user === null) {
+      throw new Error('User not found');
+    }
+    const createdPet = Pet.create({ ...pet, ownerId: user?._id });
     response.json(createdPet);
   } catch (error: any) {
     response.status(500).json(error);

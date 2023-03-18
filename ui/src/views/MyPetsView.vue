@@ -22,10 +22,11 @@ export default {
       const { user: {userName, token} } = useAuthStore();
       const url = `${API_URL}`;
       const requestOptions = {
-         method: 'GET',
-         headers: { 'x-access-token': token },
-         body: JSON.stringify({ userName}),
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json', 'x-access-token': token },
+         body: JSON.stringify({ userName }),
       };
+      console.log(requestOptions.body)
       this.myPets = await (await fetch(url, requestOptions)).json();
     },
   },

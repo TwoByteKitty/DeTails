@@ -114,7 +114,7 @@ computed:{
     },
 
     mapFeedingScheduleToCalendar(schedule: Array<IMealSchedule>){
-      return schedule.map(({ weight, date }: IMealSchedule, index) => ({
+      return schedule && schedule.map(({ weight, date }: IMealSchedule, index) => ({
         key: index + 1,
         customData: {
           weight,

@@ -159,8 +159,8 @@ export default {
         v-if="weightHistory.length"
         class="chart-wrap"
       >
-        <v-row>
-          <v-col>
+        <v-row v-if="weightHistory.length">
+          <v-col style="display:grid">
             <weight-line-chart :weight-history="weightHistory" />
           </v-col>
         </v-row>

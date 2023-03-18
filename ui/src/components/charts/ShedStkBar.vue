@@ -148,7 +148,7 @@ export default {
       const widthObj = { width: '1500px' };
       const totalLabels = getXAxisMinMax(this.shedHistory).duration;
       if (totalLabels > 5) {
-        widthObj.width = `${1500 + (totalLabels - 5) * 42}px`;
+        widthObj.width = `${1500 + ((totalLabels - 5) * 18)}px`;
       }
       return widthObj;
     },
@@ -172,13 +172,13 @@ export default {
   </div>
 </template>
 
-<style lang="css">
+<style lang="css" scoped>
 .chart-card {
-  height: 700px;
-  width: 1800px;
+  height: 900px;
   max-width: 1500px;
   overflow-x: scroll;
-  margin: 3px auto;
+  overflow-y: hidden;
+  justify-self: center;
   padding: 3px;
 }
 .chart-box {
