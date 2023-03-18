@@ -1,8 +1,8 @@
 <script lang="ts">
 import type { IWeight } from '@/shared/IWeight';
+import type { PropType } from 'vue';
 import 'chartjs-plugin-style';
 import { DateTime } from 'luxon';
-import type { PropType } from 'vue';
 import { Line } from 'vue-chartjs';
 
 const DATE_FORMAT_STRING = 'yyyy-MM-dd';
@@ -127,7 +127,7 @@ export default {
   methods: {
     formatDate(timestamp: string) {
       return DateTime.fromISO(timestamp).toLocaleString(DateTime.DATE_SHORT);
-    },
+    }
   },
   computed: {
     chartData() {
@@ -136,13 +136,12 @@ export default {
           {
             label: 'weight in grams',
             borderColor: 'rgba(56, 30, 114, 1)',
-            backgroundColor: 'rgba(56, 30, 114, 0.75)',
-            borderWidth: 3.9,
-            pointRadius: 9,
-            pointHoverRadius: 15,
-            pointStyle: 'rectRounded',
-            rotation: 45,
-            tension: 0.39,
+            backgroundColor: 'rgba(56, 30, 114, 0.6)',
+            borderWidth: 3,
+            pointRadius: 12,
+            pointHoverRadius: 21,
+            pointStyle: 'triangle',
+            tension: 0.3,
             data: this.weightHistory.map(({ weighAmt, weighDate }) => ({
               x: DateTime.fromISO(weighDate).toFormat(DATE_FORMAT_STRING),
               y: weighAmt,
@@ -153,11 +152,10 @@ export default {
     },
     chartBoxWidth() {
       console.log(getXAxisMinMax(this.weightHistory).duration);
-      // This is the problem
       const widthObj = { width: '1500px' };
       const totalLabels = getXAxisMinMax(this.weightHistory).duration;
       if (totalLabels > 5) {
-        widthObj.width = `${1500 + (totalLabels - 5) * 42}px`;
+        widthObj.width = `${1500 + ((totalLabels - 5) * 99)}px`;
       }
       return widthObj;
     },
@@ -166,13 +164,14 @@ export default {
 </script>
 
 <template>
-  <div class="chart-card">
+  <div
+    class="chart-card"
+  >
     <div
       class="chart-box"
       :style="chartBoxWidth"
     >
       <Line
-        id="my-chart-id"
         :options="chartOptions"
         :data="chartData"
       />
@@ -182,11 +181,11 @@ export default {
 
 <style lang="css" scoped>
 .chart-card {
-  height: 700px;
-  width: 1800px;
+  height: 900px;
   max-width: 1500px;
   overflow-x: scroll;
-  margin: 3px auto;
+  overflow-y: hidden;
+  justify-self: center;
   padding: 3px;
 }
 .chart-box {

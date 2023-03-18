@@ -160,7 +160,7 @@ export default {
         class="chart-wrap"
       >
         <v-row v-if="weightHistory.length">
-          <v-col>
+          <v-col style="display:grid">
             <weight-line-chart :weight-history="weightHistory" />
           </v-col>
         </v-row>
