@@ -2,8 +2,8 @@
 import type { IMeal } from '@/shared/IMeal';
 import { DegreeOfDead, PreyType } from '@/shared/SelectLists.js';
 import { useAuthStore } from '@/stores/auth.store';
-import { generateFeedingSchedule } from '@/utils/feedingSchedule';
 import type { IMealSchedule } from '@/utils/feedingSchedule';
+import { generateFeedingSchedule } from '@/utils/feedingSchedule';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { DateTime } from 'luxon';
@@ -29,7 +29,8 @@ export default {
   components: { Calendar, Datepicker },
   emits: [ 'feedingAdded' ],
   props: {
-    feedingHistory: { type: Array as PropType<Array<IMeal>>, required: true },
+   feedingHistory: { type: Array as PropType<Array<IMeal>>, required: true },
+   feedingSchedule: { type: Array as PropType<Array<IMealSchedule>>, required: true },
   },
 
   data() {
@@ -50,7 +51,6 @@ export default {
       //   type: 'date',
       //   order: 1,
       // },
-      feedingSchedule: new Array<{ customData: {}; dates: Date }>(),
     };
   },
 
@@ -59,7 +59,11 @@ export default {
   //     return [...this.shedHistory].sort(this.sortMethods(this.currentSort));
   //   },
   // },
-
+computed:{
+   feedingScheduleDisplay(){
+      return this.mapFeedingScheduleToCalendar(this.feedingSchedule)
+   }
+},
   methods: {
     formatDate(timestamp: string) {
       return DateTime.fromISO(timestamp).toLocaleString(DateTime.DATE_SHORT);
@@ -68,14 +72,14 @@ export default {
     createMeal() {
       const url = `${API_URL}${this.$route.params.id}/feedings/add`;
       delete this.newMeal._id;
-      
+
       const authStore = useAuthStore();
       const requestOptions = {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'x-access-token': authStore.user.token
-        
+
         },
         body: JSON.stringify(this.newMeal),
       };
@@ -109,10 +113,8 @@ export default {
         });
     },
 
-    createFeedingSchedule() {
-      const schedule: Array<IMealSchedule> = generateFeedingSchedule(this.freqSlider, this.sizeSlider);
-      console.log(schedule);
-      this.feedingSchedule = schedule.map(({ weight, date }: IMealSchedule, index) => ({
+    mapFeedingScheduleToCalendar(schedule: Array<IMealSchedule>){
+      return schedule.map(({ weight, date }: IMealSchedule, index) => ({
         key: index + 1,
         customData: {
           weight,
@@ -121,7 +123,11 @@ export default {
         dates: new Date(date),
         bar: 'purple'
       }));
-      console.log(this.feedingSchedule);
+    },
+
+    createFeedingSchedule() {
+      const schedule: Array<IMealSchedule> = generateFeedingSchedule(this.freqSlider, this.sizeSlider);
+      console.log(schedule);
       this.editFeedingSchedule(schedule);
     },
 
@@ -131,7 +137,7 @@ export default {
       const authStore = useAuthStore();
       const requestOptions = {
         method: 'PUT',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'x-access-token': authStore.user.token
         },
@@ -142,6 +148,7 @@ export default {
         .then(async (response) => {
           const data = await response.json();
             console.log(data);
+            this.$emit('feedingAdded');
           if (!response.ok) {
             // get error message from body or default to response status
             const error = (data && data.message) || response.status;
@@ -218,7 +225,7 @@ export default {
               <calendar
                 class="custom-calendar max-w-full"
                 :masks="masks"
-                :attributes="feedingSchedule"
+                :attributes="feedingScheduleDisplay"
                 disable-page-swipe
                 is-expanded
                 is-dark

@@ -22,6 +22,7 @@ export default {
         dateOfBirthFormatted:'',
         description: '',
         petImages: [],
+        feedingSchedule: [],
         feedingHistory:[],
         shedHistory:[],
         weightHistory:[]
@@ -80,7 +81,7 @@ export default {
     </v-tabs>
     <v-window v-model="tab">
       <v-window-item :value="1">
-        <overview-tab 
+        <overview-tab
           v-bind="myPet"
           @overview-edited="getPet"
         />
