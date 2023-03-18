@@ -35,9 +35,10 @@ if (process.env.NODE_ENV === 'production') {
 app.use(morgan(LOG_MODE));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use('/images', express.static(IMAGE_UPLOAD_PATH));
+app.options('*', cors());
 
 //-- Controller Routes -------------------------------------------------------
+app.use('/images', express.static(IMAGE_UPLOAD_PATH));
 app.use('/api', router);
 
 export default app;
