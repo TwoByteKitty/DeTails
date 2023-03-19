@@ -1,45 +1,30 @@
 import cors from 'cors';
-import dotenv from 'dotenv';
 import express, { Application } from 'express';
+import fileUpload from 'express-fileupload';
 import morgan from 'morgan';
-import path from 'path';
-import db from './config/db';
 import router from './routes/index';
-import { FILE_UPLOAD_PATH } from './utils/constants';
 
-const ENV_PATH = path.resolve(__dirname, '..', '..', '.env');
-if (process.env.NODE_ENV !== 'production') {
-  dotenv.config({
-    path: ENV_PATH,
-  });
-}
+const IS_PRODUCTION: boolean = process.env.NODE_ENV === 'production';
+const LOG_MODE: string = IS_PRODUCTION ? 'common' : 'dev';
+const PORT: string = process.env.PORT as string;
 
-//-- Constants ---------------------------------------------------------------
-const LOG_MODE: string = process.env.NODE_ENV === 'production' ? 'common' : 'dev';
-const IMAGE_UPLOAD_PATH = path.join(__dirname, '..', '..', '..', FILE_UPLOAD_PATH);
-
-//-- .env --------------------------------------------------------------------
-const DB_CONNECTION_STRING = process.env.MONGODB_URI || 'mongodb://127.0.0.1/DeTail';
-
-//-- Express -----------------------------------------------------------------
 const app: Application = express();
 
-//-- Mongoose Setup ----------------------------------------------------------
-db.connect(DB_CONNECTION_STRING);
-
-if (process.env.NODE_ENV === 'production') {
+if (IS_PRODUCTION) {
   app.use(cors({ origin: true }));
   app.options('*', cors());
   console.log('Cors Enabled');
 }
 
-//-- Middleware --------------------------------------------------------------
 app.use(morgan(LOG_MODE));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(fileUpload());
 
-//-- Controller Routes -------------------------------------------------------
-app.use('/images', express.static(IMAGE_UPLOAD_PATH));
 app.use('/api', router);
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server listening on port ${PORT}...`);
+});
 
 export default app;

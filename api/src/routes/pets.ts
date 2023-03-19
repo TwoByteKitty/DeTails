@@ -1,23 +1,17 @@
 import express, { Router } from 'express';
-import multer from 'multer';
-import path from 'path';
 import { addFeeding, getAllFeedingsByPet, getSingleFeeding } from '../controllers/herpetofauna/feedings';
 import { addShed, getAllShedsByPet, getSingleShed } from '../controllers/herpetofauna/sheds';
-import { addPet, addPetImage, editPet, getAllPets, getSinglePet, addMealSchedule } from '../controllers/pets';
+import { addMealSchedule, addPet, addPetImage, editPet, getAllPets, getSinglePet } from '../controllers/pets';
 import { addWeight, editWeight, getAllWeightsByPet, getSingleWeight } from '../controllers/weights';
-import { FILE_UPLOAD_PATH } from '../utils/constants';
 
 const router: Router = express.Router();
-const upload = multer({
-  dest: path.join(__dirname, '..', '..', '..', '..', FILE_UPLOAD_PATH),
-});
 
 // Pets CRUD
 router.post('/', getAllPets);
 router.get('/:id', getSinglePet);
 router.put('/:id', editPet);
 router.put('/:id/feeding-schedule', addMealSchedule);
-router.post('/:id/addImage', upload.single('petImage'), addPetImage);
+router.post('/:id/addImage', addPetImage);
 router.post('/add', addPet);
 
 //Sheds CRUD

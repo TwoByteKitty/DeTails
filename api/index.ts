@@ -1,8 +1,14 @@
-import app from './src/server';
+import dotenv from 'dotenv';
+import path from 'path';
 
-const PORT = process.env.PORT || 3001;
+//-- .env --------------------------------------------------------------------
+const ENV_PATH = path.resolve(__dirname, '..', '.env');
 
-//-- Main --------------------------------------------------------------------
-app.listen(PORT, () => {
-  console.log(`🚀 Server listening on port ${PORT}...`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config({
+    path: ENV_PATH,
+  });
+}
+
+require('./src/services/db');
+require('./src/server');

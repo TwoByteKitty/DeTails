@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { verifyToken } from '../config/auth';
+import { verifyToken } from '../services/auth';
 import petsRouter from './pets';
 import userRouter from './user';
 

@@ -1,12 +1,14 @@
 import { model, Schema } from 'mongoose';
 import {
   FEEDINGS_VIRTUAL_NAME,
+  IMAGES_VIRTUAL_NAME,
   SHEDS_VIRTUAL_NAME,
   VISITS_VIRTUAL_NAME,
   WEIGHTS_VIRTUAL_NAME,
 } from '../utils/constants';
 import { IFeed } from './herpetofauna/feeding';
 import { IShed } from './herpetofauna/shed';
+import { IPetImage } from './image';
 import { IVet } from './vetVisit';
 import { IWeight } from './weight';
 
@@ -22,7 +24,7 @@ export interface IPet {
   dateOfBirth: Date;
   dateOfBirthFormatted: string;
   description: string;
-  petImages: Array<string>;
+  petImages: Array<IPetImage>;
   mealSchedule: Array<{}>;
   feedingHistory: Array<IFeed>;
   shedHistory: Array<IShed>;
@@ -39,7 +41,6 @@ const petSchema = new Schema<IPet>(
     sex: { type: String, required: true },
     dateOfBirth: { type: Date, required: true },
     description: { type: String, required: true },
-    petImages: { type: [String], required: false },
     mealSchedule: { type: [{}], required: false },
     ownerId: { type: String, required: true },
   },
@@ -66,6 +67,12 @@ petSchema.virtual(WEIGHTS_VIRTUAL_NAME, {
 
 petSchema.virtual(VISITS_VIRTUAL_NAME, {
   ref: 'VetVisit',
+  localField: '_id',
+  foreignField: 'petId',
+});
+
+petSchema.virtual(IMAGES_VIRTUAL_NAME, {
+  ref: 'PetImage',
   localField: '_id',
   foreignField: 'petId',
 });
