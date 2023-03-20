@@ -1,8 +1,8 @@
 <script lang="ts">
-import type { IPet } from '@/shared/IPet';
+import type { IPet } from '@/shared/interfaces/IPet';
 import { PetType } from '@/shared/SelectLists.js';
 import { useAuthStore } from '@/stores/auth.store';
-import { getApiUrl } from '@/utils/constants';
+import { POST } from '@/utils/fetch';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { RouterLink } from 'vue-router';
@@ -36,42 +36,24 @@ export default {
 
   methods: {
     async createPet() {
-      const url = `${API_URL}`;
       const { user: {userName, token} } = useAuthStore();
-      console.log(this.myPet)
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-access-token': token },
-        body: JSON.stringify({pet:this.myPet, userName}),
-      };
-      console.log(requestOptions.body)
       this.showRegResult = false;
+      try{
+         const data = await POST(API_URL, {pet:this.myPet, userName}, token);
 
-      fetch(getApiUrl(url), requestOptions)
-        .then(async (response) => {
-          const data = await response.json();
+         this.alertMsg = successMsg;
+         this.resultIsError = false;
+         this.showRegResult = true;
+         this.myPet = { ...defaultPet };
+         this.createdPetId = data._id;
+         console.log(data);
+      }catch(error){
+         console.log(error);
 
-          // check for error response
-          if (!response.ok) {
-            // get error message from body or default to response status
-            const error = (data && data.message) || response.status;
-            return Promise.reject(error);
-          } else {
-            this.alertMsg = successMsg;
-            this.resultIsError = false;
-            this.showRegResult = true;
-            this.myPet = { ...defaultPet };
-
-            this.createdPetId = data._id;
-          }
-          console.log(data);
-        })
-        .catch((error) => {
-          console.error(errorMsg, error);
-          this.alertMsg = errorMsg;
-          this.resultIsError = true;
-          this.showRegResult = true;
-        });
+         this.alertMsg = errorMsg;
+         this.resultIsError = true;
+         this.showRegResult = true;
+      }
     },
   },
 };

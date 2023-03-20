@@ -1,7 +1,7 @@
 <script lang="ts">
 import MoreTab from '@/components/tabs/MoreTab.vue';
 import { useAuthStore } from '@/stores/auth.store';
-import { getApiUrl } from '@/utils/constants';
+import { GET } from '@/utils/fetch';
 import FeedingTab from '../components/tabs/FeedingTab.vue';
 import OverviewTab from '../components/tabs/OverviewTab.vue';
 import ShedTab from '../components/tabs/ShedTab.vue';
@@ -38,13 +38,12 @@ export default {
 
   methods: {
     async getPet() {
-      const url = `${API_URL}${this.$route.params.id}`;
-      const authStore = useAuthStore();
-      const requestOptions = {
-         method: 'GET',
-         headers: { 'x-access-token': authStore.user.token },
-      };
-      this.myPet = await (await fetch(getApiUrl(url), requestOptions)).json();
+      try{
+      // TODO convert to querystring
+      this.myPet = await GET(`${API_URL}${this.$route.params.id}`, useAuthStore().user.token);
+      }catch(error){
+         console.log(error)
+      }
     },
   },
 };

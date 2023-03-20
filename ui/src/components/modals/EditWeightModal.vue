@@ -1,7 +1,8 @@
 <script lang="ts">
+import type { IError } from '@/shared/interfaces/IError';
 import { WeighUnits } from '@/shared/SelectLists';
 import { useAuthStore } from '@/stores/auth.store';
-import { getApiUrl } from '@/utils/constants';
+import { PUT } from '@/utils/fetch';
 import { DateTime } from 'luxon';
 
 const API_URL = `api/pets/weights`;
@@ -72,46 +73,36 @@ export default {
     },
   },
   methods: {
-    async editSuccess(response: any){
-      const data = await response.json();
-      // check for error response
-      if (!response.ok) {
-        const error = (data && data.message) || response.status;
-        return Promise.reject(error);
-      } else {
-        console.log(data);
-        this.$emit('weightEdited');
-        this.alertMsg = successMsg;
-        this.alertIsError = false;
-        this.showAlert = true;
-        setTimeout(() => {
-          this.showAlert = false;
-          this.modalIsOpen = false;
-        }, 1000);
-      }
+    editSuccess(data: any){
+      console.log(data);
+      this.$emit('weightEdited');
+      this.alertMsg = successMsg;
+      this.alertIsError = false;
+      this.showAlert = true;
+      setTimeout(() => {
+        this.showAlert = false;
+        this.modalIsOpen = false;
+      }, 1000);
     },
-    async editError(error: any){
+    editError(error: any){
+      const { logout } = useAuthStore();
+      const caughtError = error as IError;
       console.error(errorMsg, error);
+      if(caughtError.type === 'AUTH'){
+         logout()
+      }else{
       this.alertMsg = errorMsg;
       this.alertIsError = true;
       this.showAlert = true;
+      }
     },
     async editPet() {
-      const url = `${API_URL}/${this._id}`;
-      const authStore = useAuthStore();
-
-      const requestOptions = {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-access-token': authStore.user.token
-        },
-        body: JSON.stringify({ ...this.fields }),
-      };
-
-      fetch(getApiUrl(url), requestOptions)
-        .then(this.editSuccess)
-        .catch(this.editError);
+      try{
+         const data = await PUT(`${API_URL}/${this._id}`, this.fields, useAuthStore().user.token);
+         this.editSuccess(data);
+      }catch(error){
+         this.editError(error)
+      }
     },
     formatDate(timestamp: string) {
       return DateTime.fromISO(timestamp).toFormat(DATE_FORMAT_STRING);

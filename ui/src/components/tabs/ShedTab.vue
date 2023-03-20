@@ -1,7 +1,7 @@
 <script lang="ts">
-import type { IShed } from '@/shared/IShed';
+import type { IShed } from '@/shared/interfaces/IShed';
 import { useAuthStore } from '@/stores/auth.store';
-import { getApiUrl } from '@/utils/constants';
+import { getApiUrl } from '@/utils/fetch';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import 'chartjs-adapter-luxon';

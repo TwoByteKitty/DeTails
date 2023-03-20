@@ -1,6 +1,6 @@
 <script lang="ts">
 import { useAuthStore } from '@/stores/auth.store';
-import { getApiUrl } from '@/utils/constants';
+import { POST } from '@/utils/fetch';
 const API_URL = `api/user/create/`;
 
 export default {
@@ -31,19 +31,11 @@ export default {
       const { valid } = await form.validate();
       this.isValid == valid;
       if(valid){
-         const authStore = useAuthStore();
+         const { login } = useAuthStore();
          this.loading = true;
-         const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(this.form),
-         };
-         fetch(getApiUrl(API_URL), requestOptions)
-           .then(async (response) => {
-             const data = await response.json();
-             console.log(data);
-             return authStore.login(this.form);
-           });
+         const data = await POST(API_URL, this.form)
+         console.log(data);
+         login(this.form);
       }
      },
    },

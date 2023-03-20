@@ -1,6 +1,6 @@
 <script lang="ts">
 import { useAuthStore } from '@/stores/auth.store';
-import { getApiUrl } from '@/utils/constants';
+import { PUT } from '@/utils/fetch';
 
 
 const API_URL = `api/pets/`;
@@ -76,43 +76,23 @@ export default {
   },
   methods: {
     async editPet() {
-      const url = `${API_URL}/${this.$route.params.id}`;
-
-      const authStore = useAuthStore();
-      const requestOptions = {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-access-token': authStore.user.token
-        },
-        body: JSON.stringify({ ...this.fields }),
-      };
-
-      fetch(getApiUrl(url), requestOptions)
-        .then(async (response) => {
-          const data = await response.json();
-
-          if (!response.ok) {
-            const error = (data && data.message) || response.status;
-            return Promise.reject(error);
-          } else {
-            this.$emit('overviewEdited');
-            this.alertMsg = successMsg;
-            this.alertIsError = false;
-            this.showAlert = true;
-
-            setTimeout(() => {
-              this.showAlert = false;
-              this.modalIsOpen = false;
-            }, 1000);
-          }
-        })
-        .catch((error) => {
-          console.error(errorMsg, error);
-          this.alertMsg = errorMsg;
-          this.alertIsError = true;
-          this.showAlert = true;
-        });
+      try{
+         const data = await PUT(`${API_URL}/${this.$route.params.id}`, this.fields, useAuthStore().user.token);
+         console.log(data);
+         this.$emit('overviewEdited');
+         this.alertMsg = successMsg;
+         this.alertIsError = false;
+         this.showAlert = true;
+         setTimeout(() => {
+           this.showAlert = false;
+           this.modalIsOpen = false;
+         }, 1000);
+      }catch(error){
+         console.error(errorMsg, error);
+         this.alertMsg = errorMsg;
+         this.alertIsError = true;
+         this.showAlert = true;
+      }
     },
   },
 };

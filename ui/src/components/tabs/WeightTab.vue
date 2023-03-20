@@ -1,8 +1,9 @@
 <script lang="ts">
-import type { IWeight } from '@/shared/IWeight';
+import type { IError } from '@/shared/interfaces/IError';
+import type { IWeight } from '@/shared/interfaces/IWeight';
 import { WeighUnits } from '@/shared/SelectLists.js';
 import { useAuthStore } from '@/stores/auth.store';
-import { getApiUrl } from '@/utils/constants';
+import { POST } from '@/utils/fetch';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import 'chartjs-plugin-style';
@@ -56,46 +57,33 @@ export default {
     formatDate(timestamp: string) {
       return DateTime.fromISO(timestamp).toLocaleString(DateTime.DATE_SHORT);
     },
-    createWeight() {
-      const url = `${API_URL}${this.$route.params.id}/weights/add`;
+    async createWeight() {
       delete this.newWeight._id;
-
-      const authStore = useAuthStore();
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-access-token': authStore.user.token
-         },
-        body: JSON.stringify(this.newWeight),
-      };
       this.showAlert = false;
+      const { logout, user: { token } } = useAuthStore();
+      try{
+         const data = await POST(`${API_URL}${this.$route.params.id}/weights/add`, this.newWeight, token);
+         console.log(data);
+         this.$emit('weightAdded');
+         this.alertMsg = successMsg;
+         this.alertIsError = false;
+         this.showAlert = true;
+         this.newWeight = { ...defaultWeigh };
+         setTimeout(() => {
+           this.showAlert = false;
+         }, 9000);
+      }catch(error){
+         const caughtError = error as IError;
+         console.error(errorMsg, error);
+         if(caughtError.type === 'AUTH'){
+            logout()
+         }else{
+         this.alertMsg = errorMsg;
+         this.alertIsError = true;
+         this.showAlert = true;
+         }
 
-      fetch(getApiUrl(url), requestOptions)
-        .then(async (response) => {
-          const data = await response.json();
-
-          if (!response.ok) {
-            const error = (data && data.message) || response.status;
-            return Promise.reject(error);
-          } else {
-            this.$emit('weightAdded');
-            this.alertMsg = successMsg;
-            this.alertIsError = false;
-            this.showAlert = true;
-
-            this.newWeight = { ...defaultWeigh };
-            setTimeout(() => {
-              this.showAlert = false;
-            }, 9000);
-          }
-        })
-        .catch((error) => {
-          console.error(errorMsg, error);
-          this.alertMsg = errorMsg;
-          this.alertIsError = true;
-          this.showAlert = true;
-        });
+      }
     },
     sort: function (sortKey: string, sortType: string) {
       this.currentSort.key = sortKey;

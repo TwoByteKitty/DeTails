@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth.store';
-import { getApiUrl } from '@/utils/constants';
+import { POST } from '@/utils/fetch';
 import { RouterLink } from 'vue-router';
 </script>
 <script lang="ts">
@@ -21,14 +21,11 @@ export default {
   methods: {
     async fetchData() {
       const { user: {userName, token} } = useAuthStore();
-      const url = `${API_URL}`;
-      const requestOptions = {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json', 'x-access-token': token },
-         body: JSON.stringify({ userName }),
-      };
-      console.log(requestOptions.body)
-      this.myPets = await (await fetch(getApiUrl(url), requestOptions)).json();
+      try{
+         this.myPets = await POST(API_URL, userName, token);
+      }catch(error){
+         console.log(error);
+      }
     },
   },
 };

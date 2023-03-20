@@ -1,10 +1,10 @@
 <script lang="ts">
-import type { IMeal } from '@/shared/IMeal';
+import type { IMeal } from '@/shared/interfaces/IMeal';
 import { DegreeOfDead, PreyType } from '@/shared/SelectLists.js';
 import { useAuthStore } from '@/stores/auth.store';
-import { getApiUrl } from '@/utils/constants';
 import type { IMealSchedule } from '@/utils/feedingSchedule';
 import { generateFeedingSchedule } from '@/utils/feedingSchedule';
+import { POST, PUT } from '@/utils/fetch';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { DateTime } from 'luxon';
@@ -70,48 +70,26 @@ computed:{
       return DateTime.fromISO(timestamp).toLocaleString(DateTime.DATE_SHORT);
     },
 
-    createMeal() {
-      const url = `${API_URL}${this.$route.params.id}/feedings/add`;
+    async createMeal() {
       delete this.newMeal._id;
-
-      const authStore = useAuthStore();
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-access-token': authStore.user.token
-
-        },
-        body: JSON.stringify(this.newMeal),
-      };
       this.showAlert = false;
-
-      fetch(getApiUrl(url), requestOptions)
-        .then(async (response) => {
-          const data = await response.json();
-
-          if (!response.ok) {
-            // get error message from body or default to response status
-            const error = (data && data.message) || response.status;
-            return Promise.reject(error);
-          } else {
-            this.$emit('feedingAdded');
-            this.alertMsg = successMsg;
-            this.alertIsError = false;
-            this.showAlert = true;
-
-            this.newMeal = { ...defaultMeal };
-            setTimeout(() => {
-              this.showAlert = false;
-            }, 9000);
-          }
-        })
-        .catch((error) => {
-          console.error(errorMsg, error);
-          this.alertMsg = errorMsg;
+      try{
+         const data = await POST(`${API_URL}${this.$route.params.id}/feedings/add`, this.newMeal, useAuthStore().user.token);
+         console.log(data);
+         this.$emit('feedingAdded');
+         this.alertMsg = successMsg;
+         this.alertIsError = false;
+         this.showAlert = true;
+         this.newMeal = { ...defaultMeal };
+         setTimeout(() => {
+           this.showAlert = false;
+         }, 9000);
+      }catch(error){
+         console.error('There was an error!', error);
+         this.alertMsg = errorMsg;
           this.alertIsError = true;
           this.showAlert = true;
-        });
+      }
     },
 
     mapFeedingScheduleToCalendar(schedule: Array<IMealSchedule>){
@@ -133,32 +111,13 @@ computed:{
     },
 
     async editFeedingSchedule(mealSchedule: Array<IMealSchedule>) {
-      const url = `${API_URL}/${this.$route.params.id}/feeding-schedule`;
-
-      const authStore = useAuthStore();
-      const requestOptions = {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-access-token': authStore.user.token
-        },
-        body: JSON.stringify({ _id: this.$route.params.id, mealSchedule }),
-      };
-
-      fetch(getApiUrl(url), requestOptions)
-        .then(async (response) => {
-          const data = await response.json();
-            console.log(data);
-            this.$emit('feedingAdded');
-          if (!response.ok) {
-            // get error message from body or default to response status
-            const error = (data && data.message) || response.status;
-            return Promise.reject(error);
-          }
-        })
-        .catch((error) => {
-          console.error('There was an error!', error);
-        });
+      try{
+         const data = await PUT(`${API_URL}/${this.$route.params.id}/feeding-schedule`, { _id: this.$route.params.id, mealSchedule }, useAuthStore().user.token);
+         console.log(data);
+         this.$emit('feedingAdded');
+      }catch(error){
+         console.error('There was an error!', error);
+      }
     },
 
     // sort(sortKey: string, sortType: string) {
