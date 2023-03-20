@@ -1,12 +1,14 @@
 <script lang="ts">
 import type { IMeal } from "@/shared/IMeal";
+import type { IPetImage } from "@/shared/IPetImage";
 import type { IShed } from "@/shared/IShed";
 import type { IWeight } from "@/shared/IWeight";
+import { useAuthStore } from "@/stores/auth.store";
 import { getApiUrl } from "@/utils/constants";
 import type { PropType } from "vue";
 import EditOverviewModal from "../modals/EditOverviewModal.vue";
 
-const API_URL = `api/pets/`;
+const API_URL = `api/pets`;
 
 export default {
   name: "OverviewTab",
@@ -20,7 +22,7 @@ export default {
     sex: { type: String, required: true, default: '' },
     dateOfBirth: { type: String, required: true, default: '' },
     description: { type: String, required: false, default: '' },
-    petImages: { type: Array<String>, required: false, default: '' },
+    petImages: { type: Array as PropType<Array<IPetImage>>, required: false, default: new Array<IPetImage>() },
     shedHistory: { type: Array as PropType<Array<IShed>>, required: true },
     feedingHistory: { type: Array as PropType<Array<IMeal>>, required: true },
     weightHistory: { type: Array as PropType<Array<IWeight>>, required: true },
@@ -28,23 +30,29 @@ export default {
   data() {
     return {
       image: [],
+      imageTitle: ''
     };
   },
   components: { EditOverviewModal },
   methods: {
     async uploadImage() {
+      const authStore = useAuthStore();
       const imageToUpload: File = this.image[0];
       const data = new FormData();
       data.append("petImage", imageToUpload, imageToUpload.name);
-
-      // send fetch along with cookies
-      const response = await fetch(getApiUrl(`${API_URL}/${this._id}/addImage`), {
-        method: "POST",
-        body: data,
-      });
-
-      // server responded with http response != 200
-      if (response.status != 200) throw new Error("HTTP response code != 200");
+      data.append("imageTitle", this.imageTitle);
+      try{
+         const response = await fetch(getApiUrl(`${API_URL}/${this._id}/addImage`), {
+            method: "POST",
+            headers: {
+               'x-access-token': authStore.user.token
+            },
+            body: data,
+         });
+         console.log(response);
+      }catch(error){
+         console.log(error);
+      }
     },
   },
 };
@@ -63,7 +71,7 @@ export default {
             <v-carousel-item
               v-for="(currentImg, index) in petImages"
               :key="index"
-              :src="`/images/${currentImg}`"
+              :src="`${currentImg.imagePath}`"
               contain
             />
           </v-carousel>
@@ -84,7 +92,10 @@ export default {
             />
           </v-col>
           <v-col>
-            <v-text-field label="Title" />
+            <v-text-field
+              v-model="imageTitle"
+              label="Title"
+            />
           </v-col>
           <v-col cols="1">
             <v-btn

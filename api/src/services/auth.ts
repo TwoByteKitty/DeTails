@@ -9,13 +9,13 @@ export const verifyToken = (
   const token = request.body.token || request.query.token || request.headers['x-access-token'];
 
   if (!token) {
-    return response.status(403).send('A token is required for authentication');
+    return response.status(403).json({ message: 'A token is required for authentication' });
   }
   try {
     const decoded = jwt.verify(token as string, process.env.JWT_SECRET as Secret);
     request.userToken = decoded;
   } catch (err) {
-    return response.status(401).send('Invalid Token');
+    return response.status(401).json({ message: 'Invalid Token' });
   }
   return next();
 };

@@ -1,10 +1,17 @@
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { Request, Response } from 'express';
-import fs from 'fs';
-import path from 'path';
+import { UploadedFile } from 'express-fileupload';
+import { DateTime } from 'luxon';
+import { IPetImage, PetImage } from '../models/image';
 import { IPet, Pet } from '../models/pet';
 import { User } from '../models/user';
-import { FEEDINGS_VIRTUAL_NAME, FILE_UPLOAD_PATH, SHEDS_VIRTUAL_NAME, WEIGHTS_VIRTUAL_NAME } from '../utils/constants';
-
+import { getUploadParams, s3Client } from '../services/s3';
+import {
+  FEEDINGS_VIRTUAL_NAME,
+  IMAGES_VIRTUAL_NAME,
+  SHEDS_VIRTUAL_NAME,
+  WEIGHTS_VIRTUAL_NAME,
+} from '../utils/constants';
 interface IPetRequestBody {
   userName: string;
 }
@@ -35,7 +42,7 @@ const addPet = async (request: Request<{}, {}, IAddPetRequestBody>, response: Re
     if (user === null) {
       throw new Error('User not found');
     }
-    const createdPet = Pet.create({ ...pet, ownerId: user?._id });
+    const createdPet = await Pet.create({ ...pet, ownerId: user?._id });
     response.json(createdPet);
   } catch (error: any) {
     response.status(500).json(error);
@@ -57,30 +64,29 @@ const addMealSchedule = (request: Request<{}, {}, { _id: string; mealSchedule: A
     .catch((err: any) => response.status(500).json(err));
 };
 
-const addPetImage = (request: Request<{ id: string }>, response: Response) => {
-  const { file } = request;
-  if (file) {
-    const tmp_path = file.path;
+const addPetImage = async (request: Request<{ id: string }, {}, { imageTitle: string }>, response: Response) => {
+  const { files } = request;
+  const { imageTitle } = request.body;
+  if (files) {
+    const fileToUpload = files.petImage as UploadedFile;
+    try {
+      const uploadParams = getUploadParams(fileToUpload);
+      await s3Client.send(new PutObjectCommand(uploadParams));
 
-    /** The original name of the uploaded file
-      stored in the variable "originalname". **/
-    const target_path = path.join(__dirname, '..', '..', '..', '..', FILE_UPLOAD_PATH, file.originalname);
+      const image: IPetImage = {
+        uploadDate: DateTime.now().toLocaleString(),
+        imageTitle: imageTitle,
+        imagePath: `${process.env.AWS_BUCKET_URI}/${uploadParams.Key}`,
+        petId: request.params.id,
+      };
 
-    /** A better way to copy the uploaded file. **/
-    const src = fs.createReadStream(tmp_path);
-    const dest = fs.createWriteStream(target_path);
-    src.pipe(dest);
-    src.on('end', () => {
-      fs.rmSync(tmp_path);
-      Pet.findByIdAndUpdate(request.params.id, { $push: { petImages: file.originalname } }, { new: true, upsert: true })
-        .then((updatedPet: IPet) => response.json(updatedPet))
-        .catch((err: any) => response.status(500).json(err));
-    });
-    src.on('error', (err) => {
-      response.status(403).end('Failed to save file.');
-    });
+      const savedImage = await PetImage.create(image);
+      response.json(savedImage);
+    } catch (err: any) {
+      response.status(500).json(err);
+    }
   } else {
-    response.status(403).end('No file found');
+    response.status(422).end({ message: 'No image found' });
   }
 };
 
@@ -89,6 +95,7 @@ const getSinglePet = (request: Request<{ id: string }>, response: Response) => {
     .populate({ path: FEEDINGS_VIRTUAL_NAME, options: { sort: { feedDate: 1 } } })
     .populate({ path: SHEDS_VIRTUAL_NAME, options: { sort: { pinkBelly: 1 } } })
     .populate({ path: WEIGHTS_VIRTUAL_NAME, options: { sort: { weighDate: 1 } } })
+    .populate({ path: IMAGES_VIRTUAL_NAME, options: { sort: { uploadDate: 1 } } })
     .then((foundPet: any) => response.json(foundPet))
     .catch((err: any) => response.status(422).json(err));
 };
