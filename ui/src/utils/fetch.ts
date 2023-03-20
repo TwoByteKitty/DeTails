@@ -1,6 +1,6 @@
-export const API_DOMAIN = 'https://jellyfish-app-yclr8.ondigitalocean.app';
+const API_HOST = ()=>(location.hostname === 'localhost' ? 'https://jellyfish-app-yclr8.ondigitalocean.app': '');
 
-export const getApiUrl = (path: string) => (`${API_DOMAIN}/${path}`);
+export const API_URL = (path: string) => (`${API_HOST()}/${path}`);
 
 interface IFetchHeaders{
    'Content-Type'?: string|undefined;
@@ -21,7 +21,7 @@ const OPTIONS: IFetchOptions = {
       },
 }
 const doFetch = async (url: string, options: {})=>{
-      return await (await fetch(getApiUrl(url), options)).json();
+      return await (await fetch(API_URL(url), options)).json();
 }
 
 export const GET = async (url:string, token?: string)=>{
