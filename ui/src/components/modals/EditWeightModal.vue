@@ -2,10 +2,9 @@
 import type { IError } from '@/shared/interfaces/IError';
 import { WeighUnits } from '@/shared/SelectLists';
 import { useAuthStore } from '@/stores/auth.store';
-import { PUT } from '@/utils/fetch';
+import { PET_API, PUT } from '@/utils/fetch';
 import { DateTime } from 'luxon';
 
-const API_URL = `api/pets/weights`;
 const DATE_FORMAT_STRING = 'yyyy-MM-dd';
 const errorMsg = 'Well... you really screwed up this time...';
 const successMsg = "I'm a success alert! Congratulations!";
@@ -98,7 +97,7 @@ export default {
     },
     async editPet() {
       try{
-         const data = await PUT(`${API_URL}/${this._id}`, this.fields, useAuthStore().user.token);
+         const data = await PUT(`${PET_API}/weights/${this._id}`, this.fields, useAuthStore().user.token);
          this.editSuccess(data);
       }catch(error){
          this.editError(error)

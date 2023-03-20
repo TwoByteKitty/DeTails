@@ -1,7 +1,6 @@
 <script lang="ts">
 import { useAuthStore } from '@/stores/auth.store';
-import { POST } from '@/utils/fetch';
-const API_URL = `api/user/create/`;
+import { POST, USER_API } from '@/utils/fetch';
 
 export default {
    data:() =>({
@@ -33,7 +32,7 @@ export default {
       if(valid){
          const { login } = useAuthStore();
          this.loading = true;
-         const data = await POST(API_URL, this.form)
+         const data = await POST(`${USER_API}/create`, this.form)
          console.log(data);
          login(this.form);
       }

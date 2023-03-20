@@ -11,7 +11,7 @@ import type { PropType } from 'vue';
 import { ref } from 'vue';
 import ShedStkBar from '../charts/ShedStkBar.vue';
 
-const API_ROUTE = `api/pets`;
+const PET_API = `api/pets`;
 const defaultShed: IShed = {
   _id: '',
   pinkBelly: '',
@@ -64,7 +64,7 @@ export default {
     },
 
     createShed() {
-      const url = `${API_ROUTE}/${this.$route.params.id}/sheds/add`;
+      const url = `${PET_API}/${this.$route.query.id}/sheds/add`;
       delete this.newShed._id;
 
       const authStore = useAuthStore();

@@ -1,9 +1,7 @@
 <script lang="ts">
 import { useAuthStore } from '@/stores/auth.store';
-import { PUT } from '@/utils/fetch';
+import { PET_API, PUT } from '@/utils/fetch';
 
-
-const API_URL = `api/pets/`;
 const errorMsg = 'Well... you really screwed up this time...';
 const successMsg = "I'm a success alert! Congratulations!";
 
@@ -77,7 +75,7 @@ export default {
   methods: {
     async editPet() {
       try{
-         const data = await PUT(`${API_URL}/${this.$route.params.id}`, this.fields, useAuthStore().user.token);
+         const data = await PUT(`${PET_API}/${this.$route.params.id}`, this.fields, useAuthStore().user.token);
          console.log(data);
          this.$emit('overviewEdited');
          this.alertMsg = successMsg;

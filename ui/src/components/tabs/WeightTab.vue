@@ -3,7 +3,7 @@ import type { IError } from '@/shared/interfaces/IError';
 import type { IWeight } from '@/shared/interfaces/IWeight';
 import { WeighUnits } from '@/shared/SelectLists.js';
 import { useAuthStore } from '@/stores/auth.store';
-import { POST } from '@/utils/fetch';
+import { PET_API, POST } from '@/utils/fetch';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import 'chartjs-plugin-style';
@@ -12,7 +12,6 @@ import type { PropType } from 'vue';
 import WeightLineChart from '../charts/WeightLineChart.vue';
 import EditWeightModal from '../modals/EditWeightModal.vue';
 
-const API_URL = `api/pets/`;
 const defaultWeigh: IWeight = {
   _id: '',
   weighDate: '',
@@ -62,7 +61,7 @@ export default {
       this.showAlert = false;
       const { logout, user: { token } } = useAuthStore();
       try{
-         const data = await POST(`${API_URL}${this.$route.params.id}/weights/add`, this.newWeight, token);
+         const data = await POST(`${PET_API}/${this.$route.query.id}/weights/add`, this.newWeight, token);
          console.log(data);
          this.$emit('weightAdded');
          this.alertMsg = successMsg;

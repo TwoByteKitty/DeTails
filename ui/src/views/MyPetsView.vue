@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth.store';
-import { POST } from '@/utils/fetch';
+import { PET_API, POST } from '@/utils/fetch';
 import { RouterLink } from 'vue-router';
 </script>
 <script lang="ts">
-const API_URL = `api/pets`;
 
 export default {
   data: () => ({
@@ -22,7 +21,7 @@ export default {
     async fetchData() {
       const { user: {userName, token} } = useAuthStore();
       try{
-         this.myPets = await POST(API_URL, userName, token);
+         this.myPets = await POST(PET_API, { userName }, token);
       }catch(error){
          console.log(error);
       }
@@ -89,7 +88,7 @@ export default {
             </v-col>
             <v-spacer />
             <v-col class="d-flex justify-end align-center">
-              <router-link :to="{ name: 'pet-details', params: { id: _id } }">
+              <router-link :to="{ name: 'pet-details', query: { id: _id } }">
                 <v-btn
                   class="ma-2 pa-1"
                   variant="flat"

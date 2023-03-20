@@ -4,14 +4,13 @@ import { DegreeOfDead, PreyType } from '@/shared/SelectLists.js';
 import { useAuthStore } from '@/stores/auth.store';
 import type { IMealSchedule } from '@/utils/feedingSchedule';
 import { generateFeedingSchedule } from '@/utils/feedingSchedule';
-import { POST, PUT } from '@/utils/fetch';
+import { PET_API, POST, PUT } from '@/utils/fetch';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { DateTime } from 'luxon';
 import { Calendar } from 'v-calendar';
 import type { PropType } from 'vue';
 
-const API_URL = `api/pets/`;
 const defaultMeal: IMeal = {
   _id: '',
   feedDate: '',
@@ -31,7 +30,7 @@ export default {
   emits: [ 'feedingAdded' ],
   props: {
    feedingHistory: { type: Array as PropType<Array<IMeal>>, required: true },
-   feedingSchedule: { type: Array as PropType<Array<IMealSchedule>>, required: true },
+   mealSchedule: { type: Array as PropType<Array<IMealSchedule>>, required: true },
   },
 
   data() {
@@ -62,7 +61,7 @@ export default {
   // },
 computed:{
    feedingScheduleDisplay(){
-      return this.mapFeedingScheduleToCalendar(this.feedingSchedule)
+      return this.mapFeedingScheduleToCalendar(this.mealSchedule)
    }
 },
   methods: {
@@ -74,7 +73,7 @@ computed:{
       delete this.newMeal._id;
       this.showAlert = false;
       try{
-         const data = await POST(`${API_URL}${this.$route.params.id}/feedings/add`, this.newMeal, useAuthStore().user.token);
+         const data = await POST(`${PET_API}/${this.$route.query.id}/feedings/add`, this.newMeal, useAuthStore().user.token);
          console.log(data);
          this.$emit('feedingAdded');
          this.alertMsg = successMsg;
@@ -112,7 +111,7 @@ computed:{
 
     async editFeedingSchedule(mealSchedule: Array<IMealSchedule>) {
       try{
-         const data = await PUT(`${API_URL}/${this.$route.params.id}/feeding-schedule`, { _id: this.$route.params.id, mealSchedule }, useAuthStore().user.token);
+         const data = await PUT(`${PET_API}/${this.$route.query.id}/feeding-schedule`, { _id: this.$route.query.id, mealSchedule }, useAuthStore().user.token);
          console.log(data);
          this.$emit('feedingAdded');
       }catch(error){

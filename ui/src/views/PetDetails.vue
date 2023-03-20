@@ -1,18 +1,16 @@
 <script lang="ts">
 import MoreTab from '@/components/tabs/MoreTab.vue';
 import { useAuthStore } from '@/stores/auth.store';
-import { GET } from '@/utils/fetch';
+import { GET, PET_API } from '@/utils/fetch';
 import FeedingTab from '../components/tabs/FeedingTab.vue';
 import OverviewTab from '../components/tabs/OverviewTab.vue';
 import ShedTab from '../components/tabs/ShedTab.vue';
 import WeightTab from '../components/tabs/WeightTab.vue';
 
-const API_URL = `api/pets/`;
 export default {
   components: { OverviewTab, WeightTab, FeedingTab, ShedTab, MoreTab },
   data (){
     return {
-      url: API_URL,
       myPet: {
         _id:'',
         name: '',
@@ -23,7 +21,7 @@ export default {
         dateOfBirthFormatted:'',
         description: '',
         petImages: [],
-        feedingSchedule: [],
+        mealSchedule: [],
         feedingHistory:[],
         shedHistory:[],
         weightHistory:[]
@@ -39,8 +37,7 @@ export default {
   methods: {
     async getPet() {
       try{
-      // TODO convert to querystring
-      this.myPet = await GET(`${API_URL}${this.$route.params.id}`, useAuthStore().user.token);
+         this.myPet = await GET(`${PET_API}/${this.$route.query.id}`, useAuthStore().user.token);
       }catch(error){
          console.log(error)
       }
