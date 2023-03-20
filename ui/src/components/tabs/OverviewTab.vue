@@ -49,6 +49,7 @@ export default {
             },
             body: data,
          });
+         this.$emit("overviewEdited");
          console.log(response);
       }catch(error){
          console.log(error);

@@ -86,7 +86,7 @@ computed:{
       };
       this.showAlert = false;
 
-      fetch(url, requestOptions)
+      fetch(getApiUrl(url), requestOptions)
         .then(async (response) => {
           const data = await response.json();
 
