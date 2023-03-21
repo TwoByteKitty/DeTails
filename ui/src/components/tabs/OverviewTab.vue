@@ -4,7 +4,7 @@ import type { IPetImage } from "@/shared/interfaces/IPetImage";
 import type { IShed } from "@/shared/interfaces/IShed";
 import type { IWeight } from "@/shared/interfaces/IWeight";
 import { useAuthStore } from "@/stores/auth.store";
-import { PET_API, POST } from "@/utils/fetch";
+import { PET_API, POST_IMAGE } from "@/utils/fetch";
 import type { PropType } from "vue";
 import EditOverviewModal from "../modals/EditOverviewModal.vue";
 
@@ -39,7 +39,7 @@ export default {
       data.append("petImage", imageToUpload, imageToUpload.name);
       data.append("imageTitle", this.imageTitle);
       try{
-         const response = await POST(`${PET_API}/${this._id}/addImage`, data, useAuthStore().user.token, false)
+         const response = await POST_IMAGE(`${PET_API}/${this._id}/addImage`, data, useAuthStore().user.token)
          this.$emit("overviewEdited");
          console.log(response);
       }catch(error){

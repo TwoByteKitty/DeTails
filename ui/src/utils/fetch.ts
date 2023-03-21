@@ -1,4 +1,4 @@
-const API_HOST = ()=>(location.hostname === 'localhost' ? '': 'https://jellyfish-app-yclr8.ondigitalocean.app');
+const API_HOST = ()=>((location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? '': 'https://jellyfish-app-yclr8.ondigitalocean.app');
 export const PET_API = 'api/pets'
 export const USER_API = 'api/user'
 export const API_URL = (path: string) => (`${API_HOST()}/${path}`);
@@ -14,40 +14,55 @@ interface IFetchOptions{
    body?: {}
 }
 
-const OPTIONS: IFetchOptions = {
-   method: 'GET',
-   headers: {
-      'Content-Type': undefined,
-      'x-access-token': undefined
-   },
-}
 const doFetch = async (url: string, options: {})=>{
       return await (await fetch(API_URL(url), options)).json();
 }
 
 export const GET = async (url:string, token?: string)=>{
-   if(token){
-      OPTIONS.headers['x-access-token'] = token;
+   const options: IFetchOptions = {
+      method: "GET",
+      headers:{}
    }
-   OPTIONS.body = undefined;
-   OPTIONS.method = 'GET'
-   return await doFetch(url, OPTIONS)
+   if(token){
+      options.headers['x-access-token'] = token;
+   }
+   return await doFetch(url, options)
 }
 
-export const POST = async (url:string, data: {}, token?: string, isJSON: boolean = true)=>{
-   if(token){
-      OPTIONS.headers['x-access-token'] = token;
+export const POST = async (url:string, data: {}, token?: string)=>{
+
+   const options: IFetchOptions ={
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
    }
-   OPTIONS.method = 'POST'
-   OPTIONS.headers['Content-Type'] = isJSON ? 'application/json': undefined;
-   OPTIONS.body = isJSON ? JSON.stringify(data) : data;
-   return await doFetch(url, OPTIONS)
+   if(token){
+      options.headers['x-access-token'] = token;
+   }
+   return await doFetch(url, options)
+}
+
+export const POST_IMAGE = async (url:string, data: {}, token: string)=>{
+   const options: IFetchOptions ={
+      method: 'POST',
+      headers: {
+         'x-access-token': token
+      },
+      body: data
+   }
+   return await doFetch(url, options)
 }
 
 export const PUT = async (url:string, data: {}, token: string)=>{
-   OPTIONS.method = 'PUT'
-   OPTIONS.headers['Content-Type'] = 'application/json';
-   OPTIONS.headers['x-access-token'] = token;
-   OPTIONS.body = JSON.stringify(data);
-   return await doFetch(url, OPTIONS)
+   const options: IFetchOptions ={
+      method: 'PUT',
+      headers: {
+         'x-access-token': token,
+         'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+   }
+   return await doFetch(url, options)
 }

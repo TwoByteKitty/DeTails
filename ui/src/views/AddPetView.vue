@@ -71,7 +71,10 @@ export default {
       close-label="Close Alert"
     >
       {{ alertMsg }}
-      <router-link :to="{ name: 'pet-details', query: { id: createdPetId } }">
+      <router-link
+        v-if="!resultIsError"
+        :to="{ name: 'pet-details', query: { id: createdPetId } }"
+      >
         <v-btn
           prepend-icon="fa:fas fa-light fa-arrow-up-right"
         >
