@@ -46,29 +46,26 @@ export default {
       freqSlider: [7, 21],
       sizeSlider: [60, 120],
       newMeal: { ...defaultMeal },
-      // currentSort: {
-      //   key: 'weighDate',
-      //   type: 'date',
-      //   order: 1,
-      // },
+      currentSort: {
+        key: 'feedDate',
+        type: 'date',
+        order: 1,
+      },
     };
   },
 
-  // computed: {
-  //   sortedHistory() {
-  //     return [...this.shedHistory].sort(this.sortMethods(this.currentSort));
-  //   },
-  // },
 computed:{
    feedingScheduleDisplay(){
       return this.mapFeedingScheduleToCalendar(this.mealSchedule)
-   }
+   },
+   sortedHistory() {
+     return [...this.feedingHistory].sort(this.sortMethods(this.currentSort));
+   },
 },
   methods: {
     formatDate(timestamp: string) {
       return DateTime.fromISO(timestamp).toLocaleString(DateTime.DATE_SHORT);
     },
-
     async createMeal() {
       delete this.newMeal._id;
       this.showAlert = false;
@@ -90,7 +87,6 @@ computed:{
           this.showAlert = true;
       }
     },
-
     mapFeedingScheduleToCalendar(schedule: Array<IMealSchedule>){
       return schedule && schedule.map(({ weight, date }: IMealSchedule, index) => ({
         key: index + 1,
@@ -102,13 +98,11 @@ computed:{
         bar: 'purple'
       }));
     },
-
     createFeedingSchedule() {
       const schedule: Array<IMealSchedule> = generateFeedingSchedule(this.freqSlider, this.sizeSlider);
       console.log(schedule);
       this.editFeedingSchedule(schedule);
     },
-
     async editFeedingSchedule(mealSchedule: Array<IMealSchedule>) {
       try{
          const data = await PUT(`${PET_API}/${this.$route.query.id}/feeding-schedule`, { _id: this.$route.query.id, mealSchedule }, useAuthStore().user.token);
@@ -118,57 +112,56 @@ computed:{
          console.error('There was an error!', error);
       }
     },
-
-    // sort(sortKey: string, sortType: string) {
-    //   this.currentSort.key = sortKey;
-    //   this.currentSort.type = sortType;
-    //   this.currentSort.order *= -1;
-    // },
-    // sortMethods({ key, type, order }: { key: string; type: string; order: number }) {
-    //   switch (type) {
-    //     case 'string': {
-    //       return order === 1
-    //         ? (a: IShed, b: IShed) =>
-    //             b[key as keyof IShed] > a[key as keyof IShed]
-    //               ? -1
-    //               : a[key as keyof IShed] > b[key as keyof IShed]
-    //               ? 1
-    //               : 0
-    //         : (a: IShed, b: IShed) =>
-    //             a[key as keyof IShed] > b[key as keyof IShed]
-    //               ? -1
-    //               : b[key as keyof IShed] > a[key as keyof IShed]
-    //               ? 1
-    //               : 0;
-    //     }
-    //     case 'number': {
-    //       console.log('Sorting by number');
-    //       console.log(this.currentSort);
-    //       return order === 1
-    //         ? (a: IShed, b: IShed) => Number(b[key as keyof IShed]) - Number(a[key as keyof IShed])
-    //         : (a: IShed, b: IShed) => Number(a[key as keyof IShed]) - Number(b[key as keyof IShed]);
-    //     }
-    //     case 'date': {
-    //       console.log('Sorting by date');
-    //       console.log(this.currentSort);
-    //       if (order === 1) {
-    //         return (a: IShed, b: IShed) =>
-    //           DateTime.fromISO(b[key as keyof IShed] as string) < DateTime.fromISO(a[key as keyof IShed] as string)
-    //             ? 1
-    //             : DateTime.fromISO(b[key as keyof IShed] as string) > DateTime.fromISO(a[key as keyof IShed] as string)
-    //             ? -1
-    //             : 0;
-    //       } else {
-    //         return (a: IShed, b: IShed) =>
-    //           DateTime.fromISO(a[key as keyof IShed] as string) < DateTime.fromISO(b[key as keyof IShed] as string)
-    //             ? 1
-    //             : DateTime.fromISO(a[key as keyof IShed] as string) > DateTime.fromISO(b[key as keyof IShed] as string)
-    //             ? -1
-    //             : 0;
-    //       }
-    //     }
-    //   }
-    // },
+    sort(sortKey: string, sortType: string) {
+      this.currentSort.key = sortKey;
+      this.currentSort.type = sortType;
+      this.currentSort.order *= -1;
+    },
+    sortMethods({ key, type, order }: { key: string; type: string; order: number }) {
+      switch (type) {
+        case 'string': {
+          return order === 1
+            ? (a: IMeal, b: IMeal) =>
+                b[key as keyof IMeal] > a[key as keyof IMeal]
+                  ? -1
+                  : a[key as keyof IMeal] > b[key as keyof IMeal]
+                  ? 1
+                  : 0
+            : (a: IMeal, b: IMeal) =>
+                a[key as keyof IMeal] > b[key as keyof IMeal]
+                  ? -1
+                  : b[key as keyof IMeal] > a[key as keyof IMeal]
+                  ? 1
+                  : 0;
+        }
+        case 'number': {
+          console.log('Sorting by number');
+          console.log(this.currentSort);
+          return order === 1
+            ? (a: IMeal, b: IMeal) => Number(b[key as keyof IMeal]) - Number(a[key as keyof IMeal])
+            : (a: IMeal, b: IMeal) => Number(a[key as keyof IMeal]) - Number(b[key as keyof IMeal]);
+        }
+        case 'date': {
+          console.log('Sorting by date');
+          console.log(this.currentSort);
+          if (order === 1) {
+            return (a: IMeal, b: IMeal) =>
+              DateTime.fromISO(b[key as keyof IMeal] as string) < DateTime.fromISO(a[key as keyof IMeal] as string)
+                ? 1
+                : DateTime.fromISO(b[key as keyof IMeal] as string) > DateTime.fromISO(a[key as keyof IMeal] as string)
+                ? -1
+                : 0;
+          } else {
+            return (a: IMeal, b: IMeal) =>
+              DateTime.fromISO(a[key as keyof IMeal] as string) < DateTime.fromISO(b[key as keyof IMeal] as string)
+                ? 1
+                : DateTime.fromISO(a[key as keyof IMeal] as string) > DateTime.fromISO(b[key as keyof IMeal] as string)
+                ? -1
+                : 0;
+          }
+        }
+      }
+    },
 
   },
 };
@@ -407,22 +400,40 @@ computed:{
             <thead>
               <tr>
                 <th class="tbl-head text-left">
-                  Date
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('feedDate', 'date')"
+                  >Date</a>
                 </th>
                 <th class="tbl-head text-left">
-                  No. of Prey Item(s)
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('preyNo', 'number')"
+                  >No. of Prey Item(s)</a>
                 </th>
                 <th class="tbl-head text-left">
-                  Type of Prey
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('preyType', 'string')"
+                  >Type of Prey</a>
                 </th>
                 <th class="tbl-head text-left">
-                  Degree of Deadness
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('dOD', 'string')"
+                  >Degree of Deadness</a>
                 </th>
                 <th class="tbl-head text-left">
-                  Apx Total Weight(g)
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('mealWeight', 'number')"
+                  >Apx Total Weight(g)</a>
                 </th>
                 <th class="tbl-head text-left">
-                  Eaten?
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('eaten', 'string')"
+                  >Eaten?</a>
                 </th>
                 <th class="tbl-head text-left">
                   Comments
@@ -431,7 +442,7 @@ computed:{
             </thead>
             <tbody>
               <tr
-                v-for="item in (feedingHistory as Array<IMeal>)"
+                v-for="item in (sortedHistory as Array<IMeal>)"
                 :key="item._id"
               >
                 <td>{{ formatDate(item.feedDate) }}</td>

@@ -8,7 +8,7 @@ import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import 'chartjs-plugin-style';
 import { DateTime } from 'luxon';
-import type { PropType } from 'vue';
+import { ref, type PropType } from 'vue';
 import WeightLineChart from '../charts/WeightLineChart.vue';
 import EditWeightModal from '../modals/EditWeightModal.vue';
 
@@ -45,13 +45,17 @@ export default {
       },
     };
   },
-
+  setup() {
+    const date = ref(new Date());
+    return {
+      date,
+    };
+  },
   computed: {
     sortedHistory() {
       return [...this.weightHistory].sort(this.sortMethods(this.currentSort));
     },
   },
-
   methods: {
     formatDate(timestamp: string) {
       return DateTime.fromISO(timestamp).toLocaleString(DateTime.DATE_SHORT);
