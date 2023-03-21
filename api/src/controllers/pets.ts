@@ -59,7 +59,7 @@ const editPet = (request: Request<{}, {}, IPet>, response: Response) => {
 
 const addMealSchedule = (request: Request<{}, {}, { _id: string; mealSchedule: Array<{}> }>, response: Response) => {
   const { _id, mealSchedule } = request.body;
-  Pet.findByIdAndUpdate(_id, { $set: { mealSchedule } })
+  Pet.findByIdAndUpdate(_id, { mealSchedule })
     .then((updatedPet: any) => response.json(updatedPet))
     .catch((err: any) => response.status(500).json(err));
 };

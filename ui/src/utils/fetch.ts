@@ -1,4 +1,4 @@
-const API_HOST = ()=>(location.hostname === 'localhost' ? 'https://jellyfish-app-yclr8.ondigitalocean.app': '');
+const API_HOST = ()=>(location.hostname === 'localhost' ? '': 'https://jellyfish-app-yclr8.ondigitalocean.app');
 export const PET_API = 'api/pets'
 export const USER_API = 'api/user'
 export const API_URL = (path: string) => (`${API_HOST()}/${path}`);
