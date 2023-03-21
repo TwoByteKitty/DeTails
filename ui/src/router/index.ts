@@ -53,7 +53,7 @@ export const routes = [
     component: () => import('../views/MyPetsView.vue'),
   },
   {
-    path: '/my-pets/:id',
+    path: '/my-pets/details',
     name: 'pet-details',
     pageTitle: 'My Pet Details',
     meta:{

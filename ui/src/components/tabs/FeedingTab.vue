@@ -1,17 +1,16 @@
 <script lang="ts">
-import type { IMeal } from '@/shared/IMeal';
+import type { IMeal } from '@/shared/interfaces/IMeal';
 import { DegreeOfDead, PreyType } from '@/shared/SelectLists.js';
 import { useAuthStore } from '@/stores/auth.store';
-import { getApiUrl } from '@/utils/constants';
 import type { IMealSchedule } from '@/utils/feedingSchedule';
 import { generateFeedingSchedule } from '@/utils/feedingSchedule';
+import { PET_API, POST, PUT } from '@/utils/fetch';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { DateTime } from 'luxon';
 import { Calendar } from 'v-calendar';
 import type { PropType } from 'vue';
 
-const API_URL = `api/pets/`;
 const defaultMeal: IMeal = {
   _id: '',
   feedDate: '',
@@ -31,7 +30,7 @@ export default {
   emits: [ 'feedingAdded' ],
   props: {
    feedingHistory: { type: Array as PropType<Array<IMeal>>, required: true },
-   feedingSchedule: { type: Array as PropType<Array<IMealSchedule>>, required: true },
+   mealSchedule: { type: Array as PropType<Array<IMealSchedule>>, required: true },
   },
 
   data() {
@@ -47,73 +46,47 @@ export default {
       freqSlider: [7, 21],
       sizeSlider: [60, 120],
       newMeal: { ...defaultMeal },
-      // currentSort: {
-      //   key: 'weighDate',
-      //   type: 'date',
-      //   order: 1,
-      // },
+      currentSort: {
+        key: 'feedDate',
+        type: 'date',
+        order: 1,
+      },
     };
   },
 
-  // computed: {
-  //   sortedHistory() {
-  //     return [...this.shedHistory].sort(this.sortMethods(this.currentSort));
-  //   },
-  // },
 computed:{
    feedingScheduleDisplay(){
-      return this.mapFeedingScheduleToCalendar(this.feedingSchedule)
-   }
+      return this.mapFeedingScheduleToCalendar(this.mealSchedule)
+   },
+   sortedHistory() {
+     return [...this.feedingHistory].sort(this.sortMethods(this.currentSort));
+   },
 },
   methods: {
     formatDate(timestamp: string) {
       return DateTime.fromISO(timestamp).toLocaleString(DateTime.DATE_SHORT);
     },
-
-    createMeal() {
-      const url = `${API_URL}${this.$route.params.id}/feedings/add`;
+    async createMeal() {
       delete this.newMeal._id;
-
-      const authStore = useAuthStore();
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-access-token': authStore.user.token
-
-        },
-        body: JSON.stringify(this.newMeal),
-      };
       this.showAlert = false;
-
-      fetch(getApiUrl(url), requestOptions)
-        .then(async (response) => {
-          const data = await response.json();
-
-          if (!response.ok) {
-            // get error message from body or default to response status
-            const error = (data && data.message) || response.status;
-            return Promise.reject(error);
-          } else {
-            this.$emit('feedingAdded');
-            this.alertMsg = successMsg;
-            this.alertIsError = false;
-            this.showAlert = true;
-
-            this.newMeal = { ...defaultMeal };
-            setTimeout(() => {
-              this.showAlert = false;
-            }, 9000);
-          }
-        })
-        .catch((error) => {
-          console.error(errorMsg, error);
-          this.alertMsg = errorMsg;
+      try{
+         const data = await POST(`${PET_API}/${this.$route.query.id}/feedings/add`, this.newMeal, useAuthStore().user.token);
+         console.log(data);
+         this.$emit('feedingAdded');
+         this.alertMsg = successMsg;
+         this.alertIsError = false;
+         this.showAlert = true;
+         this.newMeal = { ...defaultMeal };
+         setTimeout(() => {
+           this.showAlert = false;
+         }, 9000);
+      }catch(error){
+         console.error('There was an error!', error);
+         this.alertMsg = errorMsg;
           this.alertIsError = true;
           this.showAlert = true;
-        });
+      }
     },
-
     mapFeedingScheduleToCalendar(schedule: Array<IMealSchedule>){
       return schedule && schedule.map(({ weight, date }: IMealSchedule, index) => ({
         key: index + 1,
@@ -125,92 +98,70 @@ computed:{
         bar: 'purple'
       }));
     },
-
     createFeedingSchedule() {
       const schedule: Array<IMealSchedule> = generateFeedingSchedule(this.freqSlider, this.sizeSlider);
       console.log(schedule);
       this.editFeedingSchedule(schedule);
     },
-
     async editFeedingSchedule(mealSchedule: Array<IMealSchedule>) {
-      const url = `${API_URL}/${this.$route.params.id}/feeding-schedule`;
-
-      const authStore = useAuthStore();
-      const requestOptions = {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-access-token': authStore.user.token
-        },
-        body: JSON.stringify({ _id: this.$route.params.id, mealSchedule }),
-      };
-
-      fetch(getApiUrl(url), requestOptions)
-        .then(async (response) => {
-          const data = await response.json();
-            console.log(data);
-            this.$emit('feedingAdded');
-          if (!response.ok) {
-            // get error message from body or default to response status
-            const error = (data && data.message) || response.status;
-            return Promise.reject(error);
-          }
-        })
-        .catch((error) => {
-          console.error('There was an error!', error);
-        });
+      try{
+         const data = await PUT(`${PET_API}/${this.$route.query.id}/feeding-schedule`, { _id: this.$route.query.id, mealSchedule }, useAuthStore().user.token);
+         console.log(data);
+         this.$emit('feedingAdded');
+      }catch(error){
+         console.error('There was an error!', error);
+      }
     },
-
-    // sort(sortKey: string, sortType: string) {
-    //   this.currentSort.key = sortKey;
-    //   this.currentSort.type = sortType;
-    //   this.currentSort.order *= -1;
-    // },
-    // sortMethods({ key, type, order }: { key: string; type: string; order: number }) {
-    //   switch (type) {
-    //     case 'string': {
-    //       return order === 1
-    //         ? (a: IShed, b: IShed) =>
-    //             b[key as keyof IShed] > a[key as keyof IShed]
-    //               ? -1
-    //               : a[key as keyof IShed] > b[key as keyof IShed]
-    //               ? 1
-    //               : 0
-    //         : (a: IShed, b: IShed) =>
-    //             a[key as keyof IShed] > b[key as keyof IShed]
-    //               ? -1
-    //               : b[key as keyof IShed] > a[key as keyof IShed]
-    //               ? 1
-    //               : 0;
-    //     }
-    //     case 'number': {
-    //       console.log('Sorting by number');
-    //       console.log(this.currentSort);
-    //       return order === 1
-    //         ? (a: IShed, b: IShed) => Number(b[key as keyof IShed]) - Number(a[key as keyof IShed])
-    //         : (a: IShed, b: IShed) => Number(a[key as keyof IShed]) - Number(b[key as keyof IShed]);
-    //     }
-    //     case 'date': {
-    //       console.log('Sorting by date');
-    //       console.log(this.currentSort);
-    //       if (order === 1) {
-    //         return (a: IShed, b: IShed) =>
-    //           DateTime.fromISO(b[key as keyof IShed] as string) < DateTime.fromISO(a[key as keyof IShed] as string)
-    //             ? 1
-    //             : DateTime.fromISO(b[key as keyof IShed] as string) > DateTime.fromISO(a[key as keyof IShed] as string)
-    //             ? -1
-    //             : 0;
-    //       } else {
-    //         return (a: IShed, b: IShed) =>
-    //           DateTime.fromISO(a[key as keyof IShed] as string) < DateTime.fromISO(b[key as keyof IShed] as string)
-    //             ? 1
-    //             : DateTime.fromISO(a[key as keyof IShed] as string) > DateTime.fromISO(b[key as keyof IShed] as string)
-    //             ? -1
-    //             : 0;
-    //       }
-    //     }
-    //   }
-    // },
+    sort(sortKey: string, sortType: string) {
+      this.currentSort.key = sortKey;
+      this.currentSort.type = sortType;
+      this.currentSort.order *= -1;
+    },
+    sortMethods({ key, type, order }: { key: string; type: string; order: number }) {
+      switch (type) {
+        case 'string': {
+          return order === 1
+            ? (a: IMeal, b: IMeal) =>
+                b[key as keyof IMeal] > a[key as keyof IMeal]
+                  ? -1
+                  : a[key as keyof IMeal] > b[key as keyof IMeal]
+                  ? 1
+                  : 0
+            : (a: IMeal, b: IMeal) =>
+                a[key as keyof IMeal] > b[key as keyof IMeal]
+                  ? -1
+                  : b[key as keyof IMeal] > a[key as keyof IMeal]
+                  ? 1
+                  : 0;
+        }
+        case 'number': {
+          console.log('Sorting by number');
+          console.log(this.currentSort);
+          return order === 1
+            ? (a: IMeal, b: IMeal) => Number(b[key as keyof IMeal]) - Number(a[key as keyof IMeal])
+            : (a: IMeal, b: IMeal) => Number(a[key as keyof IMeal]) - Number(b[key as keyof IMeal]);
+        }
+        case 'date': {
+          console.log('Sorting by date');
+          console.log(this.currentSort);
+          if (order === 1) {
+            return (a: IMeal, b: IMeal) =>
+              DateTime.fromISO(b[key as keyof IMeal] as string) < DateTime.fromISO(a[key as keyof IMeal] as string)
+                ? 1
+                : DateTime.fromISO(b[key as keyof IMeal] as string) > DateTime.fromISO(a[key as keyof IMeal] as string)
+                ? -1
+                : 0;
+          } else {
+            return (a: IMeal, b: IMeal) =>
+              DateTime.fromISO(a[key as keyof IMeal] as string) < DateTime.fromISO(b[key as keyof IMeal] as string)
+                ? 1
+                : DateTime.fromISO(a[key as keyof IMeal] as string) > DateTime.fromISO(b[key as keyof IMeal] as string)
+                ? -1
+                : 0;
+          }
+        }
+      }
+    },
 
   },
 };
@@ -449,22 +400,40 @@ computed:{
             <thead>
               <tr>
                 <th class="tbl-head text-left">
-                  Date
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('feedDate', 'date')"
+                  >Date</a>
                 </th>
                 <th class="tbl-head text-left">
-                  No. of Prey Item(s)
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('preyNo', 'number')"
+                  >No. of Prey Item(s)</a>
                 </th>
                 <th class="tbl-head text-left">
-                  Type of Prey
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('preyType', 'string')"
+                  >Type of Prey</a>
                 </th>
                 <th class="tbl-head text-left">
-                  Degree of Deadness
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('dOD', 'string')"
+                  >Degree of Deadness</a>
                 </th>
                 <th class="tbl-head text-left">
-                  Apx Total Weight(g)
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('mealWeight', 'number')"
+                  >Apx Total Weight(g)</a>
                 </th>
                 <th class="tbl-head text-left">
-                  Eaten?
+                  <a
+                    href="#"
+                    @click.prevent="$event => sort('eaten', 'string')"
+                  >Eaten?</a>
                 </th>
                 <th class="tbl-head text-left">
                   Comments
@@ -473,7 +442,7 @@ computed:{
             </thead>
             <tbody>
               <tr
-                v-for="item in (feedingHistory as Array<IMeal>)"
+                v-for="item in (sortedHistory as Array<IMeal>)"
                 :key="item._id"
               >
                 <td>{{ formatDate(item.feedDate) }}</td>

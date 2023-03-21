@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { IShed } from '@/shared/IShed';
+import type { IShed } from '@/shared/interfaces/IShed';
 import 'chartjs-adapter-luxon';
 import 'chartjs-plugin-style';
 import { DateTime } from 'luxon';

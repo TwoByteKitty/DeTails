@@ -1,5 +1,5 @@
 import router from '@/router';
-import { getApiUrl } from '@/utils/constants';
+import { POST } from '@/utils/fetch';
 import { defineStore } from 'pinia';
 
 const LOGIN_URL = 'api/user/login';
@@ -9,18 +9,14 @@ export const useAuthStore = defineStore({
    state: () => ({
        // initialize state from local storage to enable user to stay logged in
        user: JSON.parse(localStorage.getItem('user') as string),
+       //TODO Setup return url login
        returnUrl: ''
    }),
    actions: {
        async login({userName, password}:{userName: string, password: string}) {
-         const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({userName, password}),
-          };
 
-           const user = await(await fetch(getApiUrl(LOGIN_URL), requestOptions)).json();
-           // update pinia state
+           const user = await POST(LOGIN_URL, {userName, password});
+
            this.user = user;
 
            // store user details and jwt in local storage to keep user logged in between page refreshes

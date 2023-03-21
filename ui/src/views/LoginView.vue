@@ -29,9 +29,9 @@ export default {
          const { valid } = await form.validate();
          this.isValid == valid;
          if(valid){
-            const authStore = useAuthStore();
+            const { login } = useAuthStore();
             this.loading = true
-            return authStore.login(this.form);
+            return login(this.form);
          }
       },
     },
@@ -39,7 +39,10 @@ export default {
 </script>
 
 <template>
-  <v-sheet class="bg-deep-purple pa-12" rounded>
+  <v-sheet
+    class="bg-deep-purple pa-12"
+    rounded
+  >
     <v-responsive>
       <v-card class="mx-auto px-6 py-8">
         <v-form

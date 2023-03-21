@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth.store';
-import { getApiUrl } from '@/utils/constants';
+import { PET_API, POST } from '@/utils/fetch';
 import { RouterLink } from 'vue-router';
 </script>
 <script lang="ts">
-const API_URL = `api/pets`;
 
 export default {
   data: () => ({
@@ -21,14 +20,11 @@ export default {
   methods: {
     async fetchData() {
       const { user: {userName, token} } = useAuthStore();
-      const url = `${API_URL}`;
-      const requestOptions = {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json', 'x-access-token': token },
-         body: JSON.stringify({ userName }),
-      };
-      console.log(requestOptions.body)
-      this.myPets = await (await fetch(getApiUrl(url), requestOptions)).json();
+      try{
+         this.myPets = await POST(PET_API, { userName }, token);
+      }catch(error){
+         console.log(error);
+      }
     },
   },
 };
@@ -92,7 +88,7 @@ export default {
             </v-col>
             <v-spacer />
             <v-col class="d-flex justify-end align-center">
-              <router-link :to="{ name: 'pet-details', params: { id: _id } }">
+              <router-link :to="{ name: 'pet-details', query: { id: _id } }">
                 <v-btn
                   class="ma-2 pa-1"
                   variant="flat"

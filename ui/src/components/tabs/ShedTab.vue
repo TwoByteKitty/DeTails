@@ -1,7 +1,8 @@
 <script lang="ts">
-import type { IShed } from '@/shared/IShed';
+import type { IError } from '@/shared/interfaces/IError';
+import type { IShed } from '@/shared/interfaces/IShed';
 import { useAuthStore } from '@/stores/auth.store';
-import { getApiUrl } from '@/utils/constants';
+import { PET_API, POST } from '@/utils/fetch';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import 'chartjs-adapter-luxon';
@@ -11,7 +12,6 @@ import type { PropType } from 'vue';
 import { ref } from 'vue';
 import ShedStkBar from '../charts/ShedStkBar.vue';
 
-const API_URL = `api/pets/`;
 const defaultShed: IShed = {
   _id: '',
   pinkBelly: '',
@@ -62,48 +62,33 @@ export default {
     formatDate(timestamp: string) {
       return DateTime.fromISO(timestamp).toLocaleString(DateTime.DATE_SHORT);
     },
-
-    createShed() {
-      const url = `${API_URL}${this.$route.params.id}/sheds/add`;
+    async createShed() {
       delete this.newShed._id;
-
-      const authStore = useAuthStore();
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-access-token': authStore.user.token
-        },
-        body: JSON.stringify(this.newShed),
-      };
       this.showAlert = false;
+      const { logout, user: { token } } = useAuthStore();
+      try{
+         const data = await POST(`${PET_API}/${this.$route.query.id}/sheds/add`, this.newShed, token);
+         console.log(data);
+         this.$emit('shedAdded');
+         this.alertMsg = successMsg;
+         this.alertIsError = false;
+         this.showAlert = true;
+         this.newShed = { ...defaultShed };
+         setTimeout(() => {
+           this.showAlert = false;
+         }, 9000);
+      }catch(error){
+         const caughtError = error as IError;
+         console.error(errorMsg, error);
+         if(caughtError.type === 'AUTH'){
+            logout()
+         }else{
+         this.alertMsg = errorMsg;
+         this.alertIsError = true;
+         this.showAlert = true;
+         }
 
-      fetch(getApiUrl(url), requestOptions)
-        .then(async (response) => {
-          const data = await response.json();
-
-          if (!response.ok) {
-            // get error message from body or default to response status
-            const error = (data && data.message) || response.status;
-            return Promise.reject(error);
-          } else {
-            this.$emit('shedAdded');
-            this.alertMsg = successMsg;
-            this.alertIsError = false;
-            this.showAlert = true;
-
-            this.newShed = { ...defaultShed };
-            setTimeout(() => {
-              this.showAlert = false;
-            }, 9000);
-          }
-        })
-        .catch((error) => {
-          console.error(errorMsg, error);
-          this.alertMsg = errorMsg;
-          this.alertIsError = true;
-          this.showAlert = true;
-        });
+      }
     },
     sort(sortKey: string, sortType: string) {
       this.currentSort.key = sortKey;
@@ -177,9 +162,6 @@ export default {
         </v-col>
       </v-row>
     </v-card>
-    <v-row>
-      <v-col class="d-flex justify-center align-center" />
-    </v-row>
     <v-row>
       <v-col>
         <v-card class="new-data-form elevation-6 ma-6 pa-6">

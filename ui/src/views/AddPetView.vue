@@ -1,13 +1,12 @@
 <script lang="ts">
-import type { IPet } from '@/shared/IPet';
+import type { IPet } from '@/shared/interfaces/IPet';
 import { PetType } from '@/shared/SelectLists.js';
 import { useAuthStore } from '@/stores/auth.store';
-import { getApiUrl } from '@/utils/constants';
+import { PET_API, POST } from '@/utils/fetch';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { RouterLink } from 'vue-router';
 
-const API_URL = `api/pets/add/`;
 const defaultPet: IPet = {
   name: '',
   type: null,
@@ -36,42 +35,22 @@ export default {
 
   methods: {
     async createPet() {
-      const url = `${API_URL}`;
       const { user: {userName, token} } = useAuthStore();
-      console.log(this.myPet)
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-access-token': token },
-        body: JSON.stringify({pet:this.myPet, userName}),
-      };
-      console.log(requestOptions.body)
       this.showRegResult = false;
-
-      fetch(getApiUrl(url), requestOptions)
-        .then(async (response) => {
-          const data = await response.json();
-
-          // check for error response
-          if (!response.ok) {
-            // get error message from body or default to response status
-            const error = (data && data.message) || response.status;
-            return Promise.reject(error);
-          } else {
-            this.alertMsg = successMsg;
-            this.resultIsError = false;
-            this.showRegResult = true;
-            this.myPet = { ...defaultPet };
-
-            this.createdPetId = data._id;
-          }
-          console.log(data);
-        })
-        .catch((error) => {
-          console.error(errorMsg, error);
-          this.alertMsg = errorMsg;
-          this.resultIsError = true;
-          this.showRegResult = true;
-        });
+      try{
+         const data = await POST(`${PET_API}/add`, {pet:this.myPet, userName}, token);
+         console.log(data);
+         this.alertMsg = successMsg;
+         this.resultIsError = false;
+         this.showRegResult = true;
+         this.myPet = { ...defaultPet };
+         this.createdPetId = data._id;
+      }catch(error){
+         console.log(error);
+         this.alertMsg = errorMsg;
+         this.resultIsError = true;
+         this.showRegResult = true;
+      }
     },
   },
 };
@@ -92,7 +71,7 @@ export default {
       close-label="Close Alert"
     >
       {{ alertMsg }}
-      <router-link :to="{ name: 'pet-details', params: { id: createdPetId } }">
+      <router-link :to="{ name: 'pet-details', query: { id: createdPetId } }">
         <v-btn
           prepend-icon="fa:fas fa-light fa-arrow-up-right"
         >

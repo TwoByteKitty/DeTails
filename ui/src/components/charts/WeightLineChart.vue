@@ -1,8 +1,8 @@
 <script lang="ts">
-import type { IWeight } from '@/shared/IWeight';
-import type { PropType } from 'vue';
+import type { IWeight } from '@/shared/interfaces/IWeight';
 import 'chartjs-plugin-style';
 import { DateTime } from 'luxon';
+import type { PropType } from 'vue';
 import { Line } from 'vue-chartjs';
 
 const DATE_FORMAT_STRING = 'yyyy-MM-dd';

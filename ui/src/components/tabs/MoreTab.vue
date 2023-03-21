@@ -1,6 +1,4 @@
 <script lang="ts">
-import type { PropType } from 'vue';
-import type { IPet } from '@/shared/IPet';
 
 
 export default {
