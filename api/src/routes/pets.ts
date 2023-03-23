@@ -1,7 +1,16 @@
 import express, { Router } from 'express';
 import { addFeeding, getAllFeedingsByPet, getSingleFeeding } from '../controllers/herpetofauna/feedings';
 import { addShed, getAllShedsByPet, getSingleShed } from '../controllers/herpetofauna/sheds';
-import { addMealSchedule, addPet, addPetImage, editPet, getAllPets, getSinglePet } from '../controllers/pets';
+import {
+  addMealSchedule,
+  addPet,
+  addPetImage,
+  deletePetImage,
+  editPet,
+  editPetImage,
+  getAllPets,
+  getSinglePet,
+} from '../controllers/pets';
 import { addWeight, editWeight, getAllWeightsByPet, getSingleWeight } from '../controllers/weights';
 
 const router: Router = express.Router();
@@ -11,8 +20,12 @@ router.post('/', getAllPets);
 router.get('/:id', getSinglePet);
 router.put('/:id', editPet);
 router.put('/:id/feeding-schedule', addMealSchedule);
-router.post('/:id/addImage', addPetImage);
 router.post('/add', addPet);
+
+//Photos CRUD
+router.post('/:id/addImage', addPetImage);
+router.put('/:id/editImage', editPetImage);
+router.delete('/:id/deleteImage', deletePetImage);
 
 //Sheds CRUD
 router.post('/:petId/sheds/add', addShed);

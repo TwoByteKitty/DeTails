@@ -8,7 +8,7 @@ import {
 } from '../utils/constants';
 import { IFeed } from './herpetofauna/feeding';
 import { IShed } from './herpetofauna/shed';
-import { IPetImage } from './image';
+import { IPetImage } from './petImage';
 import { IVet } from './vetVisit';
 import { IWeight } from './weight';
 

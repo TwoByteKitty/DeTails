@@ -9,7 +9,7 @@ interface IFetchHeaders{
 }
 
 interface IFetchOptions{
-   method: 'GET'|'PUT'|'POST';
+   method: 'GET'|'PUT'|'POST'|'DELETE';
    headers: IFetchHeaders
    body?: {}
 }
@@ -20,7 +20,7 @@ const doFetch = async (url: string, options: {})=>{
 
 export const GET = async (url:string, token?: string)=>{
    const options: IFetchOptions = {
-      method: "GET",
+      method: 'GET',
       headers:{}
    }
    if(token){
@@ -66,3 +66,16 @@ export const PUT = async (url:string, data: {}, token: string)=>{
    }
    return await doFetch(url, options)
 }
+
+export const DELETE = async (url:string, data: {}, token: string)=>{
+   const options: IFetchOptions ={
+      method: 'DELETE',
+      headers: {
+         'x-access-token': token,
+         'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+   }
+   return await doFetch(url, options)
+}
+

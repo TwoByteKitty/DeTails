@@ -3,5 +3,6 @@ export interface IPetImage {
    uploadDate: string;
    imageTitle: string;
    imagePath: string;
+   isThumbnail: string;
    petId: string;
  }

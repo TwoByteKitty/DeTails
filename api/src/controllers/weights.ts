@@ -22,7 +22,6 @@ const getSingleWeight = (request: Request<{ shedId: string }>, response: Respons
     .catch((err: any) => response.status(422).json(err));
 };
 
-//needs more work!
 const editWeight = (request: Request<{}, {}, IWeight>, response: Response) => {
   const petWeight: IWeight = request.body;
   Weight.findByIdAndUpdate(petWeight._id, petWeight)
