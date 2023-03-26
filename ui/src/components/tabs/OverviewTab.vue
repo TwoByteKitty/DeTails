@@ -7,6 +7,7 @@ import { useAuthStore } from "@/stores/auth.store";
 import { PET_API, POST_IMAGE } from "@/utils/fetch";
 import type { PropType } from "vue";
 import EditOverviewModal from "../modals/EditOverviewModal.vue";
+import EditPhotosModal from "../modals/EditPhotosModal.vue";
 
 export default {
   name: "OverviewTab",
@@ -31,7 +32,7 @@ export default {
       imageTitle: ''
     };
   },
-  components: { EditOverviewModal },
+  components: { EditOverviewModal, EditPhotosModal },
   methods: {
     async uploadImage() {
       const imageToUpload: File = this.image[0];
@@ -39,7 +40,7 @@ export default {
       data.append("petImage", imageToUpload, imageToUpload.name);
       data.append("imageTitle", this.imageTitle);
       try{
-         const response = await POST_IMAGE(`${PET_API}/${this._id}/addImage`, data, useAuthStore().user.token)
+         const response = await POST_IMAGE(`${PET_API}/${this._id}/add-image`, data, useAuthStore().user.token)
          this.$emit("overviewEdited");
          console.log(response);
       }catch(error){
@@ -65,13 +66,18 @@ export default {
               :key="index"
               :src="`${currentImg.imagePath}`"
               contain
-            />
+            >
+              <div class="album-edit-overlay">
+                <edit-photos-modal
+                  :_id="currentImg._id"
+                  :image-title="currentImg.imageTitle"
+                  :is-thumbnail="currentImg.isThumbnail"
+                  :upload-date="currentImg.uploadDate"
+                  :image-path="currentImg.imagePath"
+                />
+              </div>
+            </v-carousel-item>
           </v-carousel>
-          <div class="album-edit-overlay">
-            <v-btn class="album-edit-button">
-              <v-icon>fa:fas fa-thin fa-pen-to-square</v-icon>
-            </v-btn>
-          </div>
         </v-card>
         <v-row class="pa-3 ma-3 d-flex">
           <v-col cols="6">

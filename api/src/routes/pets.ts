@@ -23,9 +23,9 @@ router.put('/:id/feeding-schedule', addMealSchedule);
 router.post('/add', addPet);
 
 //Photos CRUD
-router.post('/:id/addImage', addPetImage);
-router.put('/:id/editImage', editPetImage);
-router.delete('/:id/deleteImage', deletePetImage);
+router.post('/:id/add-image', addPetImage);
+router.put('/:id/edit-image', editPetImage);
+router.delete('/:id/delete-image', deletePetImage);
 
 //Sheds CRUD
 router.post('/:petId/sheds/add', addShed);

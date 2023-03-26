@@ -87,7 +87,7 @@ export default {
       const { logout } = useAuthStore();
       const caughtError = error as IError;
       console.error(errorMsg, error);
-      if(caughtError.type === 'AUTH'){
+      if(error.message.split(':')[0]=== 'AUTH'){
          logout()
       }else{
       this.alertMsg = errorMsg;

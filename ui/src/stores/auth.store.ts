@@ -13,12 +13,16 @@ export const useAuthStore = defineStore({
    }),
    actions: {
     async login({userName, password}:{userName: string, password: string}) {
+      try{
         const user = await POST(LOGIN_URL, {userName, password});
         this.user = user;
         // store user details and jwt in local storage to keep user logged in between page refreshes
         sessionStorage.setItem('user', JSON.stringify(user));
         // redirect to previous url or default to home page
         router.push(this.returnUrl || '/my-pets');
+      } catch (error:any) {
+        throw new Error(error.message);
+      }
     },
     logout() {
         this.user = null;

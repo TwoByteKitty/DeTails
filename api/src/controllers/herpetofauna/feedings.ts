@@ -1,18 +1,18 @@
 import { Request, Response } from 'express';
-import { Feeding, IFeed } from '../../models/herpetofauna/feeding';
+import { Feeding, IMeal } from '../../models/herpetofauna/feeding';
 
-const addFeeding = (request: Request<{ petId: string }, {}, IFeed>, response: Response) => {
-  const newFeeding: IFeed = request.body;
+const addFeeding = (request: Request<{ petId: string }, {}, IMeal>, response: Response) => {
+  const newFeeding: IMeal = request.body;
   newFeeding.petId = request.params.petId;
   Feeding.create(newFeeding)
-    .then((createdFeeding: IFeed) => response.json(createdFeeding))
+    .then((createdFeeding: IMeal) => response.json(createdFeeding))
     .catch((err: any) => response.status(500).json(err));
 };
 
 const getAllFeedingsByPet = (request: Request<{ petId: string }>, response: Response) => {
   Feeding.find({ petId: request.params.petId })
     .sort({ date: -1 })
-    .then((foundFeedings: Array<IFeed>) => response.json(foundFeedings))
+    .then((foundFeedings: Array<IMeal>) => response.json(foundFeedings))
     .catch((err: any) => response.status(422).json(err));
 };
 
@@ -23,8 +23,8 @@ const getSingleFeeding = (request: Request<{ feedingId: string }>, response: Res
 };
 
 //needs more work!
-// const editFeeding = (request: Request<{}, {}, IFeed>, response: Response) => {
-//   const pet: IFeed = request.body;
+// const editFeeding = (request: Request<{}, {}, IMeal>, response: Response) => {
+//   const pet: IMeal = request.body;
 //   pet.dateOfBirth = new Date(pet.dateOfBirth);
 //   Feeding.findByIdAndUpdate(pet._id, pet)
 //     .then((updatedFeeding) => response.json(updatedFeeding))

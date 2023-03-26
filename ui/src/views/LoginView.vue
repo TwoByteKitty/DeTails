@@ -5,6 +5,8 @@ import { useAuthStore } from '@/stores/auth.store';
 export default {
     data: () => ({
       isValid: false,
+      showAlert: false,
+      alertMsg: '',
       form: { userName:'', password: '' },
       userNameRules: [
          (value: string)=>(!!value || 'Username is required'),
@@ -31,7 +33,16 @@ export default {
          if(valid){
             const { login } = useAuthStore();
             this.loading = true
-            return login(this.form);
+            try{
+            await login(this.form);
+            }catch(error: any){
+              console.log(error)
+              console.log(error.message.split(':')[1])
+              this.loading = false;
+              this.alertMsg = error.message.split(':')[1];
+              this.showAlert = true;
+              
+            }
          }
       },
     },
@@ -40,60 +51,90 @@ export default {
 
 <template>
   <v-sheet
-    class="bg-deep-purple pa-12"
+    class="login-sheet pa-6 ma-6"
     rounded
   >
     <v-responsive>
-      <v-card class="mx-auto px-6 py-8">
-        <v-form
-          ref="loginForm"
-          v-model="isValid"
-          lazy-validation
-          @submit.prevent="login"
+      <v-card 
+        class="mx-auto px-9 pt-3 pb-9 elevation-6"
+        title="Log In"
+      >
+        <div>
+          <v-alert
+            v-model="showAlert"
+            type="error"
+            variant="tonal"
+            closable
+            close-label="Close Alert"
+          >
+            {{
+              alertMsg
+            }}
+          </v-alert>
+        </div>
+        <v-card
+          class="pa-9 elevation-3"
+          variant="tonal"
         >
-          <v-row>
-            <v-col>
-              <v-text-field
-                v-model="form.userName"
-                :readonly="loading"
-                :rules="userNameRules"
-                class="mb-2"
-                clearable
-                label="User Name"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-text-field
-                v-model="form.password"
-                :readonly="loading"
-                :rules="passwordRules"
-                clearable
-                label="Password"
-                placeholder="Enter your password"
-              />
-            </v-col>
-          </v-row>
+          <v-form
+            ref="loginForm"
+            v-model="isValid"
+            lazy-validation
+            @submit.prevent="login"
+          >
+            <v-row>
+              <v-col>
+                <v-text-field
+                  v-model="form.userName"
+                  :readonly="loading"
+                  :rules="userNameRules"
+                  class="mb-2"
+                  clearable
+                  label="User Name"
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-text-field
+                  v-model="form.password"
+                  :readonly="loading"
+                  :rules="passwordRules"
+                  clearable
+                  label="Password"
+                  placeholder="Enter your password"
+                />
+              </v-col>
+            </v-row>
 
-          <v-row>
-            <v-col>
-              <v-btn
-                :loading="loading"
-                block
-                color="success"
-                size="large"
-                type="submit"
-                variant="elevated"
-              >
-                Sign In
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-form>
+            <v-row>
+              <v-col>
+                <v-btn
+                  :loading="loading"
+                  block
+                  color="success"
+                  size="large"
+                  type="submit"
+                  variant="tonal"
+                  class="submit-btn"
+                >
+                  Sign In
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card>
       </v-card>
     </v-responsive>
   </v-sheet>
 </template>
 
-<style lang="css"></style>
+<style lang="css">
+.login-sheet{
+  background-color: var(--md-ref-palette-secondary20);
+}
+.submit-btn {
+  box-shadow: 1.5px 1.5px 6px 3px rgba(0, 6, 1, .3);
+  border: 1px solid rgba(32, 88, 34, 0.66);
+}
+</style>

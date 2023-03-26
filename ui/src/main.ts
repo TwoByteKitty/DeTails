@@ -16,8 +16,6 @@ import * as directives from 'vuetify/directives';
 
 import App from './App.vue';
 import router from './router';
-// import lightTheme from './styles/themes/light';
-// import darkTheme from './styles/themes/dark';
 import './styles/main.css';
 
 const app = createApp(App);

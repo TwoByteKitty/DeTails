@@ -1,13 +1,28 @@
-<script setup lang="ts">
+<script lang="ts">
+import type { IPetImage } from '@/shared/interfaces/IPetImage';
 import { useAuthStore } from '@/stores/auth.store';
 import { PET_API, POST } from '@/utils/fetch';
 import { RouterLink } from 'vue-router';
-</script>
-<script lang="ts">
+
+interface IImgMap{
+  [key:string]: string;
+}
+
+const defaultImgMap: IImgMap = {
+  amphibian: 'https://pic-bkt-1.nyc3.cdn.digitaloceanspaces.com/pet-clipart%2Ffrog1.jfif',
+  bird: 'https://pic-bkt-1.nyc3.cdn.digitaloceanspaces.com/pet-clipart%2Fbird1.jfif',
+  cat: 'https://pic-bkt-1.nyc3.cdn.digitaloceanspaces.com/pet-clipart%2Fcat1.jfif',
+  dog: 'https://pic-bkt-1.nyc3.cdn.digitaloceanspaces.com/pet-clipart%2Fdog1.jfif',
+  fish: 'https://pic-bkt-1.nyc3.cdn.digitaloceanspaces.com/pet-clipart%2Ffish1.jfif',
+  lizard: 'https://pic-bkt-1.nyc3.cdn.digitaloceanspaces.com/pet-clipart%2Flizard5.jpg',
+  snake: 'https://pic-bkt-1.nyc3.cdn.digitaloceanspaces.com/pet-clipart%2FsnekBW2.jfif'
+}
 
 export default {
+  components: { RouterLink },
   data: () => ({
     myPets: null,
+    defaultImgMap
   }),
 
   created() {
@@ -19,13 +34,26 @@ export default {
 
   methods: {
     async fetchData() {
-      const { user: {userName, token} } = useAuthStore();
+      const { logout, user: {userName, token} } = useAuthStore();
       try{
          this.myPets = await POST(PET_API, { userName }, token);
-      }catch(error){
-         console.log(error);
+      }catch(error: any){
+         if(error.message.split(':')[0] === 'AUTH'){
+            logout()
+         }
       }
     },
+    // add another param to this function for petImages
+    getThumbnail(type: string, petImages: [IPetImage]) {
+      let thumbnail: string;
+      const petImgThumb = petImages.find(({isThumbnail}) => isThumbnail === true);
+      if (petImgThumb) {
+        thumbnail = petImgThumb.imagePath
+      } else {
+        thumbnail = this.defaultImgMap[type]
+      }
+      return thumbnail;
+    }
   },
 };
 </script>
@@ -62,27 +90,25 @@ export default {
 
     <v-list lines="two">
       <v-list-item
-        v-for="{ name, _id, species } in myPets"
+        v-for="{ name, _id, species, type, petImages } in myPets"
         :key="_id"
       >
         <v-card class="ma-2">
           <v-row>
             <v-col>
-              <v-img
-                class="ma-2"
-                aspect-ratio="1:1"
-                lazy-src="https://picsum.photos/id/11/100/60"
-                max-width="500"
-                src="https://picsum.photos/id/11/100/60"
-              >
-                <template #placeholder>
-                  <div class="d-flex align-center justify-center fill-height" />
-                </template>
-              </v-img>
+              <router-link :to="{ name: 'pet-details', query: { id: _id } }">
+                <v-img
+                  class="ma-2"
+                  aspect-ratio="1:1"
+                  max-width="500"
+                  :src="getThumbnail(type, petImages)"
+                />
+              </router-link>
             </v-col>
             <v-col>
               <v-card-item>
                 <v-card-title>{{ name }}</v-card-title>
+                <v-card-subtitle>{{ type }}</v-card-subtitle>
                 <v-card-subtitle>{{ species }}</v-card-subtitle>
               </v-card-item>
             </v-col>

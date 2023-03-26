@@ -31,11 +31,11 @@ const login = async (request: Request<{}, {}, IUser>, response: Response) => {
 
   User.findOne({ userName }).then(async (user) => {
     if (!user) {
-      return response.status(500).send('Server Error');
+      return response.status(401).json({ type: 'AUTH', message: 'Username or password is incorrect.' });
     }
 
     if (!(await bcrypt.compare(password, user.password))) {
-      return response.status(401).send('Unauthorized');
+      return response.status(401).json({ type: 'AUTH', message: 'Username or password is incorrect.' });
     }
 
     const token = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET as Secret, {

@@ -15,7 +15,12 @@ interface IFetchOptions{
 }
 
 const doFetch = async (url: string, options: {})=>{
-      return await (await fetch(API_URL(url), options)).json();
+   const response = await fetch(API_URL(url), options);
+   if(response.status !== 200){
+      const error = await response.json();
+      throw new Error(`${error.type}:${error.message}`);
+   }
+   return await response.json();
 }
 
 export const GET = async (url:string, token?: string)=>{

@@ -51,7 +51,6 @@ const addPet = async (request: Request<{}, {}, IAddPetRequestBody>, response: Re
 
 const editPet = (request: Request<{}, {}, IPet>, response: Response) => {
   const pet: IPet = request.body;
-  pet.dateOfBirth = new Date(pet.dateOfBirth);
   Pet.findByIdAndUpdate(pet._id, pet)
     .then((updatedPet: any) => response.json(updatedPet))
     .catch((err: any) => response.status(500).json(err));
@@ -65,7 +64,7 @@ const addMealSchedule = (request: Request<{}, {}, { _id: string; mealSchedule: A
 };
 
 const addPetImage = async (
-  request: Request<{ id: string }, {}, { imageTitle: string; isThumbnail: string }>,
+  request: Request<{ id: string }, {}, { imageTitle: string; isThumbnail: boolean }>,
   response: Response
 ) => {
   const { files } = request;
@@ -94,11 +93,14 @@ const addPetImage = async (
   }
 };
 
-const editPetImage = (
+const editPetImage = async (
   request: Request<{ id: string }, {}, Omit<IPetImage, 'imagePath, uploadDate, petId'>>,
   response: Response
 ) => {
   const petImage = request.body;
+  if (petImage.isThumbnail) {
+    await PetImage.updateMany({ petId: request.params.id, isThumbnail: true }, { isThumbnail: false });
+  }
   PetImage.findByIdAndUpdate(petImage._id, petImage)
     .then((updatedPet: any) => response.json(updatedPet))
     .catch((err: any) => response.status(500).json(err));

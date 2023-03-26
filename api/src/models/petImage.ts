@@ -5,7 +5,7 @@ export interface IPetImage {
   uploadDate: string;
   imageTitle: string;
   imagePath: string;
-  isThumbnail: string;
+  isThumbnail: boolean;
   petId: string;
 }
 
@@ -13,7 +13,7 @@ export const petImageSchema = new Schema<IPetImage>({
   uploadDate: { type: String, required: true },
   imageTitle: { type: String, required: true },
   imagePath: { type: String, required: true },
-  isThumbnail: { type: String, required: true },
+  isThumbnail: { type: Boolean, required: true, default: false },
   petId: { type: String, required: true },
 });
 

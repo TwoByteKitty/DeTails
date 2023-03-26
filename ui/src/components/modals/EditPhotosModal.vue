@@ -1,8 +1,7 @@
 <script lang="ts">
-import type { IError } from '@/shared/interfaces/IError';
 import type { IPetImage } from '@/shared/interfaces/IPetImage';
 import { useAuthStore } from '@/stores/auth.store';
-import { PET_API, PUT } from '@/utils/fetch';
+import { DELETE, PET_API, PUT } from '@/utils/fetch';
 import { DateTime } from 'luxon';
 
 const DATE_FORMAT_STRING = 'yyyy-MM-dd';
@@ -18,12 +17,13 @@ export default {
       // eslint-disable-next-line vue/prop-name-casing
       _id: { type: String, required: true },
       uploadDate: { type: String, required: true },
-      imageTitle: { type: Number, required: true },
+      imageTitle: { type: String, required: true },
       imagePath: { type: String, required: true },
-      isThumbnail: { type: String, required: true },
+      isThumbnail: { type: Boolean, required: true },
   },
   data() {
     return {
+      deleteImage: false,
       modalIsOpen: false,
       alertType: 'success',
       alertIsError: false,
@@ -31,10 +31,9 @@ export default {
       showAlert: false,
       fields: {
         _id: this.id,
-        uploadDate: this.formatDate(this.uploadDate),
         imageTitle: this.imageTitle,
-        imagePath: this.imagePath,
         isThumbnail: this.isThumbnail,
+
       },
     };
   },
@@ -45,22 +44,10 @@ export default {
         this.fields._id = newVal;
       },
     },
-    uploadDate: {
-      immediate: true,
-      handler(newVal) {
-        this.fields.uploadDate = this.formatDate(newVal);
-      },
-    },
     imageTitle: {
       immediate: true,
       handler(newVal) {
         this.fields.imageTitle = newVal;
-      },
-    },
-    imagePath: {
-      immediate: true,
-      handler(newVal) {
-        this.fields.imagePath = newVal;
       },
     },
     isThumbnail: {
@@ -84,9 +71,7 @@ export default {
     },
     editError(error: any){
       const { logout } = useAuthStore();
-      const caughtError = error as IError;
-      console.error(errorMsg, error);
-      if(caughtError.type === 'AUTH'){
+      if(error.message.split()[0] === 'AUTH'){
          logout()
       }else{
       this.alertMsg = errorMsg;
@@ -94,14 +79,19 @@ export default {
       this.showAlert = true;
       }
     },
-    // async editPhotos() {
-    //   try{
-    //      const data = await PUT(`${PET_API}/weights/${this._id}`, this.fields, useAuthStore().user.token);
-    //      this.editSuccess(data);
-    //   }catch(error){
-    //      this.editError(error)
-    //   }
-    // },
+    async editPhoto() {
+      let data = null;
+      try{
+        if(this.deleteImage){
+            data = await DELETE(`${PET_API}/${this.$route.query.id}/delete-image`, this.fields, useAuthStore().user.token);
+        }else{
+            data = await PUT(`${PET_API}/${this.$route.query.id}/edit-image`, this.fields, useAuthStore().user.token);
+        }
+         this.editSuccess(data);
+      }catch(error){
+         this.editError(error)
+      }
+    },
     formatDate(timestamp: string) {
       return DateTime.fromISO(timestamp).toFormat(DATE_FORMAT_STRING);
     },
@@ -117,66 +107,90 @@ export default {
     >
       <template #activator="{ props }">
         <v-btn
-          class="edit-tbl-data-btn"
+          class="album-edit-button"
           v-bind="props"
         >
-          <v-icon>fa:fas fa-thin fa-pencil</v-icon>
+          <v-icon>fa:fas fa-thin fa-pen-to-square</v-icon>
         </v-btn>
       </template>
-      <v-card title="Edit Photo Album">
-        <v-card>
-          <v-row>
+      <v-card
+        title="Edit Current Slide"
+        class="pa-6 ma-6 elevation-3"
+      >
+        <v-img
+          style="margin: auto;"
+          :width="420"
+          :src="imagePath"
+        />
+        <v-card
+          class="ma-3 pa-6 elevation-6"
+        >
+          <v-row class="ma-3 pa-3">
             <v-col
-              cols="12"
-              sm="6"
+              cols="9"
             >
               <v-text-field
-                type="date"
-                v-model="fields.weighDate"
-                label="Date"
+                v-model="fields.imageTitle"
+                label="Image Title"
               />
             </v-col>
             <v-col
               cols="12"
-              sm="6"
             >
-              <v-text-field
-                v-model="fields.weighAmt"
-                type="number"
-                label="Weigh Amount"
+              <v-checkbox
+                v-model="fields.isThumbnail"
+                label="Use this image as the pet's thumbnail?"
               />
             </v-col>
-            <v-col cols="12">
-              <v-select
-                v-model="fields.weighUnits"
-                label="Weight Units"
-                :items="WeighUnits"
+            <v-col>
+              <v-divider
+                :thickness="6"
+                color="error"
               />
             </v-col>
-            <v-col cols="12">
-              <v-textarea
-                v-model="fields.weighComments"
-                label="Comments"
+            <v-col
+              cols="12"
+              style="display: grid;"
+            >
+              <v-spacer />
+              <v-checkbox
+                :model="deleteImage"
+                style="color:red; font-weight: bold; padding: 15px; justify-self: center;"
+                label="Do you want to DELETE this image?"
+                color="error"
+              />
+              <v-spacer />
+            </v-col>
+            <v-col>
+              <v-divider
+                :thickness="6"
+                color="error"
               />
             </v-col>
           </v-row>
         </v-card>
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            color="error"
-            variant="text"
-            @click="($event: any) => modalIsOpen = false"
-          >
-            Close
-          </v-btn>
-          <v-btn
-            color="info"
-            variant="text"
-            @click="editPet"
-          >
-            Save
-          </v-btn>
+          <div class="ml-2 pl-2 mr-2 pr-2">
+            <v-btn
+              color="error"
+              variant="text"
+              prepend-icon="fa:fas fa-thin fa-xmark"
+              @click="($event: any) => modalIsOpen = false"
+            >
+              Close
+            </v-btn>
+          </div>
+          <div class="ml-2 pl-2 mr-2 pr-2">
+            <v-btn
+              color="success"
+              variant="text"
+              prepend-icon="fa:fas fa-thin fa-check"
+              @click="editPhoto"
+            >
+              Save
+            </v-btn>
+          </div>
         </v-card-actions>
         <div>
           <v-alert
@@ -197,5 +211,13 @@ export default {
 </template>
 
 <style lang="css" scoped>
-
+.album-edit-button {
+  height: 60px;
+  width: 66px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  opacity: 80%;
+  z-index: 5;
+}
 </style>
