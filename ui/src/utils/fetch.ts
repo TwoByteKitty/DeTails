@@ -9,18 +9,23 @@ interface IFetchHeaders{
 }
 
 interface IFetchOptions{
-   method: 'GET'|'PUT'|'POST';
+   method: 'GET'|'PUT'|'POST'|'DELETE';
    headers: IFetchHeaders
    body?: {}
 }
 
 const doFetch = async (url: string, options: {})=>{
-      return await (await fetch(API_URL(url), options)).json();
+   const response = await fetch(API_URL(url), options);
+   if(response.status !== 200){
+      const error = await response.json();
+      throw new Error(`${error.type}:${error.message}`);
+   }
+   return await response.json();
 }
 
 export const GET = async (url:string, token?: string)=>{
    const options: IFetchOptions = {
-      method: "GET",
+      method: 'GET',
       headers:{}
    }
    if(token){
@@ -66,3 +71,16 @@ export const PUT = async (url:string, data: {}, token: string)=>{
    }
    return await doFetch(url, options)
 }
+
+export const DELETE = async (url:string, data: {}, token: string)=>{
+   const options: IFetchOptions ={
+      method: 'DELETE',
+      headers: {
+         'x-access-token': token,
+         'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+   }
+   return await doFetch(url, options)
+}
+

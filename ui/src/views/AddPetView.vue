@@ -1,4 +1,5 @@
 <script lang="ts">
+import type { IError } from '@/shared/interfaces/IError';
 import type { IPet } from '@/shared/interfaces/IPet';
 import { PetType } from '@/shared/SelectLists.js';
 import { useAuthStore } from '@/stores/auth.store';
@@ -22,180 +23,217 @@ export default {
   components: { RouterLink, Datepicker },
   data: () => ({
     PetType,
+    isValid: false,
     showRegResult: false,
     resultIsError: false,
     alertMsg: successMsg,
     myPet: {
       ...defaultPet,
     },
-    createdPetId: ''
+    createdPetId: '',
+    nameRules: [
+         (value: string)=>(!!value || 'Name is required.'),
+         (value: string)=>{
+            if (value?.length > 2) return true
+            return 'Name must be at least 2 characters.'
+         }
+    ],
+    typeRules: [
+         (value: string)=>(!!value || 'Type is required.'),
+    ],
+    speciesRules: [
+         (value: string)=>(!!value || 'Species is required.'),
+         (value: string)=>{
+            if (value?.match(/\b[A-Z].*?\b \b[a-z].*?\b/gm)) return true
+            return 'Please enter a binomial name in the format: Genus species.'
+         }
+    ],  
   }),
 
   watch: {},
 
   methods: {
     async createPet() {
-      const { user: {userName, token} } = useAuthStore();
-      this.showRegResult = false;
-      try{
-         const data = await POST(`${PET_API}/add`, {pet:this.myPet, userName}, token);
-         console.log(data);
-         this.alertMsg = successMsg;
-         this.resultIsError = false;
-         this.showRegResult = true;
-         this.myPet = { ...defaultPet };
-         this.createdPetId = data._id;
-      }catch(error){
-         console.log(error);
-         this.alertMsg = errorMsg;
-         this.resultIsError = true;
-         this.showRegResult = true;
-      }
-    },
-  },
-};
+      const form = this.$refs.newPetForm as any;
+      const { valid } = await form.validate();
+      this.isValid == valid;
+      if(valid){
+        const { logout, user: {userName, token} } = useAuthStore();
+        this.showRegResult = false;
+        try{
+          const data = await POST(`${PET_API}/add`, {pet:this.myPet, userName}, token);
+          console.log(data);
+          this.alertMsg = successMsg;
+          this.resultIsError = false;
+          this.showRegResult = true;
+          this.createdPetId = data._id;
+          form.reset();
+        }catch(error){
+          const caughtError = error as IError;
+          console.error(errorMsg, error);
+          if(caughtError.type === 'AUTH'){
+            logout()
+          }else{
+            this.alertMsg = errorMsg;
+            this.resultIsError = true;
+            this.showRegResult = true;
+          }
+        }
+      }  
+    },  
+  }
+}
+
 </script>
 
 <template>
-  <v-card
-    class="pa-6 ma-6"
-    elevation="3"
-    variant="tonal"
-    title="Add a New Pet"
-  >
-    <v-alert
-      v-model="showRegResult"
-      :type="resultIsError ? 'error' : 'success'"
+  <v-card>
+    <v-card
+      class="pa-9 ma-9"
+      elevation="9"
       variant="tonal"
-      closable
-      close-label="Close Alert"
+      title="Add a New Pet"
+      subtitle="You can edit everything but the type later, so provide your best guess on required fields you aren't sure about."
     >
-      {{ alertMsg }}
-      <router-link
-        v-if="!resultIsError"
-        :to="{ name: 'pet-details', query: { id: createdPetId } }"
+      <v-alert
+        v-model="showRegResult"
+        :type="resultIsError ? 'error' : 'success'"
+        variant="tonal"
+        closable
+        close-label="Close Alert"
       >
-        <v-btn
-          prepend-icon="fa:fas fa-light fa-arrow-up-right"
+        {{ alertMsg }}
+        <router-link
+          v-if="!resultIsError"
+          :to="{ name: 'pet-details', query: { id: createdPetId } }"
         >
-          Go To Newly Registered Pet's Details
-          <v-icon>fa:fas fa-light fa-arrow-up-right</v-icon>
-        </v-btn>
-      </router-link>
-    </v-alert>
-    <form>
-      <v-container fluid>
-        <v-row no-gutters>
-          <v-col class="pa-1 mt-3">
-            <label>Name</label>
-            <v-text-field v-model="myPet.name" />
-          </v-col>
-        </v-row>
-        <v-row no-gutters>
-          <v-col class="pa-1">
-            <label>Type</label>
-            <v-select
-              v-model="myPet.type"
-              :items="PetType"
-              variant="solo"
-            />
-          </v-col>
-        </v-row>
-        <v-row no-gutters>
-          <v-col class="pa-1">
-            <label>Species</label>
-            <v-text-field v-model="myPet.species" />
-          </v-col>
-        </v-row>
-        <v-row no-gutters>
-          <v-col class="pa-1">
-            <label>Date of Birth</label>
-            <Datepicker
-              v-model="myPet.dateOfBirth"
-              model-type="yyyy-MM-dd"
-              :enable-time-picker="false"
-              dark
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col class="mt-5">
-            <v-radio-group
-              v-model="myPet.sex"
-              inline
-            >
-              <v-radio
-                label="Female"
-                value="female"
-                class="pr-6"
-              />
-              <v-radio
-                label="Male"
-                value="male"
-                class="pr-6"
-              />
-              <v-radio
-                label="Unknown"
-                value="unknown"
-              />
-            </v-radio-group>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-textarea
-              v-model="myPet.description"
-              auto-grow
-              label="Description"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col
-            class="pa-3 ma-3"
-            style="text-align: center;"
+          <v-btn
+            prepend-icon="fa:fas fa-light fa-arrow-up-right"
           >
-            <v-btn
-              style="width: 60%;"
-              size="x-large"
-              color="success"
-              prepend-icon="mdi-check"
-              @click="createPet"
+            Go To Newly Registered Pet's Details
+            <v-icon>fa:fas fa-light fa-arrow-up-right</v-icon>
+          </v-btn>
+        </router-link>
+      </v-alert>
+      <v-form
+        ref="newPetForm"
+        v-model="isValid"
+        lazy-validation
+        @submit.prevent="createPet"
+      >
+        <v-container fluid>
+          <v-row no-gutters>
+            <v-col class="pa-1 mt-3">
+              <label>Name</label>
+              <v-text-field 
+                v-model="myPet.name" 
+                :rules="nameRules"
+              />
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col class="pa-1">
+              <label>Type</label>
+              <v-select
+                v-model="myPet.type"
+                :items="PetType"
+                :rules="typeRules"
+                variant="solo"
+              />
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col class="pa-1">
+              <label>Species</label>
+              <v-text-field 
+                v-model="myPet.species" 
+                :rules="speciesRules"
+                placeholder="Example: Epicrates maurus"
+              />
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col class="pa-1">
+              <label>Date of Birth</label>
+              <Datepicker
+                v-model="myPet.dateOfBirth"
+                model-type="yyyy-MM-dd"
+                :enable-time-picker="false"
+                dark
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col class="mt-5">
+              <v-radio-group
+                v-model="myPet.sex"
+                inline
+              >
+                <v-radio
+                  label="Female"
+                  value="female"
+                  class="pr-6"
+                />
+                <v-radio
+                  label="Male"
+                  value="male"
+                  class="pr-6"
+                />
+                <v-radio
+                  label="Unknown"
+                  value="unknown"
+                />
+              </v-radio-group>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-textarea
+                v-model="myPet.description"
+                auto-grow
+                label="Description"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col
+              class="pa-3 ma-3"
+              style="text-align: center;"
             >
-              Create
-            </v-btn>
-          </v-col>
-          <v-col
-            class="pa-3 ma-3"
-            style="text-align: center;"
-          >
-            <v-btn
-              style="width: 60%;"
-              size="x-large"
-              color="error"
-              prepend-icon="mdi-cancel"
+              <v-btn
+                v-ripple
+                style="width: 75%;"
+                size="x-large"
+                color="success"
+                prepend-icon="fa:fas fa-duotone fa-check"
+                type="submit"
+              >
+                Register New Pet
+              </v-btn>
+            </v-col>
+            <v-col
+              class="pa-3 ma-3"
+              style="text-align: center;"
             >
-              Cancel
-            </v-btn>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col
-            class="pa-3 ma-3"
-            style="text-align: center;"
-          >
-            <v-btn
-              style="width: 75%; margin:auto;"
-              size="x-large"
-              color="primary"
-              prepend-icon="fa:fas fa-light fa-arrow-turn-down-left"
-            >
-              Return to My Pets
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-container>
-    </form>
+              <router-link
+                to="/my-pets"
+                style="text-decoration: none;"
+              >
+                <v-btn
+                  v-ripple
+                  style="width: 75%;"
+                  size="x-large"
+                  color="primary"
+                  prepend-icon="fa:fas fa-duotone fa-arrow-turn-down-left"
+                >
+                  Return to My Pets
+                </v-btn>
+              </router-link>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-form>
+    </v-card>
   </v-card>
 </template>
 

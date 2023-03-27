@@ -6,9 +6,9 @@ import {
   VISITS_VIRTUAL_NAME,
   WEIGHTS_VIRTUAL_NAME,
 } from '../utils/constants';
-import { IFeed } from './herpetofauna/feeding';
+import { IMeal } from './herpetofauna/feeding';
 import { IShed } from './herpetofauna/shed';
-import { IPetImage } from './image';
+import { IPetImage } from './petImage';
 import { IVet } from './vetVisit';
 import { IWeight } from './weight';
 
@@ -21,12 +21,11 @@ export interface IPet {
   type: PetType;
   species: string;
   sex: SexType;
-  dateOfBirth: Date;
-  dateOfBirthFormatted: string;
+  dateOfBirth: string;
   description: string;
   petImages: Array<IPetImage>;
   mealSchedule: Array<{}>;
-  feedingHistory: Array<IFeed>;
+  feedingHistory: Array<IMeal>;
   shedHistory: Array<IShed>;
   weightHistory: Array<IWeight>;
   vetHistory: Array<IVet>;
@@ -39,7 +38,7 @@ const petSchema = new Schema<IPet>(
     type: { type: String, required: true },
     species: { type: String, required: true },
     sex: { type: String, required: true },
-    dateOfBirth: { type: Date, required: true },
+    dateOfBirth: { type: String, required: true },
     description: { type: String, required: true },
     mealSchedule: { type: [{}], required: false },
     ownerId: { type: String, required: true },

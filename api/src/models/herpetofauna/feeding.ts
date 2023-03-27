@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-export interface IFeed {
+export interface IMeal {
   _id: string;
   feedDate: string;
   preyNo: number;
@@ -12,7 +12,7 @@ export interface IFeed {
   petId: string;
 }
 
-export const feedingSchema = new Schema<IFeed>(
+export const feedingSchema = new Schema<IMeal>(
   {
     feedDate: { type: String, required: true },
     preyNo: { type: Number, required: true },
@@ -26,4 +26,4 @@ export const feedingSchema = new Schema<IFeed>(
   { toJSON: { virtuals: true } }
 );
 
-export const Feeding = model<IFeed>('Feeding', feedingSchema);
+export const Feeding = model<IMeal>('Feeding', feedingSchema);

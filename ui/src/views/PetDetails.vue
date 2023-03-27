@@ -36,10 +36,13 @@ export default {
 
   methods: {
     async getPet() {
+      const { logout, user: { token } } = useAuthStore();
       try{
-         this.myPet = await GET(`${PET_API}/${this.$route.query.id}`, useAuthStore().user.token);
-      }catch(error){
-         console.log(error)
+         this.myPet = await GET(`${PET_API}/${this.$route.query.id}`, token);
+        }catch(error: any){
+         if(error.message.split(':')[0] === 'AUTH'){
+            logout()
+         }
       }
     },
   },
