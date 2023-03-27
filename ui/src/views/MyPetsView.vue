@@ -46,7 +46,7 @@ export default {
     // add another param to this function for petImages
     getThumbnail(type: string, petImages: [IPetImage]) {
       let thumbnail: string;
-      const petImgThumb = petImages.find(({isThumbnail}) => isThumbnail === true);
+      const petImgThumb = petImages && petImages.find(({isThumbnail}) => isThumbnail === true);
       if (petImgThumb) {
         thumbnail = petImgThumb.imagePath
       } else {

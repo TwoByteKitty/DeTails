@@ -9,6 +9,12 @@ import type { PropType } from "vue";
 import EditOverviewModal from "../modals/EditOverviewModal.vue";
 import EditPhotosModal from "../modals/EditPhotosModal.vue";
 
+const defaultImgUpload = {
+   image: [],
+   imageTitle: '',
+};
+
+
 export default {
   name: "OverviewTab",
   emits: [ 'overviewEdited' ],
@@ -28,20 +34,21 @@ export default {
     },
   data() {
     return {
-      image: [],
-      imageTitle: ''
+      imageUpload: {
+        ...defaultImgUpload },
     };
   },
   components: { EditOverviewModal, EditPhotosModal },
   methods: {
     async uploadImage() {
-      const imageToUpload: File = this.image[0];
+      const imageToUpload: File = this.imageUpload.image[0];
       const data = new FormData();
       data.append("petImage", imageToUpload, imageToUpload.name);
-      data.append("imageTitle", this.imageTitle);
+      data.append("imageTitle", this.imageUpload.imageTitle);
       try{
          const response = await POST_IMAGE(`${PET_API}/${this._id}/add-image`, data, useAuthStore().user.token)
          this.$emit("overviewEdited");
+         this.imageUpload = { ...defaultImgUpload };
          console.log(response);
       }catch(error){
          console.log(error);
@@ -74,6 +81,7 @@ export default {
                   :is-thumbnail="currentImg.isThumbnail"
                   :upload-date="currentImg.uploadDate"
                   :image-path="currentImg.imagePath"
+                  @photos-edited="$event => $emit('overviewEdited')"
                 />
               </div>
             </v-carousel-item>
@@ -82,7 +90,7 @@ export default {
         <v-row class="pa-3 ma-3 d-flex">
           <v-col cols="6">
             <v-file-input
-              v-model="image"
+              v-model="imageUpload.image"
               name="pet-image"
               label="Upload photos"
               clearable
@@ -91,7 +99,7 @@ export default {
           </v-col>
           <v-col>
             <v-text-field
-              v-model="imageTitle"
+              v-model="imageUpload.imageTitle"
               label="Title"
             />
           </v-col>

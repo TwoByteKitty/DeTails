@@ -27,7 +27,9 @@ const getAllPets = async (request: Request<{}, {}, IPetRequestBody>, response: R
     if (user === null) {
       throw new Error('User not found');
     }
-    const foundPets = await Pet.find({ ownerId: user?._id }).sort({ date: -1 });
+    const foundPets = await Pet.find({ ownerId: user?._id })
+      .sort({ date: -1 })
+      .populate({ path: IMAGES_VIRTUAL_NAME, options: { sort: { uploadDate: 1 } } });
     response.json(foundPets);
   } catch (error) {
     response.status(422).json(error);

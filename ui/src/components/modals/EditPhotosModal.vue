@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { IPetImage } from '@/shared/interfaces/IPetImage';
 import { useAuthStore } from '@/stores/auth.store';
 import { DELETE, PET_API, PUT } from '@/utils/fetch';
 import { DateTime } from 'luxon';
@@ -115,15 +114,18 @@ export default {
       </template>
       <v-card
         title="Edit Current Slide"
-        class="pa-6 ma-6 elevation-3"
+        class="pa-3 ma-3"
       >
-        <v-img
-          style="margin: auto;"
-          :width="420"
-          :src="imagePath"
-        />
+        <div
+          style="margin: auto; width: 480px; height: 480px;"
+        >
+          <v-img
+            style="margin: auto;"
+            :src="imagePath"
+          />
+        </div>
         <v-card
-          class="ma-3 pa-6 elevation-6"
+          class="ma-3 px-6 py-3 elevation-3"
         >
           <v-row class="ma-3 pa-3">
             <v-col
@@ -154,10 +156,11 @@ export default {
             >
               <v-spacer />
               <v-checkbox
-                :model="deleteImage"
-                style="color:red; font-weight: bold; padding: 15px; justify-self: center;"
+                v-model="deleteImage"
+                class="delete-chkbx"
                 label="Do you want to DELETE this image?"
                 color="error"
+                :hide-details="true"
               />
               <v-spacer />
             </v-col>
@@ -210,7 +213,7 @@ export default {
   </v-row>
 </template>
 
-<style lang="css" scoped>
+<style lang="css">
 .album-edit-button {
   height: 60px;
   width: 66px;
@@ -220,4 +223,13 @@ export default {
   opacity: 80%;
   z-index: 5;
 }
+.delete-chkbx {
+  color: var(--md-ref-palette-error60); 
+  padding: 15px; 
+  justify-self: center;
+}
+.delete-chkbx .v-label  {
+  font-size: 1.25rem;
+}
+
 </style>
