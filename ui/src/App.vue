@@ -16,7 +16,7 @@ ChartJS.register(BarElement, LineElement, PointElement, TimeScale, LinearScale, 
 export default {
   components:{ RouterView },
   data: () => ({
-    pageTitle: 'DeTails',
+ //   pageTitle: 'DeTails',
     drawerVisibleLeft: false,
     drawerVisibleRight: false,
     routes,
@@ -59,15 +59,18 @@ export default {
 <template>
   <v-app>
     <v-app-bar
-      color="primary"
-      prominent
+      class="py-2"
+      color="var(--md-ref-palette-neutral-variant20)"
     >
       <v-app-bar-nav-icon
         icon="fa:fas fa-duotone fa-bars"
         variant="text"
         @click.stop="$event => drawerVisibleLeft = !drawerVisibleLeft"
       />
-      <v-toolbar-title>{{ pageTitle }}</v-toolbar-title>
+      <v-spacer />
+      <v-img
+        src="/assets/logo-no-background.svg"
+      />
       <v-spacer />
       <v-app-bar-nav-icon
         icon="fa:fas fa-duotone fa-ellipsis-vertical"
@@ -79,13 +82,20 @@ export default {
       v-model="drawerVisibleLeft"
       location="left"
       temporary
+      width="300"
     >
-      <v-list>
+      <v-list
+        class="mt-3"
+      >
         <v-list-item
           v-for="route in navMenu"
           :key="route.pageTitle"
+          class="ma-2 pt-6 px-4 display-medium"
         >
-          <router-link :to="route.path">
+          <router-link 
+            :to="route.path"
+            style="text-decoration: none; padding-left: 6px;"
+          >
             {{ route.pageTitle }}
           </router-link>
         </v-list-item>

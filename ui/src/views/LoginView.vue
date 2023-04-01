@@ -7,6 +7,7 @@ export default {
       isValid: false,
       showAlert: false,
       alertMsg: '',
+      showPW: false,
       form: { userName:'', password: '' },
       userNameRules: [
          (value: string)=>(!!value || 'Username is required'),
@@ -57,8 +58,12 @@ export default {
     <v-responsive>
       <v-card 
         class="mx-auto px-9 pt-3 pb-9 elevation-6"
-        title="Log In"
       >
+        <v-card-title
+          class="title-large"
+        >
+          Log In
+        </v-card-title>
         <div>
           <v-alert
             v-model="showAlert"
@@ -100,6 +105,10 @@ export default {
                   v-model="form.password"
                   :readonly="loading"
                   :rules="passwordRules"
+                  :append-icon="showPW ? 'fa:fas fa-duotone fa-eye' : 'fa:fas fa-duotone fa-eye-slash'"
+                  :type="showPW ? 'text' : 'password'"
+                  @click:append="$event => showPW = !showPW"
+                  counter
                   clearable
                   label="Password"
                   placeholder="Enter your password"
@@ -134,7 +143,7 @@ export default {
   background-color: var(--md-ref-palette-secondary20);
 }
 .submit-btn {
-  box-shadow: 1.5px 1.5px 6px 3px rgba(0, 6, 1, .3);
+  box-shadow: 1.5px 1.5px 6px 3px rgba(0, 6, 1, 0.33);
   border: 1px solid rgba(32, 88, 34, 0.66);
 }
 </style>

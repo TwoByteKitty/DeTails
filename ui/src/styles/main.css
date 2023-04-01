@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Advent+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Calligraffitti&family=Cormorant+Infant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Cormorant+Upright:wght@300;400;500;600;700&family=Emilys+Candy&family=Kavivanar&family=Laila:wght@300;400;500;600;700&family=Lancelot&family=Milonga&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Shalimar&family=Spectral:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Trirong:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Biryani:wght@200;300;400;600;700;800;900&family=Calligraffitti&family=Cormorant+Infant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Cormorant+Unicase:wght@300;400;500;600;700&family=Cormorant+Upright:wght@300;400;500;600;700&family=Euphoria+Script&family=Kalam:wght@300;400;700&family=Laila:wght@300;400;500;600;700&family=Maitree:wght@200;300;400;500;600&family=Martel+Sans:wght@200;300;400;600;700&family=Martel:wght@200;300;400;600;700;800;900&family=Merienda:wght@300;400;500;600;700;800;900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import "./themes/theme.css";
 
 
@@ -8,6 +9,10 @@
   font-family: 'Laila', sans-serif;
   font-weight: 300;
 }
+
+/* .v-card-title {
+  font-family: 'Fondamento', serif;
+} */
 
 .data-tbl {
   max-width: 100%;
