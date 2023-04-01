@@ -83,7 +83,7 @@ export default {
       let data = null;
       try{
         if(this.deleteImage){
-            data = await DELETE(`${PET_API}/${this.$route.query.id}/delete-image`, this.fields, useCookies().cookies.get(TOKEN_KEY));
+            data = await DELETE(`${PET_API}/${this.$route.query.id}/delete-image`, { ...this.fields, imagePath: this.imagePath }, useCookies().cookies.get(TOKEN_KEY));
         }else{
             data = await PUT(`${PET_API}/${this.$route.query.id}/edit-image`, this.fields, useCookies().cookies.get(TOKEN_KEY));
         }
