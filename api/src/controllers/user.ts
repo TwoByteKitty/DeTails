@@ -1,12 +1,12 @@
 import bcrypt from "bcrypt";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import jwt, { Secret } from "jsonwebtoken";
 import { IUser, User } from "../models/user";
+import { TOKEN_KEY } from "../utils/constants";
 
 const registerUser = async (
   request: Request<{}, {}, IUser>,
-  response: Response,
-  next: NextFunction
+  response: Response
 ) => {
   const user: IUser = request.body;
   const oldUser = await User.findOne({ userName: user.userName });
@@ -26,12 +26,7 @@ const registerUser = async (
           expiresIn: "2h",
         }
       );
-      // save user token
-      createdUser.token = token;
-      // return new user
-      response
-        .status(200)
-        .json({ userName: createdUser.userName, token: createdUser.token });
+      response.status(200).json({ userName: createdUser.userName });
     })
     .catch((err: any) => response.status(500).json(err));
 };
@@ -60,10 +55,10 @@ const login = async (request: Request<{}, {}, IUser>, response: Response) => {
       }
     );
 
-    // save user token
-    user.token = token;
-    // user
-    response.status(200).json({ userName: user.userName, token: user.token });
+    response
+      .setHeader(TOKEN_KEY, token)
+      .status(200)
+      .json({ user: user.userName });
   });
 };
 

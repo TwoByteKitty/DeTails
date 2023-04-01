@@ -35,14 +35,14 @@ export default {
             const { login } = useAuthStore();
             this.loading = true
             try{
-            await login(this.form);
+               await login(this.form);
             }catch(error: any){
               console.log(error)
               console.log(error.message.split(':')[1])
               this.loading = false;
               this.alertMsg = error.message.split(':')[1];
               this.showAlert = true;
-              
+
             }
          }
       },
@@ -56,7 +56,7 @@ export default {
     rounded
   >
     <v-responsive>
-      <v-card 
+      <v-card
         class="mx-auto px-9 pt-3 pb-9 elevation-6"
       >
         <v-card-title

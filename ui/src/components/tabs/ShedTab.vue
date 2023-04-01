@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { IError } from '@/shared/interfaces/IError';
 import type { IShed } from '@/shared/interfaces/IShed';
-import { useAuthStore } from '@/stores/auth.store';
+import { TOKEN_KEY, useAuthStore } from '@/stores/auth.store';
 import { PET_API, POST } from '@/utils/fetch';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
@@ -10,6 +10,7 @@ import 'chartjs-plugin-style';
 import { DateTime } from 'luxon';
 import type { PropType } from 'vue';
 import { ref } from 'vue';
+import { useCookies } from 'vue3-cookies';
 import ShedStkBar from '../charts/ShedStkBar.vue';
 
 const defaultShed: IShed = {
@@ -65,9 +66,9 @@ export default {
     async createShed() {
       delete this.newShed._id;
       this.showAlert = false;
-      const { logout, user: { token } } = useAuthStore();
+      const { logout } = useAuthStore();
       try{
-         const data = await POST(`${PET_API}/${this.$route.query.id}/sheds/add`, this.newShed, token);
+         const data = await POST(`${PET_API}/${this.$route.query.id}/sheds/add`, this.newShed, useCookies().cookies.get(TOKEN_KEY));
          console.log(data);
          this.$emit('shedAdded');
          this.alertMsg = successMsg;

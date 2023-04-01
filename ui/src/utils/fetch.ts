@@ -20,7 +20,7 @@ const doFetch = async (url: string, options: {})=>{
       const error = await response.json();
       throw new Error(`${error.type}:${error.message}`);
    }
-   return await response.json();
+   return response;
 }
 
 export const GET = async (url:string, token?: string)=>{
@@ -31,7 +31,7 @@ export const GET = async (url:string, token?: string)=>{
    if(token){
       options.headers['x-access-token'] = token;
    }
-   return await doFetch(url, options)
+   return await (await doFetch(url, options)).json();
 }
 
 export const POST = async (url:string, data: {}, token?: string)=>{
@@ -46,7 +46,19 @@ export const POST = async (url:string, data: {}, token?: string)=>{
    if(token){
       options.headers['x-access-token'] = token;
    }
-   return await doFetch(url, options)
+   return await (await doFetch(url, options)).json();
+}
+
+export const LOGIN = async (url:string, data: {})=>{
+
+   const options: IFetchOptions ={
+      method: 'POST',
+      headers: {
+         'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+   }
+   return await doFetch(url, options);
 }
 
 export const POST_IMAGE = async (url:string, data: {}, token: string)=>{
@@ -57,7 +69,7 @@ export const POST_IMAGE = async (url:string, data: {}, token: string)=>{
       },
       body: data
    }
-   return await doFetch(url, options)
+   return await(await doFetch(url, options)).json();
 }
 
 export const PUT = async (url:string, data: {}, token: string)=>{
@@ -69,7 +81,7 @@ export const PUT = async (url:string, data: {}, token: string)=>{
       },
       body: JSON.stringify(data)
    }
-   return await doFetch(url, options)
+   return await(await doFetch(url, options)).json();
 }
 
 export const DELETE = async (url:string, data: {}, token: string)=>{
@@ -81,6 +93,6 @@ export const DELETE = async (url:string, data: {}, token: string)=>{
       },
       body: JSON.stringify(data)
    }
-   return await doFetch(url, options)
+   return await(await doFetch(url, options)).json();
 }
 

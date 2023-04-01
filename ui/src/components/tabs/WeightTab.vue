@@ -2,13 +2,14 @@
 import type { IError } from '@/shared/interfaces/IError';
 import type { IWeight } from '@/shared/interfaces/IWeight';
 import { WeighUnits } from '@/shared/SelectLists.js';
-import { useAuthStore } from '@/stores/auth.store';
+import { TOKEN_KEY, useAuthStore } from '@/stores/auth.store';
 import { PET_API, POST } from '@/utils/fetch';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import 'chartjs-plugin-style';
 import { DateTime } from 'luxon';
 import { ref, type PropType } from 'vue';
+import { useCookies } from 'vue3-cookies';
 import WeightLineChart from '../charts/WeightLineChart.vue';
 import EditWeightModal from '../modals/EditWeightModal.vue';
 
@@ -63,9 +64,9 @@ export default {
     async createWeight() {
       delete this.newWeight._id;
       this.showAlert = false;
-      const { logout, user: { token } } = useAuthStore();
+      const { logout } = useAuthStore();
       try{
-         const data = await POST(`${PET_API}/${this.$route.query.id}/weights/add`, this.newWeight, token);
+         const data = await POST(`${PET_API}/${this.$route.query.id}/weights/add`, this.newWeight, useCookies().cookies.get(TOKEN_KEY));
          console.log(data);
          this.$emit('weightAdded');
          this.alertMsg = successMsg;

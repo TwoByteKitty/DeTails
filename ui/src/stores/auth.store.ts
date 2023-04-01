@@ -1,33 +1,45 @@
 import router from '@/router';
-import { POST } from '@/utils/fetch';
+import { LOGIN } from '@/utils/fetch';
 import { defineStore } from 'pinia';
+import { useCookies } from "vue3-cookies";
 
 const LOGIN_URL = 'api/user/login';
+export const TOKEN_KEY = 'x-access-token';
+export const USER_KEY = 'x-user-name';
 
 export const useAuthStore = defineStore({
    id: 'auth',
    state: () => ({
-     // initialize state from local storage to enable user to stay logged in
-     user: JSON.parse(sessionStorage.getItem('user') as string),
+     user: '',
      returnUrl: ''
    }),
    actions: {
     async login({userName, password}:{userName: string, password: string}) {
+      const { cookies } = useCookies();
       try{
-        const user = await POST(LOGIN_URL, {userName, password});
-        this.user = user;
-        // store user details and jwt in local storage to keep user logged in between page refreshes
-        sessionStorage.setItem('user', JSON.stringify(user));
-        // redirect to previous url or default to home page
-        router.push(this.returnUrl || '/my-pets');
+         const response = await LOGIN(LOGIN_URL, { userName, password });
+         const { user }: { user: string } = await response.json();
+         this.user = user;
+
+         const token = response.headers.get(TOKEN_KEY);
+
+         if(token){
+            cookies
+               .set(TOKEN_KEY, token, '2h')
+               .set(USER_KEY, user, '2h');
+            // redirect to previous url or default to home page
+            router.push(this.returnUrl || '/my-pets');
+         }
       } catch (error:any) {
         throw new Error(error.message);
       }
     },
     logout() {
-        this.user = null;
-        sessionStorage.removeItem('user');
-        router.push('/login');
+      const { cookies } = useCookies();
+      this.user = null;
+      cookies.remove(TOKEN_KEY);
+      cookies.remove(USER_KEY);
+      router.push('/login');
     }
    }
 });

@@ -3,9 +3,10 @@ import type { IMeal } from "@/shared/interfaces/IMeal";
 import type { IPetImage } from "@/shared/interfaces/IPetImage";
 import type { IShed } from "@/shared/interfaces/IShed";
 import type { IWeight } from "@/shared/interfaces/IWeight";
-import { useAuthStore } from "@/stores/auth.store";
+import { TOKEN_KEY } from "@/stores/auth.store";
 import { PET_API, POST_IMAGE } from "@/utils/fetch";
 import type { PropType } from "vue";
+import { useCookies } from "vue3-cookies";
 import EditOverviewModal from "../modals/EditOverviewModal.vue";
 import EditPhotosModal from "../modals/EditPhotosModal.vue";
 
@@ -46,7 +47,7 @@ export default {
       data.append("petImage", imageToUpload, imageToUpload.name);
       data.append("imageTitle", this.imageUpload.imageTitle);
       try{
-         const response = await POST_IMAGE(`${PET_API}/${this._id}/add-image`, data, useAuthStore().user.token)
+         const response = await POST_IMAGE(`${PET_API}/${this._id}/add-image`, data, useCookies().cookies.get(TOKEN_KEY))
          this.$emit("overviewEdited");
          this.imageUpload = { ...defaultImgUpload };
          console.log(response);

@@ -1,7 +1,8 @@
 <script lang="ts">
 import MoreTab from '@/components/tabs/MoreTab.vue';
-import { useAuthStore } from '@/stores/auth.store';
+import { TOKEN_KEY, useAuthStore } from '@/stores/auth.store';
 import { GET, PET_API } from '@/utils/fetch';
+import { useCookies } from 'vue3-cookies';
 import FeedingTab from '../components/tabs/FeedingTab.vue';
 import OverviewTab from '../components/tabs/OverviewTab.vue';
 import ShedTab from '../components/tabs/ShedTab.vue';
@@ -36,9 +37,9 @@ export default {
 
   methods: {
     async getPet() {
-      const { logout, user: { token } } = useAuthStore();
+      const { logout } = useAuthStore();
       try{
-         this.myPet = await GET(`${PET_API}/${this.$route.query.id}`, token);
+         this.myPet = await GET(`${PET_API}/${this.$route.query.id}`, useCookies().cookies.get(TOKEN_KEY));
         }catch(error: any){
          if(error.message.split(':')[0] === 'AUTH'){
             logout()

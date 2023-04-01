@@ -1,9 +1,10 @@
 <script lang="ts">
 import type { IError } from '@/shared/interfaces/IError';
 import { WeighUnits } from '@/shared/SelectLists';
-import { useAuthStore } from '@/stores/auth.store';
+import { TOKEN_KEY, useAuthStore } from '@/stores/auth.store';
 import { PET_API, PUT } from '@/utils/fetch';
 import { DateTime } from 'luxon';
+import { useCookies } from 'vue3-cookies';
 
 const DATE_FORMAT_STRING = 'yyyy-MM-dd';
 const errorMsg = 'Well... you really screwed up this time...';
@@ -97,7 +98,7 @@ export default {
     },
     async editPet() {
       try{
-         const data = await PUT(`${PET_API}/weights/${this._id}`, this.fields, useAuthStore().user.token);
+         const data = await PUT(`${PET_API}/weights/${this._id}`, this.fields, useCookies().cookies.get(TOKEN_KEY));
          this.editSuccess(data);
       }catch(error){
          this.editError(error)

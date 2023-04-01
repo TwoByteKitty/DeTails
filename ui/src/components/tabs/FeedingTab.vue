@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { IMeal } from '@/shared/interfaces/IMeal';
 import { DegreeOfDead, PreyType } from '@/shared/SelectLists.js';
-import { useAuthStore } from '@/stores/auth.store';
+import { TOKEN_KEY } from '@/stores/auth.store';
 import type { IMealSchedule } from '@/utils/feedingSchedule';
 import { generateFeedingSchedule } from '@/utils/feedingSchedule';
 import { PET_API, POST, PUT } from '@/utils/fetch';
@@ -10,6 +10,7 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import { DateTime } from 'luxon';
 import { Calendar } from 'v-calendar';
 import type { PropType } from 'vue';
+import { useCookies } from 'vue3-cookies';
 
 const defaultMeal: IMeal = {
   _id: '',
@@ -70,7 +71,7 @@ computed:{
       delete this.newMeal._id;
       this.showAlert = false;
       try{
-         const data = await POST(`${PET_API}/${this.$route.query.id}/feedings/add`, this.newMeal, useAuthStore().user.token);
+         const data = await POST(`${PET_API}/${this.$route.query.id}/feedings/add`, this.newMeal, useCookies().cookies.get(TOKEN_KEY));
          console.log(data);
          this.$emit('feedingAdded');
          this.alertMsg = successMsg;
@@ -105,7 +106,7 @@ computed:{
     },
     async editFeedingSchedule(mealSchedule: Array<IMealSchedule>) {
       try{
-         const data = await PUT(`${PET_API}/${this.$route.query.id}/feeding-schedule`, { _id: this.$route.query.id, mealSchedule }, useAuthStore().user.token);
+         const data = await PUT(`${PET_API}/${this.$route.query.id}/feeding-schedule`, { _id: this.$route.query.id, mealSchedule }, useCookies().cookies.get(TOKEN_KEY));
          console.log(data);
          this.$emit('feedingAdded');
       }catch(error){

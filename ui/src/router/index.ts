@@ -1,5 +1,6 @@
-import { useAuthStore } from '@/stores/auth.store';
+import { TOKEN_KEY, useAuthStore } from '@/stores/auth.store';
 import { createRouter, createWebHistory } from 'vue-router';
+import { useCookies } from 'vue3-cookies';
 import HomeView from '../views/HomeView.vue';
 export const routes = [
   {
@@ -89,8 +90,8 @@ router.beforeEach(async (to) => {
    // redirect to login page if not logged in and trying to access a restricted page
    const { authRequired } = to.meta;
    const auth = useAuthStore();
-
-   if (authRequired && !auth.user) {
+   const authToken = useCookies().cookies.get(TOKEN_KEY)
+   if (authRequired && authToken) {
        auth.returnUrl = to.fullPath;
        return '/login';
    }
