@@ -5,6 +5,7 @@ import { POST, USER_API } from '@/utils/fetch';
 export default {
    data:() =>({
       isValid: false,
+      showPW: false,
       form: { userName:'', password: '' },
       passwordConfirm: '',
       userNameRules: [
@@ -47,74 +48,98 @@ export default {
 </script>
 
 <template>
-  <v-container>
-    <v-responsive
-      class="mx-auto"
-      max-width="1080"
+  <v-sheet
+    class="ma-12 pa-12"
+  >
+    <v-card 
+      class="ma-6 pa-6 elevation-9"
+      variant="tonal"
     >
-      <v-card title="New User Registration">
-        <v-card>
-          <v-form
-            ref="registrationForm"
-            v-model="isValid"
-            lazy-validation
-            @submit.prevent="register"
-          >
-            <v-row>
-              <v-col>
-                <v-text-field
-                  v-model="form.userName"
-                  :readonly="loading"
-                  :rules="userNameRules"
-                  class="mb-2"
-                  clearable
-                  label="User Name"
-                />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-text-field
-                  v-model="form.password"
-                  :readonly="loading"
-                  :rules="passwordRules"
-                  clearable
-                  label="Password"
-                  placeholder="Enter your password"
-                />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-text-field
-                  v-model="passwordConfirm"
-                  :readonly="loading"
-                  :rules="[passwordMatch]"
-                  clearable
-                  label="Confirm Password"
-                  placeholder="Re-enter your password"
-                />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-btn
-                  :loading="loading"
-                  block
-                  color="success"
-                  size="large"
-                  type="submit"
-                  variant="elevated"
-                >
-                  Register
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-form>
-        </v-card>
+      <v-card-title
+        class="title-large"
+      >
+        New User Registration
+      </v-card-title>
+      <v-card
+        class="ma-3 pa-6"
+      >
+        <v-form
+          ref="registrationForm"
+          v-model="isValid"
+          lazy-validation
+          @submit.prevent="register"
+        >
+          <v-row>
+            <v-col>
+              <v-text-field
+                v-model="form.userName"
+                :readonly="loading"
+                :rules="userNameRules"
+                class="mb-2"
+                clearable
+                label="User Name"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-text-field
+                v-model="form.password"
+                :readonly="loading"
+                :rules="passwordRules"
+                :append-icon="showPW ? 'fa:fas fa-duotone fa-eye' : 'fa:fas fa-duotone fa-eye-slash'"
+                :type="showPW ? 'text' : 'password'"
+                @click:append="$event => showPW = !showPW"
+                counter
+                clearable
+                label="Password"
+                placeholder="Enter your password"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-text-field
+                v-model="passwordConfirm"
+                :readonly="loading"
+                :rules="[passwordMatch]"
+                :append-icon="showPW ? 'fa:fas fa-duotone fa-eye' : 'fa:fas fa-duotone fa-eye-slash'"
+                :type="showPW ? 'text' : 'password'"
+                @click:append="$event => showPW = !showPW"
+                counter
+                clearable
+                label="Confirm Password"
+                placeholder="Re-enter your password"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-btn
+                :loading="loading"
+                block
+                class="reg-btn"
+                color="success"
+                size="large"
+                type="submit"
+                variant="tonal"
+              >
+                Register
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-form>
       </v-card>
-    </v-responsive>
-  </v-container>
+    </v-card>
+  </v-sheet>
 </template>
 
-<style lang="css"></style>
+<style lang="css">
+.reg-btn {
+  margin-top: 9px;
+  margin-bottom: 15px;
+  box-shadow: 1.5px 1.5px 6px 3px rgba(0, 6, 1, .3);
+  border: 1px solid rgba(32, 88, 34, 0.66);
+}
+
+</style>
