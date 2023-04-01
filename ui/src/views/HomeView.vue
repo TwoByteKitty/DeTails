@@ -1,5 +1,4 @@
 <script lang="ts">
-import logo from '@/assets/logo-no-background.svg';
 
 
 export default {};
@@ -27,11 +26,11 @@ export default {};
           class="ml-3 mb-3"
         >
           <v-card-title>Hi there! New around here?</v-card-title>
-          
+
           <v-card-subtitle
             class="pa-3 ml-2"
           >
-            Please take a moment  
+            Please take a moment
             <router-link to="/register">
               <span
                 class="reg-span"
@@ -46,11 +45,11 @@ export default {};
         >
           <v-card-subtitle>
             Otherwise, welcome back!
-            <router-link to="/register">
+            <router-link to="/login">
               <span
                 class="login-span"
               >
-                Please log in. 
+                Please log in.
               </span>
             </router-link>
           </v-card-subtitle>

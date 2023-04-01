@@ -2,11 +2,12 @@
 import type { IError } from '@/shared/interfaces/IError';
 import type { IPet } from '@/shared/interfaces/IPet';
 import { PetType } from '@/shared/SelectLists.js';
-import { useAuthStore } from '@/stores/auth.store';
+import { TOKEN_KEY, useAuthStore, USER_KEY } from '@/stores/auth.store';
 import { PET_API, POST } from '@/utils/fetch';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { RouterLink } from 'vue-router';
+import { useCookies } from 'vue3-cookies';
 
 const defaultPet: IPet = {
   name: '',
@@ -47,7 +48,7 @@ export default {
             if (value?.match(/\b[A-Z].*?\b \b[a-z].*?\b/gm)) return true
             return 'Please enter a binomial name in the format: Genus species.'
          }
-    ],  
+    ],
   }),
 
   watch: {},
@@ -58,10 +59,11 @@ export default {
       const { valid } = await form.validate();
       this.isValid == valid;
       if(valid){
-        const { logout, user: {userName, token} } = useAuthStore();
+        const { logout } = useAuthStore();
+        const { cookies } = useCookies();
         this.showRegResult = false;
         try{
-          const data = await POST(`${PET_API}/add`, {pet:this.myPet, userName}, token);
+          const data = await POST(`${PET_API}/add`, {pet:this.myPet, userName: cookies.get(USER_KEY)}, cookies.get(TOKEN_KEY));
           console.log(data);
           this.alertMsg = successMsg;
           this.resultIsError = false;
@@ -79,8 +81,8 @@ export default {
             this.showRegResult = true;
           }
         }
-      }  
-    },  
+      }
+    },
   }
 }
 
@@ -125,8 +127,8 @@ export default {
           <v-row no-gutters>
             <v-col class="pa-1 mt-3">
               <label>Name</label>
-              <v-text-field 
-                v-model="myPet.name" 
+              <v-text-field
+                v-model="myPet.name"
                 :rules="nameRules"
               />
             </v-col>
@@ -145,8 +147,8 @@ export default {
           <v-row no-gutters>
             <v-col class="pa-1">
               <label>Species</label>
-              <v-text-field 
-                v-model="myPet.species" 
+              <v-text-field
+                v-model="myPet.species"
                 :rules="speciesRules"
                 placeholder="Example: Epicrates maurus"
               />

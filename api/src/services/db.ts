@@ -1,9 +1,10 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const DB_CONNECTION_STRING = process.env.MONGODB_URI || 'mongodb://127.0.0.1/DeTail';
+const DB_CONNECTION_STRING =
+  process.env.MONGODB_URI || "mongodb://127.0.0.1/DeTail";
 
 const db = mongoose;
-db.connection.on('error', (err: any) => {
+db.connection.on("error", (err: any) => {
   console.log(`Mongoose connection err:\n${err}`);
 });
 

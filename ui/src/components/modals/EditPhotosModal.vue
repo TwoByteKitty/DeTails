@@ -1,7 +1,8 @@
 <script lang="ts">
-import { useAuthStore } from '@/stores/auth.store';
+import { TOKEN_KEY, useAuthStore } from '@/stores/auth.store';
 import { DELETE, PET_API, PUT } from '@/utils/fetch';
 import { DateTime } from 'luxon';
+import { useCookies } from 'vue3-cookies';
 
 const DATE_FORMAT_STRING = 'yyyy-MM-dd';
 const errorMsg = 'Well... you really screwed up this time...';
@@ -82,9 +83,9 @@ export default {
       let data = null;
       try{
         if(this.deleteImage){
-            data = await DELETE(`${PET_API}/${this.$route.query.id}/delete-image`, this.fields, useAuthStore().user.token);
+            data = await DELETE(`${PET_API}/${this.$route.query.id}/delete-image`, this.fields, useCookies().cookies.get(TOKEN_KEY));
         }else{
-            data = await PUT(`${PET_API}/${this.$route.query.id}/edit-image`, this.fields, useAuthStore().user.token);
+            data = await PUT(`${PET_API}/${this.$route.query.id}/edit-image`, this.fields, useCookies().cookies.get(TOKEN_KEY));
         }
          this.editSuccess(data);
       }catch(error){
@@ -224,8 +225,8 @@ export default {
   z-index: 5;
 }
 .delete-chkbx {
-  color: var(--md-ref-palette-error60); 
-  padding: 15px; 
+  color: var(--md-ref-palette-error60);
+  padding: 15px;
   justify-self: center;
 }
 .delete-chkbx .v-label  {

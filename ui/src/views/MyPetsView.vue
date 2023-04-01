@@ -1,8 +1,9 @@
 <script lang="ts">
 import type { IPetImage } from '@/shared/interfaces/IPetImage';
-import { useAuthStore } from '@/stores/auth.store';
+import { TOKEN_KEY, useAuthStore, USER_KEY } from '@/stores/auth.store';
 import { PET_API, POST } from '@/utils/fetch';
 import { RouterLink } from 'vue-router';
+import { useCookies } from 'vue3-cookies';
 
 interface IImgMap{
   [key:string]: string;
@@ -34,9 +35,10 @@ export default {
 
   methods: {
     async fetchData() {
-      const { logout, user: {userName, token} } = useAuthStore();
+      const { logout } = useAuthStore();
+      const { cookies } = useCookies();
       try{
-         this.myPets = await POST(PET_API, { userName }, token);
+         this.myPets = await POST(PET_API, { userName: cookies.get(USER_KEY) }, cookies.get(TOKEN_KEY));
       }catch(error: any){
          if(error.message.split(':')[0] === 'AUTH'){
             logout()
@@ -69,7 +71,7 @@ export default {
     >
       List looking a little empty? Bring home a new buddy?
     </span>
-    <router-link 
+    <router-link
       to="/my-pets/add"
       style="display: grid; text-decoration: none;"
     >
