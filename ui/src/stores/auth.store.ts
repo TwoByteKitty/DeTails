@@ -7,12 +7,18 @@ const LOGIN_URL = 'api/user/login';
 export const TOKEN_KEY = 'x-access-token';
 export const USER_KEY = 'x-user-name';
 
+interface IAuthState{
+   user?: string | null;
+   returnUrl?: string|null;
+}
+
+const initialState: IAuthState =  {
+   user: '',
+   returnUrl: null
+ }
 export const useAuthStore = defineStore({
    id: 'auth',
-   state: () => ({
-     user: '',
-     returnUrl: ''
-   }),
+   state: () => (initialState),
    actions: {
     async login({userName, password}:{userName: string, password: string}) {
       const { cookies } = useCookies();

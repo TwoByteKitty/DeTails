@@ -91,7 +91,7 @@ router.beforeEach(async (to) => {
    const { authRequired } = to.meta;
    const auth = useAuthStore();
    const authToken = useCookies().cookies.get(TOKEN_KEY)
-   if (authRequired && authToken) {
+   if (authRequired && !authToken) {
        auth.returnUrl = to.fullPath;
        return '/login';
    }
