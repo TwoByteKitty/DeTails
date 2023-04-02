@@ -1,17 +1,17 @@
-import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { Request, Response } from 'express';
-import { UploadedFile } from 'express-fileupload';
-import { DateTime } from 'luxon';
-import { IPetImage, PetImage } from '../models/petImage';
-import { IPet, Pet } from '../models/pet';
-import { User } from '../models/user';
-import { getUploadParams, s3Client } from '../services/s3';
+import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { Request, Response } from "express";
+import { UploadedFile } from "express-fileupload";
+import { DateTime } from "luxon";
+import { IPet, Pet } from "../models/pet";
+import { IPetImage, PetImage } from "../models/petImage";
+import { User } from "../models/user";
+import { getDeleteParams, getUploadParams, s3Client } from "../services/s3";
 import {
   FEEDINGS_VIRTUAL_NAME,
   IMAGES_VIRTUAL_NAME,
   SHEDS_VIRTUAL_NAME,
-  WEIGHTS_VIRTUAL_NAME,
-} from '../utils/constants';
+  WEIGHTS_VIRTUAL_NAME
+} from "../utils/constants";
 interface IPetRequestBody {
   userName: string;
 }
@@ -20,29 +20,38 @@ interface IAddPetRequestBody extends IPet {
   userName: string;
 }
 
-const getAllPets = async (request: Request<{}, {}, IPetRequestBody>, response: Response) => {
+const getAllPets = async (
+  request: Request<{}, {}, IPetRequestBody>,
+  response: Response
+) => {
   const { userName } = request.body;
   try {
     const user = await User.findOne({ userName });
     if (user === null) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
     const foundPets = await Pet.find({ ownerId: user?._id })
       .sort({ date: -1 })
-      .populate({ path: IMAGES_VIRTUAL_NAME, options: { sort: { uploadDate: 1 } } });
+      .populate({
+        path: IMAGES_VIRTUAL_NAME,
+        options: { sort: { uploadDate: 1 } },
+      });
     response.json(foundPets);
   } catch (error) {
     response.status(422).json(error);
   }
 };
 
-const addPet = async (request: Request<{}, {}, IAddPetRequestBody>, response: Response) => {
+const addPet = async (
+  request: Request<{}, {}, IAddPetRequestBody>,
+  response: Response
+) => {
   const { userName } = request.body;
   const { pet } = request.body;
   try {
     const user = await User.findOne({ userName });
     if (user === null) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
     const createdPet = await Pet.create({ ...pet, ownerId: user?._id });
     response.json(createdPet);
@@ -58,7 +67,10 @@ const editPet = (request: Request<{}, {}, IPet>, response: Response) => {
     .catch((err: any) => response.status(500).json(err));
 };
 
-const addMealSchedule = (request: Request<{}, {}, { _id: string; mealSchedule: Array<{}> }>, response: Response) => {
+const addMealSchedule = (
+  request: Request<{}, {}, { _id: string; mealSchedule: Array<{}> }>,
+  response: Response
+) => {
   const { _id, mealSchedule } = request.body;
   Pet.findByIdAndUpdate(_id, { mealSchedule })
     .then((updatedPet: any) => response.json(updatedPet))
@@ -66,7 +78,11 @@ const addMealSchedule = (request: Request<{}, {}, { _id: string; mealSchedule: A
 };
 
 const addPetImage = async (
-  request: Request<{ id: string }, {}, { imageTitle: string; isThumbnail: boolean }>,
+  request: Request<
+    { id: string },
+    {},
+    { imageTitle: string; isThumbnail: boolean }
+  >,
   response: Response
 ) => {
   const { files } = request;
@@ -91,28 +107,41 @@ const addPetImage = async (
       response.status(500).json(err);
     }
   } else {
-    response.status(422).end({ message: 'No image found' });
+    response.status(422).end({ message: "No image found" });
   }
 };
 
 const editPetImage = async (
-  request: Request<{ id: string }, {}, Omit<IPetImage, 'imagePath, uploadDate, petId'>>,
+  request: Request<
+    { id: string },
+    {},
+    Omit<IPetImage, "imagePath, uploadDate, petId">
+  >,
   response: Response
 ) => {
   const petImage = request.body;
   if (petImage.isThumbnail) {
-    await PetImage.updateMany({ petId: request.params.id, isThumbnail: true }, { isThumbnail: false });
+    await PetImage.updateMany(
+      { petId: request.params.id, isThumbnail: true },
+      { isThumbnail: false }
+    );
   }
   PetImage.findByIdAndUpdate(petImage._id, petImage)
     .then((updatedPet: any) => response.json(updatedPet))
     .catch((err: any) => response.status(500).json(err));
 };
 
-const deletePetImage = (
-  request: Request<{ id: string }, {}, Omit<IPetImage, 'imagePath, uploadDate, petId, imageTitle, isThumbnail'>>,
+const deletePetImage = async (
+  request: Request<
+    { id: string },
+    {},
+    Omit<IPetImage, "uploadDate, petId, imageTitle, isThumbnail">
+  >,
   response: Response
 ) => {
   const petImage = request.body;
+  const uploadParams = getDeleteParams(petImage.imagePath);
+  await s3Client.send(new DeleteObjectCommand(uploadParams));
   PetImage.findByIdAndDelete(petImage._id)
     .then((updatedPet: any) => response.json(updatedPet))
     .catch((err: any) => response.status(500).json(err));
@@ -120,12 +149,30 @@ const deletePetImage = (
 
 const getSinglePet = (request: Request<{ id: string }>, response: Response) => {
   Pet.findById(request.params.id)
-    .populate({ path: FEEDINGS_VIRTUAL_NAME, options: { sort: { feedDate: 1 } } })
+    .populate({
+      path: FEEDINGS_VIRTUAL_NAME,
+      options: { sort: { feedDate: 1 } },
+    })
     .populate({ path: SHEDS_VIRTUAL_NAME, options: { sort: { pinkBelly: 1 } } })
-    .populate({ path: WEIGHTS_VIRTUAL_NAME, options: { sort: { weighDate: 1 } } })
-    .populate({ path: IMAGES_VIRTUAL_NAME, options: { sort: { uploadDate: 1 } } })
+    .populate({
+      path: WEIGHTS_VIRTUAL_NAME,
+      options: { sort: { weighDate: 1 } },
+    })
+    .populate({
+      path: IMAGES_VIRTUAL_NAME,
+      options: { sort: { uploadDate: 1 } },
+    })
     .then((foundPet: any) => response.json(foundPet))
     .catch((err: any) => response.status(422).json(err));
 };
 
-export { getAllPets, addPet, editPet, getSinglePet, addPetImage, addMealSchedule, editPetImage, deletePetImage };
+export {
+  getAllPets,
+  addPet,
+  editPet,
+  getSinglePet,
+  addPetImage,
+  addMealSchedule,
+  editPetImage,
+  deletePetImage,
+};
