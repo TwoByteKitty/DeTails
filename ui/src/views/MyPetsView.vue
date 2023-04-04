@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { IPetImage } from '@/shared/interfaces/IPetImage';
-import { TOKEN_KEY, useAuthStore, USER_KEY } from '@/stores/auth.store';
+import { useAuthStore, USER_KEY } from '@/stores/auth.store';
 import { PET_API, POST } from '@/utils/fetch';
 import { RouterLink } from 'vue-router';
 import { useCookies } from 'vue3-cookies';
@@ -38,7 +38,7 @@ export default {
       const { logout } = useAuthStore();
       const { cookies } = useCookies();
       try{
-         this.myPets = await POST(PET_API, { userName: cookies.get(USER_KEY) }, cookies.get(TOKEN_KEY));
+         this.myPets = await POST(PET_API, { userName: cookies.get(USER_KEY) });
       }catch(error: any){
          if(error.message.split(':')[0] === 'AUTH'){
             logout()

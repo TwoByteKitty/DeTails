@@ -2,14 +2,14 @@
 import type { IError } from '@/shared/interfaces/IError';
 import type { IWeight } from '@/shared/interfaces/IWeight';
 import { WeighUnits } from '@/shared/SelectLists.js';
-import { TOKEN_KEY, useAuthStore } from '@/stores/auth.store';
+import { useAuthStore } from '@/stores/auth.store';
 import { PET_API, POST } from '@/utils/fetch';
+import { getSortMethods } from '@/utils/sort';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import 'chartjs-plugin-style';
 import { DateTime } from 'luxon';
 import { ref, type PropType } from 'vue';
-import { useCookies } from 'vue3-cookies';
 import WeightLineChart from '../charts/WeightLineChart.vue';
 import EditWeightModal from '../modals/EditWeightModal.vue';
 
@@ -54,7 +54,7 @@ export default {
   },
   computed: {
     sortedHistory() {
-      return [...this.weightHistory].sort(this.sortMethods(this.currentSort));
+      return [...this.weightHistory].sort(getSortMethods<IWeight>(this.currentSort));
     },
   },
   methods: {
@@ -66,7 +66,7 @@ export default {
       this.showAlert = false;
       const { logout } = useAuthStore();
       try{
-         const data = await POST(`${PET_API}/${this.$route.query.id}/weights/add`, this.newWeight, useCookies().cookies.get(TOKEN_KEY));
+         const data = await POST(`${PET_API}/${this.$route.query.id}/weights/add`, this.newWeight);
          console.log(data);
          this.$emit('weightAdded');
          this.alertMsg = successMsg;
@@ -93,54 +93,7 @@ export default {
       this.currentSort.key = sortKey;
       this.currentSort.type = sortType;
       this.currentSort.order *= -1;
-    },
-    sortMethods({ key, type, order }: { key: string; type: string; order: number }) {
-      switch (type) {
-        case 'string': {
-          return order === 1
-            ? (a: IWeight, b: IWeight) =>
-                b[key as keyof IWeight] > a[key as keyof IWeight]
-                  ? -1
-                  : a[key as keyof IWeight] > b[key as keyof IWeight]
-                  ? 1
-                  : 0
-            : (a: IWeight, b: IWeight) =>
-                a[key as keyof IWeight] > b[key as keyof IWeight]
-                  ? -1
-                  : b[key as keyof IWeight] > a[key as keyof IWeight]
-                  ? 1
-                  : 0;
-        }
-        case 'number': {
-          console.log('Sorting by number');
-          console.log(this.currentSort);
-          return order === 1
-            ? (a: IWeight, b: IWeight) => Number(b[key as keyof IWeight]) - Number(a[key as keyof IWeight])
-            : (a: IWeight, b: IWeight) => Number(a[key as keyof IWeight]) - Number(b[key as keyof IWeight]);
-        }
-        case 'date': {
-          console.log('Sorting by date');
-          console.log(this.currentSort);
-          if (order === 1) {
-            return (a: IWeight, b: IWeight) =>
-              DateTime.fromISO(b[key as keyof IWeight] as string) < DateTime.fromISO(a[key as keyof IWeight] as string)
-                ? 1
-                : DateTime.fromISO(b[key as keyof IWeight] as string) >
-                  DateTime.fromISO(a[key as keyof IWeight] as string)
-                ? -1
-                : 0;
-          } else {
-            return (a: IWeight, b: IWeight) =>
-              DateTime.fromISO(a[key as keyof IWeight] as string) < DateTime.fromISO(b[key as keyof IWeight] as string)
-                ? 1
-                : DateTime.fromISO(a[key as keyof IWeight] as string) >
-                  DateTime.fromISO(b[key as keyof IWeight] as string)
-                ? -1
-                : 0;
-          }
-        }
-      }
-    },
+    }
   },
 };
 </script>

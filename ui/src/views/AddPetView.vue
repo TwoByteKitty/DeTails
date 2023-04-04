@@ -2,7 +2,7 @@
 import type { IError } from '@/shared/interfaces/IError';
 import type { IPet } from '@/shared/interfaces/IPet';
 import { PetType } from '@/shared/SelectLists.js';
-import { TOKEN_KEY, useAuthStore, USER_KEY } from '@/stores/auth.store';
+import { useAuthStore, USER_KEY } from '@/stores/auth.store';
 import { PET_API, POST } from '@/utils/fetch';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
@@ -63,7 +63,7 @@ export default {
         const { cookies } = useCookies();
         this.showRegResult = false;
         try{
-          const data = await POST(`${PET_API}/add`, {pet:this.myPet, userName: cookies.get(USER_KEY)}, cookies.get(TOKEN_KEY));
+          const data = await POST(`${PET_API}/add`, {pet:this.myPet, userName: cookies.get(USER_KEY)});
           console.log(data);
           this.alertMsg = successMsg;
           this.resultIsError = false;

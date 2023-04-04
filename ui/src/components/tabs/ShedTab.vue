@@ -1,8 +1,9 @@
 <script lang="ts">
 import type { IError } from '@/shared/interfaces/IError';
 import type { IShed } from '@/shared/interfaces/IShed';
-import { TOKEN_KEY, useAuthStore } from '@/stores/auth.store';
+import { useAuthStore } from '@/stores/auth.store';
 import { PET_API, POST } from '@/utils/fetch';
+import { getSortMethods } from '@/utils/sort';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import 'chartjs-adapter-luxon';
@@ -10,7 +11,6 @@ import 'chartjs-plugin-style';
 import { DateTime } from 'luxon';
 import type { PropType } from 'vue';
 import { ref } from 'vue';
-import { useCookies } from 'vue3-cookies';
 import ShedStkBar from '../charts/ShedStkBar.vue';
 import EditShedModal from '../modals/EditShedModal.vue';
 
@@ -57,7 +57,7 @@ export default {
   },
   computed: {
     sortedHistory() {
-      return [...this.shedHistory].sort(this.sortMethods(this.currentSort));
+      return [...this.shedHistory].sort(getSortMethods<IShed>(this.currentSort));
     },
   },
   methods: {
@@ -69,7 +69,7 @@ export default {
       this.showAlert = false;
       const { logout } = useAuthStore();
       try{
-         const data = await POST(`${PET_API}/${this.$route.query.id}/sheds/add`, this.newShed, useCookies().cookies.get(TOKEN_KEY));
+         const data = await POST(`${PET_API}/${this.$route.query.id}/sheds/add`, this.newShed);
          console.log(data);
          this.$emit('shedAdded');
          this.alertMsg = successMsg;
@@ -96,51 +96,6 @@ export default {
       this.currentSort.key = sortKey;
       this.currentSort.type = sortType;
       this.currentSort.order *= -1;
-    },
-    sortMethods({ key, type, order }: { key: string; type: string; order: number }) {
-      switch (type) {
-        case 'string': {
-          return order === 1
-            ? (a: IShed, b: IShed) =>
-                b[key as keyof IShed] > a[key as keyof IShed]
-                  ? -1
-                  : a[key as keyof IShed] > b[key as keyof IShed]
-                  ? 1
-                  : 0
-            : (a: IShed, b: IShed) =>
-                a[key as keyof IShed] > b[key as keyof IShed]
-                  ? -1
-                  : b[key as keyof IShed] > a[key as keyof IShed]
-                  ? 1
-                  : 0;
-        }
-        case 'number': {
-          console.log('Sorting by number');
-          console.log(this.currentSort);
-          return order === 1
-            ? (a: IShed, b: IShed) => Number(b[key as keyof IShed]) - Number(a[key as keyof IShed])
-            : (a: IShed, b: IShed) => Number(a[key as keyof IShed]) - Number(b[key as keyof IShed]);
-        }
-        case 'date': {
-          console.log('Sorting by date');
-          console.log(this.currentSort);
-          if (order === 1) {
-            return (a: IShed, b: IShed) =>
-              DateTime.fromISO(b[key as keyof IShed] as string) < DateTime.fromISO(a[key as keyof IShed] as string)
-                ? 1
-                : DateTime.fromISO(b[key as keyof IShed] as string) > DateTime.fromISO(a[key as keyof IShed] as string)
-                ? -1
-                : 0;
-          } else {
-            return (a: IShed, b: IShed) =>
-              DateTime.fromISO(a[key as keyof IShed] as string) < DateTime.fromISO(b[key as keyof IShed] as string)
-                ? 1
-                : DateTime.fromISO(a[key as keyof IShed] as string) > DateTime.fromISO(b[key as keyof IShed] as string)
-                ? -1
-                : 0;
-          }
-        }
-      }
     },
   },
 };
