@@ -16,7 +16,7 @@ const baseConfig = {
 const serveConfig: UserConfig = {
    ...baseConfig,
    define: {
-      API_HOST: JSON.stringify('http://localhost:3001'),
+      API_HOST: JSON.stringify(''),
    },
    server: {
       proxy: {

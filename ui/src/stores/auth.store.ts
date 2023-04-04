@@ -3,7 +3,6 @@ import { LOGIN } from '@/utils/fetch';
 import { defineStore } from 'pinia';
 import { useCookies } from "vue3-cookies";
 
-const LOGIN_URL = 'api/user/login';
 export const TOKEN_KEY = 'x-access-token';
 export const USER_KEY = 'x-user-name';
 
