@@ -1,8 +1,8 @@
 import { TOKEN_KEY } from "@/stores/auth.store";
 import { useCookies } from "vue3-cookies";
 
-const REGISTER_URL = '/create';
-const LOGIN_URL = '/login';
+const REGISTER_URL = 'create';
+const LOGIN_URL = 'login';
 
 interface IFetchHeaders {
    'Content-Type'?: string | undefined;

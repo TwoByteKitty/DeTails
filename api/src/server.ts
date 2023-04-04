@@ -3,6 +3,7 @@ import express, { Application } from 'express';
 import fileUpload from 'express-fileupload';
 import morgan from 'morgan';
 import router from './routes/index';
+import { TOKEN_KEY } from './utils/constants';
 
 const IS_PRODUCTION: boolean = process.env.NODE_ENV === 'production';
 const LOG_MODE: string = IS_PRODUCTION ? 'common' : 'dev';
@@ -11,7 +12,7 @@ const PORT: string = process.env.PORT as string;
 const app: Application = express();
 
 if (IS_PRODUCTION) {
-  app.use(cors({ origin: true }));
+  app.use(cors({ origin: true, allowedHeaders: [TOKEN_KEY], exposedHeaders: [TOKEN_KEY] }));
   app.options('*', cors());
   console.log('Cors Enabled');
 }
