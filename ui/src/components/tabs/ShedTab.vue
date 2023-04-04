@@ -12,6 +12,7 @@ import type { PropType } from 'vue';
 import { ref } from 'vue';
 import { useCookies } from 'vue3-cookies';
 import ShedStkBar from '../charts/ShedStkBar.vue';
+import EditShedModal from '../modals/EditShedModal.vue';
 
 const defaultShed: IShed = {
   _id: '',
@@ -27,7 +28,7 @@ const successMsg = "I'm a success alert! Congratulations!";
 
 export default {
   name: 'ShedTab',
-  components: { Datepicker, ShedStkBar },
+  components: { Datepicker, ShedStkBar, EditShedModal },
   emits: [ 'shedAdded' ],
   props: {
     shedHistory: { type: Array as PropType<Array<IShed>>, required: true },
@@ -290,19 +291,32 @@ export default {
                 <th class="tbl-head text-left">
                   Comments
                 </th>
+                <th class="tbl-head text-left" />
               </tr>
             </thead>
             <tbody>
               <tr
-                v-for="item in (sortedHistory as Array<IShed>)"
-                :key="item._id"
+                v-for="shed in sortedHistory"
+                :key="shed._id"
               >
-                <td>{{ formatDate(item.pinkBelly) }}</td>
-                <td>{{ formatDate(item.blueEyes) }}</td>
-                <td>{{ formatDate(item.clearEyes) }}</td>
-                <td>{{ formatDate(item.shedSkin) }}</td>
-                <td>{{ item.entire === 'Not Entire' ? 'N' : 'Y' }}</td>
-                <td>{{ item.shedComments }}</td>
+                <td>{{ formatDate(shed.pinkBelly) }}</td>
+                <td>{{ formatDate(shed.blueEyes) }}</td>
+                <td>{{ formatDate(shed.clearEyes) }}</td>
+                <td>{{ formatDate(shed.shedSkin) }}</td>
+                <td>{{ shed.entire === 'Not Entire' ? 'N' : 'Y' }}</td>
+                <td>{{ shed.shedComments }}</td>
+                <td>
+                  <edit-shed-modal
+                    @shed-edited="$event => $emit('shedAdded')"
+                    :_id="shed._id? shed._id : '' "
+                    :pink-belly="shed.pinkBelly"
+                    :blue-eyes="shed.blueEyes"
+                    :clear-eyes="shed.clearEyes"
+                    :shed-skin="shed.shedSkin"
+                    :entire="shed.entire"
+                    :shed-comments="shed.shedComments? shed.shedComments : '' "
+                  />
+                </td>
               </tr>
             </tbody>
           </v-table>

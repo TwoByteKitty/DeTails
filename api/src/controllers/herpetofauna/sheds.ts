@@ -22,13 +22,11 @@ const getSingleShed = (request: Request<{ shedId: string }>, response: Response)
     .catch((err: any) => response.status(422).json(err));
 };
 
-//needs more work!
-// const editShed = (request: Request<{}, {}, IShed>, response: Response) => {
-//   const pet: IShed = request.body;
-//   pet.dateOfBirth = new Date(pet.dateOfBirth);
-//   Shed.findByIdAndUpdate(pet._id, pet)
-//     .then((updatedShed) => response.json(updatedShed))
-//     .catch((err) => response.status(500).json(err));
-// };
+const editShed = (request: Request<{}, {}, IShed>, response: Response) => {
+  const petShed: IShed = request.body;
+  Shed.findByIdAndUpdate(petShed._id, petShed)
+    .then((updatedShed) => response.json(updatedShed))
+    .catch((err) => response.status(500).json(err));
+};
 
-export { getAllShedsByPet, addShed, getSingleShed };
+export { getAllShedsByPet, addShed, getSingleShed, editShed };
