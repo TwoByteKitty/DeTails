@@ -1,7 +1,5 @@
 <script lang="ts">
-import { TOKEN_KEY } from '@/stores/auth.store';
 import { PET_API, PUT } from '@/utils/fetch';
-import { useCookies } from 'vue3-cookies';
 
 const errorMsg = 'Well... you really screwed up this time...';
 const successMsg = "I'm a success alert! Congratulations!";
@@ -76,7 +74,7 @@ export default {
   methods: {
     async editPet() {
       try{
-         const data = await PUT(`${PET_API}/${this.$route.params.id}`, this.fields, useCookies().cookies.get(TOKEN_KEY));
+         const data = await PUT(`${PET_API}/${this.$route.params.id}`, this.fields);
          console.log(data);
          this.$emit('overviewEdited');
          this.alertMsg = successMsg;

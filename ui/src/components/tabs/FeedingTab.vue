@@ -1,16 +1,15 @@
 <script lang="ts">
 import type { IMeal } from '@/shared/interfaces/IMeal';
 import { DegreeOfDead, PreyType } from '@/shared/SelectLists.js';
-import { TOKEN_KEY } from '@/stores/auth.store';
 import type { IMealSchedule } from '@/utils/feedingSchedule';
 import { generateFeedingSchedule } from '@/utils/feedingSchedule';
 import { PET_API, POST, PUT } from '@/utils/fetch';
+import { getSortMethods } from '@/utils/sort';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { DateTime } from 'luxon';
 import { Calendar } from 'v-calendar';
 import type { PropType } from 'vue';
-import { useCookies } from 'vue3-cookies';
 
 const defaultMeal: IMeal = {
   _id: '',
@@ -60,7 +59,7 @@ computed:{
       return this.mapFeedingScheduleToCalendar(this.mealSchedule)
    },
    sortedHistory() {
-     return [...this.feedingHistory].sort(this.sortMethods(this.currentSort));
+     return [...this.feedingHistory].sort(getSortMethods<IMeal>(this.currentSort));
    },
 },
   methods: {
@@ -71,7 +70,7 @@ computed:{
       delete this.newMeal._id;
       this.showAlert = false;
       try{
-         const data = await POST(`${PET_API}/${this.$route.query.id}/feedings/add`, this.newMeal, useCookies().cookies.get(TOKEN_KEY));
+         const data = await POST(`${PET_API}/${this.$route.query.id}/feedings/add`, this.newMeal);
          console.log(data);
          this.$emit('feedingAdded');
          this.alertMsg = successMsg;
@@ -106,7 +105,7 @@ computed:{
     },
     async editFeedingSchedule(mealSchedule: Array<IMealSchedule>) {
       try{
-         const data = await PUT(`${PET_API}/${this.$route.query.id}/feeding-schedule`, { _id: this.$route.query.id, mealSchedule }, useCookies().cookies.get(TOKEN_KEY));
+         const data = await PUT(`${PET_API}/${this.$route.query.id}/feeding-schedule`, { _id: this.$route.query.id, mealSchedule });
          console.log(data);
          this.$emit('feedingAdded');
       }catch(error){
@@ -118,52 +117,6 @@ computed:{
       this.currentSort.type = sortType;
       this.currentSort.order *= -1;
     },
-    sortMethods({ key, type, order }: { key: string; type: string; order: number }) {
-      switch (type) {
-        case 'string': {
-          return order === 1
-            ? (a: IMeal, b: IMeal) =>
-                b[key as keyof IMeal] > a[key as keyof IMeal]
-                  ? -1
-                  : a[key as keyof IMeal] > b[key as keyof IMeal]
-                  ? 1
-                  : 0
-            : (a: IMeal, b: IMeal) =>
-                a[key as keyof IMeal] > b[key as keyof IMeal]
-                  ? -1
-                  : b[key as keyof IMeal] > a[key as keyof IMeal]
-                  ? 1
-                  : 0;
-        }
-        case 'number': {
-          console.log('Sorting by number');
-          console.log(this.currentSort);
-          return order === 1
-            ? (a: IMeal, b: IMeal) => Number(b[key as keyof IMeal]) - Number(a[key as keyof IMeal])
-            : (a: IMeal, b: IMeal) => Number(a[key as keyof IMeal]) - Number(b[key as keyof IMeal]);
-        }
-        case 'date': {
-          console.log('Sorting by date');
-          console.log(this.currentSort);
-          if (order === 1) {
-            return (a: IMeal, b: IMeal) =>
-              DateTime.fromISO(b[key as keyof IMeal] as string) < DateTime.fromISO(a[key as keyof IMeal] as string)
-                ? 1
-                : DateTime.fromISO(b[key as keyof IMeal] as string) > DateTime.fromISO(a[key as keyof IMeal] as string)
-                ? -1
-                : 0;
-          } else {
-            return (a: IMeal, b: IMeal) =>
-              DateTime.fromISO(a[key as keyof IMeal] as string) < DateTime.fromISO(b[key as keyof IMeal] as string)
-                ? 1
-                : DateTime.fromISO(a[key as keyof IMeal] as string) > DateTime.fromISO(b[key as keyof IMeal] as string)
-                ? -1
-                : 0;
-          }
-        }
-      }
-    },
-
   },
 };
 </script>
@@ -443,7 +396,7 @@ computed:{
             </thead>
             <tbody>
               <tr
-                v-for="item in (sortedHistory as Array<IMeal>)"
+                v-for="item in sortedHistory"
                 :key="item._id"
               >
                 <td>{{ formatDate(item.feedDate) }}</td>

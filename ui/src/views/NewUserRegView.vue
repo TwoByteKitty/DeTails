@@ -1,6 +1,6 @@
 <script lang="ts">
 import { useAuthStore } from '@/stores/auth.store';
-import { POST, USER_API } from '@/utils/fetch';
+import { REGISTER } from '@/utils/fetch';
 
 export default {
    data:() =>({
@@ -33,7 +33,7 @@ export default {
       if(valid){
          const { login } = useAuthStore();
          this.loading = true;
-         const data = await POST(`${USER_API}/create`, this.form)
+         const data = await REGISTER(this.form)
          console.log(data);
          login(this.form);
       }
@@ -51,7 +51,7 @@ export default {
   <v-sheet
     class="ma-12 pa-12"
   >
-    <v-card 
+    <v-card
       class="ma-6 pa-6 elevation-9"
       variant="tonal"
     >
