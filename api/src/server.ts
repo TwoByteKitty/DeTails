@@ -11,11 +11,9 @@ const PORT: string = process.env.PORT as string;
 
 const app: Application = express();
 
-if (IS_PRODUCTION) {
-  app.use(cors({ origin: true, allowedHeaders: [TOKEN_KEY], exposedHeaders: [TOKEN_KEY] }));
-  app.options('*', cors());
-  console.log('Cors Enabled');
-}
+app.use(cors({ origin: process.env.ALLOWED_ORIGINS?.split(','), exposedHeaders: [TOKEN_KEY] }));
+app.options('*', cors());
+console.log('Cors Enabled');
 
 app.use(morgan(LOG_MODE));
 app.use(express.urlencoded({ extended: true }));
