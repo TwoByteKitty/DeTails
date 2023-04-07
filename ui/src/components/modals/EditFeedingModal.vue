@@ -1,5 +1,5 @@
 <script lang="ts">
-import { PreyType } from '@/shared/SelectLists';
+import { PreyType, DegreeOfDead } from '@/shared/SelectLists';
 import { useAuthStore } from '@/stores/auth.store';
 import { PET_API, PUT } from '@/utils/fetch';
 import { DateTime } from 'luxon';
@@ -18,7 +18,7 @@ export default {
       _id: { type: String, required: true },
       feedDate: { type: String, required: true },
       preyNo: { type: Number, required: true },
-      preyType: { type: String, required: true },
+      preyType: { type: Array<String>, required: true },
       dOD: { type: String, required: true },
       mealWeight: { type: Number, required: true },
       eaten: { type: String, required: true },
@@ -27,6 +27,7 @@ export default {
   data() {
     return {
       PreyType,
+      DegreeOfDead,
       modalIsOpen: false,
       alertType: 'success',
       alertIsError: false,
@@ -34,10 +35,13 @@ export default {
       showAlert: false,
       fields: {
         _id: this.id,
-        weighDate: this.formatDate(this.weighDate),
-        weighAmt: this.weighAmt,
-        weighUnits: this.weighUnits,
-        weighComments: this.weighComments,
+        feedDate: this.formatDate(this.feedDate),
+        preyNo: this.preyNo,
+        preyType: this.preyType,
+        dOD: this.dOD,
+        mealWeight: this.mealWeight,
+        eaten: this.eaten,
+        feedComments: this.feedComments,
       },
     };
   },
@@ -48,42 +52,60 @@ export default {
         this.fields._id = newVal;
       },
     },
-    weighDate: {
+    feedDate: {
       immediate: true,
       handler(newVal) {
-        this.fields.weighDate = this.formatDate(newVal);
+        this.fields.feedDate = this.formatDate(newVal);
       },
     },
-    weighAmt: {
+    preyNo: {
       immediate: true,
       handler(newVal) {
-        this.fields.weighAmt = newVal;
+        this.fields.preyNo = newVal;
       },
     },
-    weighUnits: {
+    preyType: {
       immediate: true,
       handler(newVal) {
-        this.fields.weighUnits = newVal;
+        this.fields.preyType = newVal;
       },
     },
-    weighComments: {
+    dOD: {
       immediate: true,
       handler(newVal) {
-        this.fields.weighComments = newVal;
+        this.fields.dOD = newVal;
+      },
+    },
+    mealWeight: {
+      immediate: true,
+      handler(newVal) {
+        this.fields.mealWeight = newVal;
+      },
+    },
+    eaten: {
+      immediate: true,
+      handler(newVal) {
+        this.fields.eaten = newVal;
+      },
+    },
+    feedComments: {
+      immediate: true,
+      handler(newVal) {
+        this.fields.feedComments = newVal;
       },
     },
   },
   methods: {
     editSuccess(data: any){
       console.log(data);
-      this.$emit('weightEdited');
+      this.$emit('feedingEdited');
       this.alertMsg = successMsg;
       this.alertIsError = false;
       this.showAlert = true;
       setTimeout(() => {
         this.showAlert = false;
         this.modalIsOpen = false;
-      }, 1000);
+      }, 900);
     },
     editError(error: any){
       const { logout } = useAuthStore();
@@ -98,7 +120,7 @@ export default {
     },
     async editPet() {
       try{
-         const data = await PUT(`${PET_API}/weights/${this._id}`, this.fields);
+         const data = await PUT(`${PET_API}/feedings/${this._id}`, this.fields);
          this.editSuccess(data);
       }catch(error){
          this.editError(error)
@@ -125,8 +147,17 @@ export default {
           <v-icon>fa:fas fa-thin fa-pencil</v-icon>
         </v-btn>
       </template>
-      <v-card title="Edit Weight Data">
-        <v-card>
+      <v-sheet
+        class="pa-3"
+      >
+      <v-card
+        class="ma-3 pa-3 elevation-6"
+      >
+        <v-card-title>Edit Feeding Data</v-card-title>
+        <v-card
+          class="ma-1 pa-3"
+          variant="flat"
+        >
           <v-row>
             <v-col
               cols="12"
@@ -134,7 +165,7 @@ export default {
             >
               <v-text-field
                 type="date"
-                v-model="fields.weighDate"
+                v-model="fields.feedDate"
                 label="Date"
               />
             </v-col>
@@ -143,21 +174,61 @@ export default {
               sm="6"
             >
               <v-text-field
-                v-model="fields.weighAmt"
+                v-model="fields.preyNo"
                 type="number"
-                label="Weigh Amount"
+                label="No. of Prey Items"
               />
             </v-col>
-            <v-col cols="12">
+            <v-col
+              cols="12"
+              sm="6"
+            >
               <v-select
-                v-model="fields.weighUnits"
-                label="Weight Units"
-                :items="WeighUnits"
+                v-model="fields.preyType"
+                label="Prey Type"
+                :items="PreyType"
+                multiple
               />
             </v-col>
-            <v-col cols="12">
+            <v-col 
+              cols="12"
+              sm="6"
+            >
+              <v-select
+                v-model="fields.dOD"
+                label="Degree of Deadness"
+                :items="DegreeOfDead"
+              />
+            </v-col>
+            <v-col
+              cols="12"
+              sm="6"
+            >
+              <v-text-field
+                v-model="fields.mealWeight"
+                type="number"
+                label="Total Meal Weight(in grams)"
+              />
+            </v-col>
+            <v-col
+              cols="6"
+            >
+              <div class="eaten-btn-div d-flex justify-space-around align-center flex-column flex-md-row fill-height">
+                <v-switch
+                  v-model="fields.eaten"
+                  hide-details
+                  true-value="Eaten"
+                  false-value="Not Eaten"
+                  :label="`${fields.eaten}`"
+                  inset
+                />
+              </div>
+            </v-col>
+            <v-col 
+              cols="12"
+            >
               <v-textarea
-                v-model="fields.weighComments"
+                v-model="fields.feedComments"
                 label="Comments"
               />
             </v-col>
@@ -194,6 +265,7 @@ export default {
           </v-alert>
         </div>
       </v-card>
+    </v-sheet>
     </v-dialog>
   </v-row>
 </template>

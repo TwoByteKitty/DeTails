@@ -22,13 +22,11 @@ const getSingleFeeding = (request: Request<{ feedingId: string }>, response: Res
     .catch((err: any) => response.status(422).json(err));
 };
 
-//needs more work!
-// const editFeeding = (request: Request<{}, {}, IMeal>, response: Response) => {
-//   const pet: IMeal = request.body;
-//   pet.dateOfBirth = new Date(pet.dateOfBirth);
-//   Feeding.findByIdAndUpdate(pet._id, pet)
-//     .then((updatedFeeding) => response.json(updatedFeeding))
-//     .catch((err) => response.status(500).json(err));
-// };
+const editFeeding = (request: Request<{}, {}, IMeal>, response: Response) => {
+  const petFeeding: IMeal = request.body;
+  Feeding.findByIdAndUpdate(petFeeding._id, petFeeding)
+    .then((updatedFeeding) => response.json(updatedFeeding))
+    .catch((err) => response.status(500).json(err));
+};
 
-export { getAllFeedingsByPet, addFeeding, getSingleFeeding };
+export { getAllFeedingsByPet, addFeeding, getSingleFeeding, editFeeding };

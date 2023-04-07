@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { addFeeding, getAllFeedingsByPet, getSingleFeeding } from '../controllers/herpetofauna/feedings';
+import { addFeeding, getAllFeedingsByPet, getSingleFeeding, editFeeding } from '../controllers/herpetofauna/feedings';
 import { addShed, editShed, getAllShedsByPet, getSingleShed } from '../controllers/herpetofauna/sheds';
 import {
   addMealSchedule,
@@ -37,6 +37,7 @@ router.put('/sheds/:shedId', editShed);
 router.post('/:petId/feedings/add', addFeeding);
 router.get('/:petId/feedings/:feedingId', getSingleFeeding);
 router.get('/:petId/feedings/', getAllFeedingsByPet);
+router.put('/feedings/:feedingId', editFeeding);
 
 //Weights CRUD
 router.post('/:petId/weights/add', addWeight);

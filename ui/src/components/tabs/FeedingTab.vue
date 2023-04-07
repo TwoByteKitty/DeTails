@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { IMeal } from '@/shared/interfaces/IMeal';
+import EditFeedingModal from '../modals/EditFeedingModal.vue';
 import { DegreeOfDead, PreyType } from '@/shared/SelectLists.js';
 import type { IMealSchedule } from '@/utils/feedingSchedule';
 import { generateFeedingSchedule } from '@/utils/feedingSchedule';
@@ -26,7 +27,7 @@ const successMsg = "I'm a success alert! Congratulations!";
 
 export default {
   name: 'FeedingTab',
-  components: { Calendar, Datepicker },
+  components: { Calendar, Datepicker, EditFeedingModal },
   emits: [ 'feedingAdded' ],
   props: {
    feedingHistory: { type: Array as PropType<Array<IMeal>>, required: true },
@@ -260,7 +261,7 @@ computed:{
               />
             </v-col>
             <v-col>
-              <label>No. of Prey Item(s)</label>
+              <label>No. of Prey Feeding(s)</label>
               <v-text-field
                 v-model="newMeal.preyNo"
                 type="number"
@@ -268,10 +269,10 @@ computed:{
               />
             </v-col>
             <v-col>
-              <label>Type of Prey Item(s)</label>
+              <label>Type of Prey Feeding(s)</label>
               <v-select
                 v-model="newMeal.preyType"
-                :items="PreyType"
+                :feedings="PreyType"
                 multiple
                 variant="underlined"
               />
@@ -282,7 +283,7 @@ computed:{
               <label>Degree of Deadness</label>
               <v-select
                 v-model="newMeal.dOD"
-                :items="DegreeOfDead"
+                :feedings="DegreeOfDead"
                 variant="underlined"
               />
             </v-col>
@@ -363,7 +364,7 @@ computed:{
                   <a
                     href="#"
                     @click.prevent="$event => sort('preyNo', 'number')"
-                  >No. of Prey Item(s)</a>
+                  >No. of Prey Items</a>
                 </th>
                 <th class="tbl-head text-left">
                   <a
@@ -392,20 +393,34 @@ computed:{
                 <th class="tbl-head text-left">
                   Comments
                 </th>
+                <th class="tbl-head text-left" />
               </tr>
             </thead>
             <tbody>
               <tr
-                v-for="item in sortedHistory"
-                :key="item._id"
+                v-for="feeding in sortedHistory"
+                :key="feeding._id"
               >
-                <td>{{ formatDate(item.feedDate) }}</td>
-                <td>{{ item.preyNo }}</td>
-                <td>{{ item.preyType.toString() }}</td>
-                <td>{{ item.dOD }}</td>
-                <td>{{ item.mealWeight }}</td>
-                <td>{{ item.eaten === 'Not Eaten' ? 'N' : 'Y' }}</td>
-                <td>{{ item.feedComments }}</td>
+                <td>{{ formatDate(feeding.feedDate) }}</td>
+                <td>{{ feeding.preyNo }}</td>
+                <td>{{ feeding.preyType.toString() }}</td>
+                <td>{{ feeding.dOD }}</td>
+                <td>{{ feeding.mealWeight }}</td>
+                <td>{{ feeding.eaten === 'Not Eaten' ? 'N' : 'Y' }}</td>
+                <td>{{ feeding.feedComments }}</td>
+                <td>
+                <edit-feeding-modal
+                  @feeding-edited="$event => $emit('feedingAdded')"
+                  :_id="feeding._id? feeding._id : '' "
+                  :feed-date="feeding.feedDate"
+                  :prey-no="feeding.preyNo"
+                  :prey-type="feeding.preyType"
+                  :d-o-d="feeding.dOD"
+                  :meal-weight="feeding.mealWeight"
+                  :eaten="feeding.eaten"
+                  :feed-comments="feeding.feedComments? feeding.feedComments : '' "
+                />
+              </td>
               </tr>
             </tbody>
           </v-table>
@@ -458,8 +473,8 @@ computed:{
 .slider-col {
   padding: 3px;
   margin: 3px;
-  align-items: center;
-  justify-items: center;
+  align-feedings: center;
+  justify-feedings: center;
   flex-direction: column;
 }
 .slider-col .slider-label {
