@@ -110,7 +110,7 @@ export default {
     },
     async editPet() {
       try{
-         const data = await PUT(`${PET_API}/sheds/${this._id}`, this.fields, useCookies().cookies.get(TOKEN_KEY));
+         const data = await PUT(`${PET_API}/sheds/${this._id}`, this.fields );
          this.editSuccess(data);
       }catch(error){
          this.editError(error)
