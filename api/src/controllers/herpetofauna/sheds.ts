@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Shed, IShed } from '../../models/herpetofauna/shed';
+import { IShed, Shed } from '../../models/herpetofauna/shed';
 
 const addShed = (request: Request<{ petId: string }, {}, IShed>, response: Response) => {
   const newShed: IShed = request.body;
@@ -16,10 +16,13 @@ const getAllShedsByPet = (request: Request<{ petId: string }>, response: Respons
     .catch((err: any) => response.status(422).json(err));
 };
 
-const getSingleShed = (request: Request<{ shedId: string }>, response: Response) => {
-  Shed.findById(request.params.shedId)
-    .then((foundShed: any) => response.json(foundShed))
-    .catch((err: any) => response.status(422).json(err));
+const getSingleShed = async (request: Request<{ shedId: string }>, response: Response) => {
+  try {
+    const foundShed = await Shed.findById(request.params.shedId);
+    response.status(200).json(foundShed);
+  } catch (error: any) {
+    response.status(422).json(error);
+  }
 };
 
 const editShed = (request: Request<{}, {}, IShed>, response: Response) => {

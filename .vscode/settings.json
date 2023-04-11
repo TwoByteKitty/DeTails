@@ -5,6 +5,7 @@
     "fileupload",
     "herpetofauna",
     "linebreak",
+    "mockingoose",
     "pinia",
     "tsbuildinfo",
     "vuetify"

@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shed CRUD Controller getSingleShed: should return the doc with findById: findById query 1`] = `
+{
+  "_id": "507f191e810c19729de860ea",
+}
+`;
