@@ -31,10 +31,11 @@ export default {
       const { valid } = await form.validate();
       this.isValid == valid;
       if(valid){
-         const { login } = useAuthStore();
+         const { login, setReturnURL } = useAuthStore();
          this.loading = true;
          const data = await REGISTER(this.form)
          console.log(data);
+         setReturnURL('/my-pets');
          login(this.form);
       }
      },

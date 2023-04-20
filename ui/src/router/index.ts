@@ -88,13 +88,13 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
    // redirect to login page if not logged in and trying to access a restricted page
-   const { authRequired } = to.meta;
-   const auth = useAuthStore();
-   const authToken = useCookies().cookies.get(TOKEN_KEY)
-   if (authRequired && !authToken) {
-       auth.returnUrl = to.fullPath;
-       return '/login';
-   }
+  const { authRequired } = to.meta;
+  const auth = useAuthStore();
+  const authToken = useCookies().cookies.get(TOKEN_KEY)
+  if (authRequired && !authToken) {
+      auth.returnUrl = to.fullPath;
+      return '/login';
+  }
 });
 
 export default router;

@@ -18,7 +18,6 @@ export default {
         species: '',
         sex: '',
         dateOfBirth: '',
-        dateOfBirthFormatted:'',
         description: '',
         petImages: [],
         mealSchedule: [],
@@ -38,11 +37,11 @@ export default {
     async getPet() {
       const { logout } = useAuthStore();
       try{
-         this.myPet = await GET(`${PET_API}/${this.$route.query.id}`);
+        this.myPet = await GET(`${PET_API}/${this.$route.query.id}`);
         }catch(error: any){
-         if(error.message.split(':')[0] === 'AUTH'){
+        if(error.message.split(':')[0] === 'AUTH'){
             logout()
-         }
+        }
       }
     },
   },

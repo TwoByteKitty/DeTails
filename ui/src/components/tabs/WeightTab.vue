@@ -1,17 +1,16 @@
 <script lang="ts">
-import type { IError } from '@/shared/interfaces/IError';
+import { errorHandler } from '@/shared/errorHandler';
 import type { IWeight } from '@/shared/interfaces/IWeight';
 import { WeighUnits } from '@/shared/SelectLists.js';
-import { useAuthStore } from '@/stores/auth.store';
 import { PET_API, POST } from '@/utils/fetch';
 import { getSortMethods } from '@/utils/sort';
+import WeightLineChart from '../charts/WeightLineChart.vue';
+import EditWeightModal from '../modals/EditWeightModal.vue';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import 'chartjs-plugin-style';
 import { DateTime } from 'luxon';
 import { ref, type PropType } from 'vue';
-import WeightLineChart from '../charts/WeightLineChart.vue';
-import EditWeightModal from '../modals/EditWeightModal.vue';
 
 const defaultWeigh: IWeight = {
   _id: '',
@@ -20,8 +19,8 @@ const defaultWeigh: IWeight = {
   weighUnits: '',
   weighComments: '',
 };
-const errorMsg = 'Well... you really screwed up this time...';
-const successMsg = "I'm a success alert! Congratulations!";
+const errorMsg = 'You really screwed up this time...';
+const successMsg = 'Success! New weight data saved.';
 
 export default {
   name: 'WeightTab',
@@ -61,32 +60,24 @@ export default {
     formatDate(timestamp: string) {
       return DateTime.fromISO(timestamp).toLocaleString(DateTime.DATE_SHORT);
     },
+    createSuccess(){
+      this.$emit('weightAdded');
+      this.alertMsg = successMsg;
+      this.alertIsError = false;
+      this.showAlert = true;
+      this.newWeight = { ...defaultWeigh };
+        setTimeout(() => {
+          this.showAlert = false;
+        }, 9000);
+    },
     async createWeight() {
       delete this.newWeight._id;
       this.showAlert = false;
-      const { logout } = useAuthStore();
       try{
-         const data = await POST(`${PET_API}/${this.$route.query.id}/weights/add`, this.newWeight);
-         console.log(data);
-         this.$emit('weightAdded');
-         this.alertMsg = successMsg;
-         this.alertIsError = false;
-         this.showAlert = true;
-         this.newWeight = { ...defaultWeigh };
-         setTimeout(() => {
-           this.showAlert = false;
-         }, 9000);
+        await POST(`${PET_API}/${this.$route.query.id}/weights/add`, this.newWeight);
+        this.createSuccess();
       }catch(error){
-         const caughtError = error as IError;
-         console.error(errorMsg, error);
-         if(caughtError.type === 'AUTH'){
-            logout()
-         }else{
-         this.alertMsg = errorMsg;
-         this.alertIsError = true;
-         this.showAlert = true;
-         }
-
+        errorHandler(error, errorMsg, this);
       }
     },
     sort: function (sortKey: string, sortType: string) {

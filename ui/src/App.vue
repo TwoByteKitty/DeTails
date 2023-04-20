@@ -38,7 +38,7 @@ export default {
         title: 'Sign Off',
         type: 'action',
         url:'',
-        action: ()=> useAuthStore().logout(),
+        action: ()=> useAuthStore().logout(false),
       },
     ],
   }),
@@ -50,7 +50,15 @@ export default {
   },
   computed:{
     navMenu(){
-      return routes.filter((route)=>{return route.meta.showInMenu})
+      const { user } = useAuthStore();
+      const filteredRoutes = routes.filter((route)=>{return route.meta.showInMenu});
+      let authRoutes: Array<{}>;
+      if (user) {
+        authRoutes = filteredRoutes.filter((route)=>{return route.meta.authRequired});
+      } else {
+        authRoutes = filteredRoutes.filter((route)=>{return !route.meta.authRequired});
+      };
+      return authRoutes;
     }
   }
 };
@@ -104,13 +112,13 @@ export default {
     <v-navigation-drawer
       v-model="drawerVisibleRight"
       location="right"
-      width="150"
-      color="grey-lighten-1"
+      width="210"
       temporary
     >
       <v-list-item
         v-for="item in itemsRight"
         :key="item.title"
+        class="ma-2 pt-6 px-4 display-medium"
       >
         <!-- Other -->
         <a
