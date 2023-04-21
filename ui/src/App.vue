@@ -124,10 +124,13 @@ export default {
         <a
           v-if="item.type === 'link'"
           :href="item.url"
+          style="text-decoration: none; padding-left: 6px;"
         >{{ item.title }}</a>
         <!-- Logout -->
         <a
           v-if="item.type === 'action'"
+          href="#"
+          style="text-decoration: none; padding-left: 6px;"
           @click.prevent="$event => item.action()"
         >{{ item.title }}</a>
       </v-list-item>

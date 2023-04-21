@@ -62,7 +62,7 @@ export default {
 
 <template>
   <v-sheet
-    class="pa-9 ma-3"
+    class="pa-1 ma-0"
     style="display: grid;"
   >
     <span
@@ -84,7 +84,7 @@ export default {
       </v-btn>
     </router-link>
     <v-card
-      class="pa-3 ma-3 elevation-6"
+      class="pa-1 ma-1 elevation-6"
     >
       <v-container
         fluid
