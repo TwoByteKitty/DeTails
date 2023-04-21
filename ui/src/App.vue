@@ -1,4 +1,5 @@
 <script lang="ts">
+import { useAuthStore } from '@/stores/auth.store';
 import {
 BarElement, CategoryScale, Chart as ChartJS, LinearScale, LineElement,
 PointElement,
@@ -7,7 +8,7 @@ TimeScale, Tooltip
 import 'chartjs-adapter-luxon';
 import { RouterView } from 'vue-router';
 import { routes } from './router';
-import { useAuthStore } from '@/stores/auth.store';
+import type { IRoute } from './shared/interfaces/IRoute';
 //import RouterView from './router/RouterView.vue';
 //import AppBar from './components/AppBar.vue';
 
@@ -52,12 +53,12 @@ export default {
     navMenu(){
       const { user } = useAuthStore();
       const filteredRoutes = routes.filter((route)=>{return route.meta.showInMenu});
-      let authRoutes: Array<{}>;
+      let authRoutes: Array<IRoute>;
       if (user) {
         authRoutes = filteredRoutes.filter((route)=>{return route.meta.authRequired});
       } else {
         authRoutes = filteredRoutes.filter((route)=>{return !route.meta.authRequired});
-      };
+      }
       return authRoutes;
     }
   }
@@ -100,7 +101,7 @@ export default {
           :key="route.pageTitle"
           class="ma-2 pt-6 px-4 display-medium"
         >
-          <router-link 
+          <router-link
             :to="route.path"
             style="text-decoration: none; padding-left: 6px;"
           >
