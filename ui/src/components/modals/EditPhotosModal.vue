@@ -1,5 +1,6 @@
 <script lang="ts">
 import { errorHandler } from '@/shared/errorHandler';
+import { useAuthStore } from '@/stores/auth.store';
 import { DELETE, PET_API, PUT } from '@/utils/fetch';
 import { DateTime } from 'luxon';
 
@@ -82,6 +83,12 @@ export default {
         this.deleteImage = false;
       }
     },
+    activatorClick(){
+      const { user, logout } = useAuthStore();
+      if (!user){
+        logout(true);
+      }
+    },
     formatDate(timestamp: string) {
       return DateTime.fromISO(timestamp).toFormat(DATE_FORMAT_STRING);
     },
@@ -102,6 +109,7 @@ export default {
           variant="tonal"
           color="var(--md-ref-palette-primary30)"
           elevation="7"
+          @click="activatorClick"
         >
           <v-icon>fa:fas fa-thin fa-pen-to-square</v-icon>
         </v-btn>

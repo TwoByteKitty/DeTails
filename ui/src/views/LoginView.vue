@@ -50,39 +50,82 @@ export default {
 </script>
 
 <template>
-  <v-sheet class="login-sheet pa-1 mx-auto mx-md-6 mx-lg-15 mx-xl-auto xl-width my-9 my-lg-15" rounded>
-    <v-card class="mx-3 mx-lg-12 my-3 my-lg-12 px-1 px-md-3 px-lg-9 py-3 py-lg-9" elevation="6">
+  <v-sheet
+    class="login-sheet pa-1 mx-auto mx-md-6 mx-lg-15 mx-xl-auto xl-width my-9 my-lg-15"
+    rounded
+  >
+    <v-card
+      class="mx-3 mx-lg-12 my-3 my-lg-12 px-1 px-md-3 px-lg-9 py-3 py-lg-9"
+      elevation="6"
+    >
       <v-card-title class="title-large">
         Log In
       </v-card-title>
       <div>
-        <v-alert v-model="showAlert" type="error" variant="tonal" closable close-label="Close Alert">
+        <v-alert
+          v-model="showAlert"
+          type="error"
+          variant="tonal"
+          closable
+          close-label="Close Alert"
+        >
           {{
             alertMsg
           }}
         </v-alert>
       </div>
-      <v-card class="px-3 px-lg-15 pb-3 pt-6 py-lg-15" variant="tonal" elevation="5">
-        <v-form ref="loginForm" v-model="isValid" lazy-validation @submit.prevent="login">
+      <v-card
+        class="px-3 px-lg-15 pb-3 pt-6 py-lg-15"
+        variant="tonal"
+        elevation="5"
+      >
+        <v-form
+          ref="loginForm"
+          v-model="isValid"
+          lazy-validation
+          @submit.prevent="login"
+        >
           <v-row>
             <v-col>
-              <v-text-field v-model="form.userName" :readonly="loading" :rules="userNameRules" class="mb-2" clearable
-                label="User Name" />
+              <v-text-field
+                v-model="form.userName"
+                :readonly="loading"
+                :rules="userNameRules"
+                class="mb-2"
+                clearable
+                label="User Name"
+              />
             </v-col>
           </v-row>
           <v-row>
             <v-col>
-              <v-text-field v-model="form.password" :readonly="loading" :rules="passwordRules"
+              <v-text-field
+                v-model="form.password"
+                :readonly="loading"
+                :rules="passwordRules"
                 :append-icon="showPW ? 'fa:fas fa-duotone fa-eye' : 'fa:fas fa-duotone fa-eye-slash'"
-                :type="showPW ? 'text' : 'password'" @click:append="$event => showPW = !showPW" counter clearable
-                label="Password" placeholder="Enter your password" />
+                :type="showPW ? 'text' : 'password'"
+                @click:append="$event => showPW = !showPW"
+                counter
+                clearable
+                label="Password"
+                placeholder="Enter your password"
+              />
             </v-col>
           </v-row>
 
           <v-row>
             <v-col>
-              <v-btn :loading="loading" block color="success" size="large" type="submit" variant="tonal"
-                class="submit-btn">
+              <v-btn
+                :loading="loading"
+                block
+                color="success"
+                size="large"
+                type="submit"
+                variant="tonal"
+                class="submit-btn"
+                elevation="15"
+              >
                 Sign In
               </v-btn>
             </v-col>
@@ -95,11 +138,10 @@ export default {
 
 <style lang="css">
 .login-sheet {
-  background-color: var(--md-ref-palette-secondary20);
+  background-color: var(--md-sys-color-secondary-light);
 }
 
 .submit-btn {
-  box-shadow: 1.5px 1.5px 6px 3px rgba(0, 6, 1, 0.33);
-  border: 1px dotted rgba(32, 88, 34);
+  border: 1px solid rgba(32, 88, 34);
 }
 </style>

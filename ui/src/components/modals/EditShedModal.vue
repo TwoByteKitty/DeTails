@@ -1,5 +1,6 @@
 <script lang="ts">
 import { errorHandler } from '@/shared/errorHandler';
+import { useAuthStore } from '@/stores/auth.store';
 import { PET_API, PUT } from '@/utils/fetch';
 import { DateTime } from 'luxon';
 
@@ -102,6 +103,12 @@ export default {
         errorHandler(error, errorMsg, this);
       }
     },
+    activatorClick(){
+      const { user, logout } = useAuthStore();
+      if (!user){
+        logout(true);
+      }
+    },
     formatDate(timestamp: string) {
       return DateTime.fromISO(timestamp).toFormat(DATE_FORMAT_STRING);
     },
@@ -119,6 +126,7 @@ export default {
         <v-btn
           class="edit-tbl-data-btn"
           v-bind="props"
+          @click="activatorClick"
         >
           <v-icon>fa:fas fa-thin fa-pencil</v-icon>
         </v-btn>
