@@ -93,10 +93,10 @@ export default {
       }
     },
     activatorClick(){
-       const { user, logout } = useAuthStore();
-       if (!user){
+      const { user, logout } = useAuthStore();
+      if (!user){
         logout(true);
-       }
+      }
     },
   },
 };

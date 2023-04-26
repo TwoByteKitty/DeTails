@@ -31,5 +31,8 @@
   "audioCues.taskCompleted": "off",
   "audioCues.taskFailed": "off",
   "audioCues.terminalCommandFailed": "off",
-  "audioCues.terminalQuickFix": "off"
+  "audioCues.terminalQuickFix": "off",
+  "[vue]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
 }

@@ -9,9 +9,11 @@
   font-weight: 300;
 }
 
-/* .v-card-title {
-  font-family: 'Fondamento', serif;
-} */
+@media (min-width: 1920px) {
+  .xl-width {
+    width: 66%;
+  }
+}
 
 .data-tbl {
   max-width: 100%;
@@ -36,5 +38,6 @@
   background: transparent;
   box-shadow: none;
 }
+
 
 

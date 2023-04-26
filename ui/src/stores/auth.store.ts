@@ -34,8 +34,8 @@ export const useAuthStore = defineStore({
 
             if (token) {
                cookies
-                  .set(TOKEN_KEY, token, '1h')
-                  .set(USER_KEY, user, '1h');
+                  .set(TOKEN_KEY, token, '3h')
+                  .set(USER_KEY, user, '3h');
                   this.user = user;
                router.push(this.returnUrl || '/my-pets');
             }

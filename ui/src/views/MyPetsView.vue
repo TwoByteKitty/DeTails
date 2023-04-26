@@ -5,8 +5,8 @@ import { PET_API, POST } from '@/utils/fetch';
 import { RouterLink } from 'vue-router';
 import { useCookies } from 'vue3-cookies';
 
-interface IImgMap{
-  [key:string]: string;
+interface IImgMap {
+  [key: string]: string;
 }
 
 const defaultImgMap: IImgMap = {
@@ -37,18 +37,18 @@ export default {
     async fetchData() {
       const { logout } = useAuthStore();
       const { cookies } = useCookies();
-      try{
-         this.myPets = await POST(PET_API, { userName: cookies.get(USER_KEY) });
-      }catch(error: any){
-         if(error.message.split(':')[0] === 'AUTH'){
-            logout()
-         }
+      try {
+        this.myPets = await POST(PET_API, { userName: cookies.get(USER_KEY) });
+      } catch (error: any) {
+        if (error.message.split(':')[0] === 'AUTH') {
+          logout()
+        }
       }
     },
     // add another param to this function for petImages
     getThumbnail(type: string, petImages: [IPetImage]) {
       let thumbnail: string;
-      const petImgThumb = petImages && petImages.find(({isThumbnail}) => isThumbnail === true);
+      const petImgThumb = petImages && petImages.find(({ isThumbnail }) => isThumbnail === true);
       if (petImgThumb) {
         thumbnail = petImgThumb.imagePath
       } else {
@@ -66,7 +66,7 @@ export default {
     style="display: grid;"
   >
     <span
-      class="mx-auto"
+      class="mx-auto mt-6"
       style="font-size: 0.9rem;"
     >
       List looking a little empty? Bring home a new buddy?
@@ -83,79 +83,66 @@ export default {
         Add a New Pet
       </v-btn>
     </router-link>
-    <v-card
-      class="pa-1 ma-1 elevation-6"
+    <v-card 
+      class="pa-0 ma-1 ma-md-3 ma-lg-9 mx-xl-auto xl-width"
+      elevation="9"
     >
-      <v-container
-        fluid
-        nogutters
+      <v-toolbar
+        class="mb-1"
+        elevation="3"
       >
-        <v-toolbar flat>
-          <v-toolbar-title> My Pets </v-toolbar-title>
-          <v-spacer />
-          <div d-flex>
-            <v-btn
-              class="ma-2 pa-1"
-              icon
-            >
-              <v-icon> fa:fas fa-thin fa-magnifying-glass </v-icon>
-            </v-btn>
-            <v-btn
-              class="ma-2 pa-1"
-              icon
-            >
-              <v-icon> fa:fas fa-thin fa-list </v-icon>
-            </v-btn>
-            <v-btn
-              class="ma-2 pa-1"
-              icon
-            >
-              <v-icon> fa:fas fa-thin fa-circle-sort </v-icon>
-            </v-btn>
-          </div>
-        </v-toolbar>
+        <v-toolbar-title class="title-large">
+          My Pets
+        </v-toolbar-title>
+        <v-spacer />
+      </v-toolbar>
 
-        <v-list lines="two">
-          <v-list-item
-            v-for="{ name, _id, species, type, petImages } in myPets"
-            :key="_id"
+      <v-list lines="one">
+        <v-list-item
+          v-for="{ name, _id, species, type, petImages } in myPets"
+          :key="_id"
+          class="ma-1 pa-1 px-lg-6 py-lg-3"
+          rounded
+          elevation="0"
+        >
+          <v-card
+            class="ma-1 mx-lg-9 pa-1 pa-lg-3"
+            elevation="9"
+            min-height="300"
           >
-            <v-card class="ma-2">
-              <v-row>
-                <v-col>
-                  <router-link :to="{ name: 'pet-details', query: { id: _id } }">
-                    <v-img
-                      class="ma-2"
-                      aspect-ratio="1:1"
-                      max-width="500"
-                      :src="getThumbnail(type, petImages)"
-                    />
-                  </router-link>
-                </v-col>
-                <v-col>
-                  <v-card-item>
-                    <v-card-title>{{ name }}</v-card-title>
-                    <v-card-subtitle>{{ type }}</v-card-subtitle>
-                    <v-card-subtitle>{{ species }}</v-card-subtitle>
-                  </v-card-item>
-                </v-col>
+            <v-row class="pet-row">
+              <v-col
+                class="pet-img"
+                cols="12"
+                md="4"
+              >
+                <router-link :to="{ name: 'pet-details', query: { id: _id } }">
+                  <v-img
+                    class="ma-1 mx-lg-3"
+                    aspect-ratio="1:1"
+                    max-height="300"
+                    :src="getThumbnail(type, petImages)"
+                  />
+                </router-link>
+              </v-col>
+              <v-divider
+                :thickness="3"
+                vertical
+              />
+              <v-col 
+                class="pet-info"
+              >
+                <v-card-item class="my-0 my-lg-3 mx-6 py-1 py-lg-3 px-1">
+                  <v-card-title>{{ name }}</v-card-title>
+                  <v-card-subtitle>{{ type }}</v-card-subtitle>
+                  <v-card-subtitle>{{ species }}</v-card-subtitle>
+                </v-card-item>
                 <v-spacer />
-                <v-col class="d-flex justify-end align-center">
-                  <router-link :to="{ name: 'pet-details', query: { id: _id } }">
-                    <v-btn
-                      class="ma-2 pa-1"
-                      variant="flat"
-                      icon
-                    >
-                      <v-icon> fa:fas fa-duotone fa-memo-circle-info</v-icon>
-                    </v-btn>
-                  </router-link>
-                </v-col>
-              </v-row>
-            </v-card>
-          </v-list-item>
-        </v-list>
-      </v-container>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-list-item>
+      </v-list>
     </v-card>
   </v-sheet>
 </template>
@@ -168,10 +155,37 @@ export default {
     align-items: center;
   }
 }
+
 .add-pet-btn {
   color: var(--md-ref-palette-primary30);
-  width: 33%;
+  width: inherit;
   box-shadow: 1px 1px 6px 3px rgba(3, 0, 6, 0.18);
-  border: 1px dotted var(--md-ref-palette-primary30);
+  border: 1px solid var(--md-ref-palette-primary30);
+}
+
+@media (min-width: 1024px) {
+  .add-pet-btn {
+    width: 33%;
+  }
+}
+.pet-row{
+  min-height: inherit;
+}
+.pet-row > .pet-img{
+  display: flex;
+}
+.pet-row > .pet-img a{
+  display: contents;
+}
+.pet-row > .pet-info{
+  display: grid;
+}
+@media (min-width: 960px){
+.pet-row > .pet-info{
+  display: flex;
+}
+}
+.pet-info > .v-card-item {
+  justify-self: center;
 }
 </style>
