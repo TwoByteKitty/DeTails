@@ -1,14 +1,40 @@
 # DeTails
 
+DOCS & RESOURCES
+~~~~~~~
+VUE.JS
+docs:
+https://vuejs.org/
 
-CHART.JS RESOURCES
-
+~~~~~~~
+CHART.JS 
 chart.js vid for making Gantt chart:
 https://www.youtube.com/watch?v=InMnGwP7iX4
+docs:
+https://www.chartjs.org/docs/latest/
 
-chart.js vid Horizontal Scroll Bar with Fixed Y Scale:
-https://www.youtube.com/watch?v=IV6Qy5EQZlA
+~~~~~~~
+LUXON
+docs:
+https://moment.github.io/luxon/#/?id=luxon
 
-example of stacked bar chart:
-https://www.chartjs.org/docs/latest/samples/bar/stacked.html
+~~~~~~~
+DATEPICKER
+docs:
+https://vue3datepicker.com/
 
+~~~~~~~
+VUETIFY
+docs:
+https://vuetifyjs.com/en/
+
+~~~~~~~
+VCALENDAR
+docs:
+https://vcalendar.io/
+
+~~~~~~~
+LOGO et al.
+https://app.logo.com/dashboard/logo_24c0258f-c671-4380-ac54-b2289c4fe00d/your-logo-files
+
+~~~~~~~

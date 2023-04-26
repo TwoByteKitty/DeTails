@@ -11,10 +11,16 @@ interface IAuthState {
    returnUrl?: string | null;
 }
 
+const getInitialUser = ():string| null => {
+   const { cookies } = useCookies();
+   return cookies.get(USER_KEY) || null;
+}
+
 const initialState: IAuthState = {
-   user: '',
+   user: getInitialUser(),
    returnUrl: null
 }
+
 export const useAuthStore = defineStore({
    id: 'auth',
    state: () => (initialState),
@@ -24,27 +30,29 @@ export const useAuthStore = defineStore({
          try {
             const response = await LOGIN({ userName, password });
             const { user }: { user: string } = await response.json();
-            this.user = user;
-
             const token = response.headers.get(TOKEN_KEY);
 
             if (token) {
                cookies
-                  .set(TOKEN_KEY, token, '2h')
-                  .set(USER_KEY, user, '2h');
-               // redirect to previous url or default to home page
+                  .set(TOKEN_KEY, token, '3h')
+                  .set(USER_KEY, user, '3h');
+                  this.user = user;
                router.push(this.returnUrl || '/my-pets');
             }
          } catch (error: any) {
+            this.user = null;
             throw new Error(error.message);
          }
       },
-      logout() {
+      logout(sendToLogin: boolean = true) {
          const { cookies } = useCookies();
          this.user = null;
          cookies.remove(TOKEN_KEY);
          cookies.remove(USER_KEY);
-         router.push('/login');
+         router.push(sendToLogin ? '/login' : '/');
+      },
+      setReturnURL(url: string|null) {
+         this.returnUrl = url;
       }
    }
 });

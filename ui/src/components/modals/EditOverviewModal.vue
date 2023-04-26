@@ -1,8 +1,10 @@
 <script lang="ts">
+import { errorHandler } from '@/shared/errorHandler';
+import { useAuthStore } from '@/stores/auth.store';
 import { PET_API, PUT } from '@/utils/fetch';
 
-const errorMsg = 'Well... you really screwed up this time...';
-const successMsg = "I'm a success alert! Congratulations!";
+const errorMsg = 'You really screwed up this time...';
+const successMsg = 'Edit successful! Congratulations!';
 
 export default {
   name: 'EditOverviewModal',
@@ -72,23 +74,28 @@ export default {
     },
   },
   methods: {
+    editSuccess(){
+      this.$emit('overviewEdited');
+      this.alertMsg = successMsg;
+      this.alertIsError = false;
+      this.showAlert = true;
+      setTimeout(() => {
+        this.showAlert = false;
+        this.modalIsOpen = false;
+      }, 900);
+    },
     async editPet() {
       try{
-         const data = await PUT(`${PET_API}/${this.$route.params.id}`, this.fields);
-         console.log(data);
-         this.$emit('overviewEdited');
-         this.alertMsg = successMsg;
-         this.alertIsError = false;
-         this.showAlert = true;
-         setTimeout(() => {
-           this.showAlert = false;
-           this.modalIsOpen = false;
-         }, 1000);
+        await PUT(`${PET_API}/${this.$route.params.id}`, this.fields);
+        this.editSuccess();
       }catch(error){
-         console.error(errorMsg, error);
-         this.alertMsg = errorMsg;
-         this.alertIsError = true;
-         this.showAlert = true;
+        errorHandler(error, errorMsg, this);
+      }
+    },
+    activatorClick(){
+      const { user, logout } = useAuthStore();
+      if (!user){
+        logout(true);
       }
     },
   },
@@ -103,8 +110,12 @@ export default {
     >
       <template #activator="{ props }">
         <v-btn
-          style="height: 66px; width: 66px"
+          style="height: 60px; width: 66px"
           v-bind="props"
+          elevation="7"
+          variant="tonal"
+          color="var(--md-ref-palette-primary30)"
+          @click="activatorClick"
         >
           <v-icon>fa:fas fa-thin fa-pen-to-square</v-icon>
         </v-btn>

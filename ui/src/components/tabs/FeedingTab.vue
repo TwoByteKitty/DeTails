@@ -1,16 +1,21 @@
 <script lang="ts">
+import { errorHandler } from '@/shared/errorHandler';
 import type { IMeal } from '@/shared/interfaces/IMeal';
-import EditFeedingModal from '../modals/EditFeedingModal.vue';
+import { useAuthStore } from '@/stores/auth.store';
 import { DegreeOfDead, PreyType } from '@/shared/SelectLists.js';
 import type { IMealSchedule } from '@/utils/feedingSchedule';
 import { generateFeedingSchedule } from '@/utils/feedingSchedule';
 import { PET_API, POST, PUT } from '@/utils/fetch';
 import { getSortMethods } from '@/utils/sort';
+import EditFeedingModal from '../modals/EditFeedingModal.vue';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { DateTime } from 'luxon';
 import { Calendar } from 'v-calendar';
 import type { PropType } from 'vue';
+
+
+
 
 const defaultMeal: IMeal = {
   _id: '',
@@ -22,16 +27,16 @@ const defaultMeal: IMeal = {
   eaten: 'Not Eaten',
   feedComments: '',
 };
-const errorMsg = 'Well... you really screwed up this time...';
-const successMsg = "I'm a success alert! Congratulations!";
+const errorMsg = 'You really screwed up this time...';
+const successMsg = 'Success! New meal data saved.';
 
 export default {
   name: 'FeedingTab',
   components: { Calendar, Datepicker, EditFeedingModal },
   emits: [ 'feedingAdded' ],
   props: {
-   feedingHistory: { type: Array as PropType<Array<IMeal>>, required: true },
-   mealSchedule: { type: Array as PropType<Array<IMealSchedule>>, required: true },
+    feedingHistory: { type: Array as PropType<Array<IMeal>>, required: true },
+    mealSchedule: { type: Array as PropType<Array<IMealSchedule>>, required: true },
   },
 
   data() {
@@ -56,36 +61,35 @@ export default {
   },
 
 computed:{
-   feedingScheduleDisplay(){
+  feedingScheduleDisplay(){
       return this.mapFeedingScheduleToCalendar(this.mealSchedule)
-   },
-   sortedHistory() {
+  },
+  sortedHistory() {
      return [...this.feedingHistory].sort(getSortMethods<IMeal>(this.currentSort));
-   },
+  },
 },
   methods: {
     formatDate(timestamp: string) {
       return DateTime.fromISO(timestamp).toLocaleString(DateTime.DATE_SHORT);
     },
+    createSuccess(){
+      this.$emit('feedingAdded');
+      this.alertMsg = successMsg;
+      this.alertIsError = false;
+      this.showAlert = true;
+      this.newMeal = { ...defaultMeal };
+        setTimeout(() => {
+          this.showAlert = false;
+        }, 9000);
+    },
     async createMeal() {
       delete this.newMeal._id;
       this.showAlert = false;
       try{
-         const data = await POST(`${PET_API}/${this.$route.query.id}/feedings/add`, this.newMeal);
-         console.log(data);
-         this.$emit('feedingAdded');
-         this.alertMsg = successMsg;
-         this.alertIsError = false;
-         this.showAlert = true;
-         this.newMeal = { ...defaultMeal };
-         setTimeout(() => {
-           this.showAlert = false;
-         }, 9000);
+        await POST(`${PET_API}/${this.$route.query.id}/feedings/add`, this.newMeal);
+        this.createSuccess();
       }catch(error){
-         console.error('There was an error!', error);
-         this.alertMsg = errorMsg;
-          this.alertIsError = true;
-          this.showAlert = true;
+        errorHandler(error, errorMsg, this);
       }
     },
     mapFeedingScheduleToCalendar(schedule: Array<IMealSchedule>){
@@ -106,11 +110,14 @@ computed:{
     },
     async editFeedingSchedule(mealSchedule: Array<IMealSchedule>) {
       try{
-         const data = await PUT(`${PET_API}/${this.$route.query.id}/feeding-schedule`, { _id: this.$route.query.id, mealSchedule });
-         console.log(data);
-         this.$emit('feedingAdded');
-      }catch(error){
-         console.error('There was an error!', error);
+        const data = await PUT(`${PET_API}/${this.$route.query.id}/feeding-schedule`, { _id: this.$route.query.id, mealSchedule });
+        console.log(data);
+        this.$emit('feedingAdded');
+      }catch(error: any){
+        const { logout } = useAuthStore();
+        if(error.message.split(':')[0]=== 'AUTH'){
+          logout();
+        }
       }
     },
     sort(sortKey: string, sortType: string) {
@@ -261,7 +268,7 @@ computed:{
               />
             </v-col>
             <v-col>
-              <label>No. of Prey Feeding(s)</label>
+              <label>No. of Prey Items</label>
               <v-text-field
                 v-model="newMeal.preyNo"
                 type="number"
@@ -269,10 +276,10 @@ computed:{
               />
             </v-col>
             <v-col>
-              <label>Type of Prey Feeding(s)</label>
+              <label>Type of Prey</label>
               <v-select
                 v-model="newMeal.preyType"
-                :feedings="PreyType"
+                :items="PreyType"
                 multiple
                 variant="underlined"
               />
@@ -283,7 +290,7 @@ computed:{
               <label>Degree of Deadness</label>
               <v-select
                 v-model="newMeal.dOD"
-                :feedings="DegreeOfDead"
+                :items="DegreeOfDead"
                 variant="underlined"
               />
             </v-col>

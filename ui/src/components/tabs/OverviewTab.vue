@@ -1,18 +1,21 @@
 <script lang="ts">
+import { errorHandler } from "@/shared/errorHandler";
 import type { IMeal } from "@/shared/interfaces/IMeal";
 import type { IPetImage } from "@/shared/interfaces/IPetImage";
 import type { IShed } from "@/shared/interfaces/IShed";
 import type { IWeight } from "@/shared/interfaces/IWeight";
 import { PET_API, POST_IMAGE } from "@/utils/fetch";
-import type { PropType } from "vue";
 import EditOverviewModal from "../modals/EditOverviewModal.vue";
 import EditPhotosModal from "../modals/EditPhotosModal.vue";
+import type { PropType } from "vue";
+import { DateTime } from 'luxon';
 
 const defaultImgUpload = {
-   image: [],
-   imageTitle: '',
+  image: [],
+  imageTitle: '',
 };
-
+const errorMsg = 'You really screwed up this time...';
+const successMsg = 'Image upload successful!';
 
 export default {
   name: "OverviewTab",
@@ -34,23 +37,46 @@ export default {
   data() {
     return {
       imageUpload: {
-        ...defaultImgUpload },
+        ...defaultImgUpload 
+      },
+      currentSlide: 0,
+      alertType: 'success',
+      alertIsError: false,
+      alertMsg: successMsg,
+      showAlert: false,
     };
+  },
+  computed: {
+    age() {
+      const today = DateTime.now();
+      const birthday = DateTime.fromISO(this.dateOfBirth);
+      const {years, months, days} = today.diff(birthday,  ['years', 'months', 'days']).toObject();
+      return `${years} years, ${months} months`
+    }
   },
   components: { EditOverviewModal, EditPhotosModal },
   methods: {
+    uploadSuccess(){
+      this.$emit('overviewEdited');
+      this.alertMsg = successMsg;
+      this.alertIsError = false;
+      this.showAlert = true;
+      this.imageUpload = { ...defaultImgUpload };
+        setTimeout(() => {
+          this.showAlert = false;
+        }, 9000);
+    },
     async uploadImage() {
       const imageToUpload: File = this.imageUpload.image[0];
       const data = new FormData();
       data.append("petImage", imageToUpload, imageToUpload.name);
       data.append("imageTitle", this.imageUpload.imageTitle);
       try{
-         const response = await POST_IMAGE(`${PET_API}/${this._id}/add-image`, data)
-         this.$emit("overviewEdited");
-         this.imageUpload = { ...defaultImgUpload };
-         console.log(response);
+        const response = await POST_IMAGE(`${PET_API}/${this._id}/add-image`, data)
+        console.log(response);
+        this.uploadSuccess();
       }catch(error){
-         console.log(error);
+        errorHandler(error, errorMsg, this);
       }
     },
   },
@@ -65,7 +91,7 @@ export default {
           <v-carousel
             hide-delimiters
             show-arrows="hover"
-            :model-value="0"
+            v-model="currentSlide"
           >
             <v-carousel-item
               v-for="(currentImg, index) in petImages"
@@ -93,7 +119,6 @@ export default {
               name="pet-image"
               label="Upload photos"
               clearable
-              variant="solo"
             />
           </v-col>
           <v-col>
@@ -104,16 +129,39 @@ export default {
           </v-col>
           <v-col cols="1">
             <v-btn
-              style="height: 60px; width: 66px"
+              class="uploadBtn"
+              variant="tonal"
+              color="success"
               @click="uploadImage"
+              elevation="9"
             >
               <v-icon>fa:fas fa-thin fa-arrow-up-from-arc</v-icon>
             </v-btn>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col>
+            <div>
+              <v-alert
+                v-model="showAlert"
+                :type="alertIsError ? 'error': 'success'"
+                variant="tonal"
+                closable
+                close-label="Close Alert"
+                >
+                  {{
+                    alertMsg
+                  }}
+              </v-alert>
+            </div>
+          </v-col>
+        </v-row>
       </v-card>
       <v-card class="elevation-7 pa-3 ma-3">
-        <v-card-title class="d-flex justify-space-between">
+        <v-card-title 
+          class="d-flex justify-space-between"
+          style="padding: 18px"
+          >
           <span> Overview </span>
           <span>
             <edit-overview-modal
@@ -164,7 +212,7 @@ export default {
               Age:
             </v-card-subtitle>
             <v-card-text class="overview-inline">
-              {{ dateOfBirth }}
+              {{ age }}
             </v-card-text>
           </v-col>
           <v-col>
@@ -188,6 +236,11 @@ export default {
 </template>
 
 <style lang="css" scoped>
+.uploadBtn {
+  height: 60px; 
+  width: 66px;
+  border: 1px solid rgba(32, 88, 34, 0.66);
+}
 .overview-inline {
   display: inline;
 }
@@ -197,18 +250,10 @@ export default {
 .album-edit-overlay {
   position: absolute;
   min-width: 100%;
-  min-height: 20%;
-  bottom: 0;
+  min-height: 100%;
+  bottom: 5px;
+  right: 5px;
   z-index: 0;
 }
 
-.album-edit-button {
-  height: 60px;
-  width: 66px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  opacity: 80%;
-  z-index: 5;
-}
 </style>

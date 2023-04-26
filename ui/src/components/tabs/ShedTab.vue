@@ -1,9 +1,10 @@
 <script lang="ts">
-import type { IError } from '@/shared/interfaces/IError';
+import { errorHandler } from '@/shared/errorHandler';
 import type { IShed } from '@/shared/interfaces/IShed';
-import { useAuthStore } from '@/stores/auth.store';
 import { PET_API, POST } from '@/utils/fetch';
 import { getSortMethods } from '@/utils/sort';
+import ShedStkBar from '../charts/ShedStkBar.vue';
+import EditShedModal from '../modals/EditShedModal.vue';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import 'chartjs-adapter-luxon';
@@ -11,8 +12,6 @@ import 'chartjs-plugin-style';
 import { DateTime } from 'luxon';
 import type { PropType } from 'vue';
 import { ref } from 'vue';
-import ShedStkBar from '../charts/ShedStkBar.vue';
-import EditShedModal from '../modals/EditShedModal.vue';
 
 const defaultShed: IShed = {
   _id: '',
@@ -23,8 +22,8 @@ const defaultShed: IShed = {
   entire: 'Not Entire',
   shedComments: '',
 };
-const errorMsg = 'Well... you really screwed up this time...';
-const successMsg = "I'm a success alert! Congratulations!";
+const errorMsg = 'You really screwed up this time...';
+const successMsg = 'Success! New shed data saved.';
 
 export default {
   name: 'ShedTab',
@@ -64,33 +63,26 @@ export default {
     formatDate(timestamp: string) {
       return DateTime.fromISO(timestamp).toLocaleString(DateTime.DATE_SHORT);
     },
+    createSuccess(){
+      this.$emit('shedAdded');
+      this.alertMsg = successMsg;
+      this.alertIsError = false;
+      this.showAlert = true;
+      this.newShed = { ...defaultShed };
+        setTimeout(() => {
+          this.showAlert = false;
+        }, 9000);
+    },
     async createShed() {
       delete this.newShed._id;
       this.showAlert = false;
-      const { logout } = useAuthStore();
       try{
-         const data = await POST(`${PET_API}/${this.$route.query.id}/sheds/add`, this.newShed);
-         console.log(data);
-         this.$emit('shedAdded');
-         this.alertMsg = successMsg;
-         this.alertIsError = false;
-         this.showAlert = true;
-         this.newShed = { ...defaultShed };
-         setTimeout(() => {
-           this.showAlert = false;
-         }, 9000);
+        const data = await POST(`${PET_API}/${this.$route.query.id}/sheds/add`, this.newShed);
+        console.log(data);
+        this.createSuccess();
       }catch(error){
-         const caughtError = error as IError;
-         console.error(errorMsg, error);
-         if(caughtError.type === 'AUTH'){
-            logout()
-         }else{
-         this.alertMsg = errorMsg;
-         this.alertIsError = true;
-         this.showAlert = true;
-         }
-
-      }
+        errorHandler(error, errorMsg, this);
+        }
     },
     sort(sortKey: string, sortType: string) {
       this.currentSort.key = sortKey;

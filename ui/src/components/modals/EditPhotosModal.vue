@@ -1,12 +1,12 @@
 <script lang="ts">
+import { errorHandler } from '@/shared/errorHandler';
 import { useAuthStore } from '@/stores/auth.store';
 import { DELETE, PET_API, PUT } from '@/utils/fetch';
 import { DateTime } from 'luxon';
 
 const DATE_FORMAT_STRING = 'yyyy-MM-dd';
-const errorMsg = 'Well... you really screwed up this time...';
-const successMsg = "I'm a success alert! Congratulations!";
-
+const errorMsg = 'You really screwed up this time...';
+const successMsg = 'Edit successful! Congratulations!';
 
 export default {
   name: 'EditPhotosModal',
@@ -63,20 +63,11 @@ export default {
       this.alertMsg = successMsg;
       this.alertIsError = false;
       this.showAlert = true;
+      this.deleteImage = false;
       setTimeout(() => {
         this.showAlert = false;
         this.modalIsOpen = false;
       }, 1000);
-    },
-    editError(error: any){
-      const { logout } = useAuthStore();
-      if(error.message.split()[0] === 'AUTH'){
-         logout()
-      }else{
-      this.alertMsg = errorMsg;
-      this.alertIsError = true;
-      this.showAlert = true;
-      }
     },
     async editPhoto() {
       let data = null;
@@ -86,9 +77,16 @@ export default {
         }else{
             data = await PUT(`${PET_API}/${this.$route.query.id}/edit-image`, this.fields);
         }
-         this.editSuccess(data);
+        this.editSuccess(data);
       }catch(error){
-         this.editError(error)
+        errorHandler(error, errorMsg, this);
+        this.deleteImage = false;
+      }
+    },
+    activatorClick(){
+      const { user, logout } = useAuthStore();
+      if (!user){
+        logout(true);
       }
     },
     formatDate(timestamp: string) {
@@ -108,6 +106,10 @@ export default {
         <v-btn
           class="album-edit-button"
           v-bind="props"
+          variant="tonal"
+          color="var(--md-ref-palette-primary30)"
+          elevation="7"
+          @click="activatorClick"
         >
           <v-icon>fa:fas fa-thin fa-pen-to-square</v-icon>
         </v-btn>
@@ -215,13 +217,14 @@ export default {
 
 <style lang="css">
 .album-edit-button {
-  height: 60px;
-  width: 66px;
+  height: 60px !important;
+  width: 66px !important;
   position: absolute;
   bottom: 0;
   right: 0;
-  opacity: 80%;
+  opacity: 90%;
   z-index: 5;
+
 }
 .delete-chkbx {
   color: var(--md-ref-palette-error60);

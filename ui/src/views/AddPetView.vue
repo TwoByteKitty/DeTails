@@ -202,21 +202,6 @@ export default {
               class="pa-3 ma-3"
               style="text-align: center;"
             >
-              <v-btn
-                v-ripple
-                style="width: 75%;"
-                size="x-large"
-                color="success"
-                prepend-icon="fa:fas fa-duotone fa-check"
-                type="submit"
-              >
-                Register New Pet
-              </v-btn>
-            </v-col>
-            <v-col
-              class="pa-3 ma-3"
-              style="text-align: center;"
-            >
               <router-link
                 to="/my-pets"
                 style="text-decoration: none;"
@@ -231,6 +216,21 @@ export default {
                   Return to My Pets
                 </v-btn>
               </router-link>
+            </v-col>
+            <v-col
+              class="pa-3 ma-3"
+              style="text-align: center;"
+            >
+              <v-btn
+                v-ripple
+                style="width: 75%;"
+                size="x-large"
+                color="success"
+                prepend-icon="fa:fas fa-duotone fa-check"
+                type="submit"
+              >
+                Register New Pet
+              </v-btn>
             </v-col>
           </v-row>
         </v-container>

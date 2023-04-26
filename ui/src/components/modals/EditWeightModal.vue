@@ -1,13 +1,13 @@
 <script lang="ts">
+import { errorHandler } from '@/shared/errorHandler';
 import { WeighUnits } from '@/shared/SelectLists';
 import { useAuthStore } from '@/stores/auth.store';
 import { PET_API, PUT } from '@/utils/fetch';
 import { DateTime } from 'luxon';
 
 const DATE_FORMAT_STRING = 'yyyy-MM-dd';
-const errorMsg = 'Well... you really screwed up this time...';
-const successMsg = "I'm a success alert! Congratulations!";
-
+const errorMsg = 'You really screwed up this time...';
+const successMsg = 'Edit successful! Congratulations!';
 
 export default {
   name: 'EditWeightModal',
@@ -71,8 +71,7 @@ export default {
     },
   },
   methods: {
-    editSuccess(data: any){
-      console.log(data);
+    editSuccess(){
       this.$emit('weightEdited');
       this.alertMsg = successMsg;
       this.alertIsError = false;
@@ -80,25 +79,20 @@ export default {
       setTimeout(() => {
         this.showAlert = false;
         this.modalIsOpen = false;
-      }, 1000);
-    },
-    editError(error: any){
-      const { logout } = useAuthStore();
-      console.error(errorMsg, error);
-      if(error.message.split(':')[0]=== 'AUTH'){
-         logout()
-      }else{
-      this.alertMsg = errorMsg;
-      this.alertIsError = true;
-      this.showAlert = true;
-      }
+      }, 900);
     },
     async editPet() {
       try{
-         const data = await PUT(`${PET_API}/weights/${this._id}`, this.fields);
-         this.editSuccess(data);
+        await PUT(`${PET_API}/weights/${this._id}`, this.fields);
+        this.editSuccess();
       }catch(error){
-         this.editError(error)
+        errorHandler(error, errorMsg, this);
+      }
+    },
+    activatorClick(){
+      const { user, logout } = useAuthStore();
+      if (!user){
+        logout(true);
       }
     },
     formatDate(timestamp: string) {
@@ -118,6 +112,7 @@ export default {
         <v-btn
           class="edit-tbl-data-btn"
           v-bind="props"
+          @click="activatorClick"
         >
           <v-icon>fa:fas fa-thin fa-pencil</v-icon>
         </v-btn>

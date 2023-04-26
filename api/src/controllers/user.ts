@@ -12,7 +12,10 @@ const registerUser = async (
   const oldUser = await User.findOne({ userName: user.userName });
 
   if (oldUser) {
-    return response.status(409).send("User Already Exist. Please Login");
+    return response.status(409).json({ 
+      message: "User already exists. Please log in.",
+      type: "AUTH",
+    });
   }
 
   user.password = await bcrypt.hash(user.password, 10);
