@@ -1,43 +1,42 @@
+@use 'vuetify';
 
 @import url('https://fonts.googleapis.com/css2?family=Biryani:wght@200;300;400;600;700;800;900&family=Calligraffitti&family=Cormorant+Infant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Cormorant+Unicase:wght@300;400;500;600;700&family=Cormorant+Upright:wght@300;400;500;600;700&family=Euphoria+Script&family=Kalam:wght@300;400;700&family=Laila:wght@300;400;500;600;700&family=Maitree:wght@200;300;400;500;600&family=Martel+Sans:wght@200;300;400;600;700&family=Martel:wght@200;300;400;600;700;800;900&family=Merienda:wght@300;400;500;600;700;800;900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-@import "./themes/theme.css";
-
+@import "./theme.scss";
 
 #app {
-  margin: 0 auto;
-  font-family: 'Laila', sans-serif;
-  font-weight: 300;
+   margin: 0 auto;
+   font-family: 'Laila', sans-serif;
+   font-weight: 300;
 }
 
 @media (min-width: 1920px) {
-  .xl-width {
-    width: 66%;
-  }
+   .xl-width {
+      width: 66%;
+   }
 }
 
 .data-tbl {
-  max-width: 100%;
-  overflow-x: hidden;
+   max-width: 100%;
+   overflow-x: hidden;
 }
 
-.data-tbl .v-table__wrapper{
-  height: 600px;
+.data-tbl .v-table__wrapper {
+   height: 600px;
 }
 
 .tbl-wrap {
-  box-shadow: 3px 3px 9px 6px var(--md-ref-palette-neutral10);
-  padding: 6px;
-}
-.tbl-wrap, .tbl-head {
-  background-color: var(--md-ref-palette-secondary30) !important;
+   box-shadow: 3px 3px 9px 6px var(--md-ref-palette-neutral10);
+   padding: 6px;
 }
 
-.edit-tbl-data-btn{
-  height: 45px;
-  width: 45px;
-  background: transparent;
-  box-shadow: none;
+.tbl-wrap,
+.tbl-head {
+   background-color: var(--md-ref-palette-secondary30) !important;
 }
 
-
-
+.edit-tbl-data-btn {
+   height: 45px;
+   width: 45px;
+   background: transparent;
+   box-shadow: none;
+}

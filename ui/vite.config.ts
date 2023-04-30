@@ -1,11 +1,13 @@
 import { fileURLToPath, URL } from 'node:url';
 
 import vue from '@vitejs/plugin-vue';
+import vuetify from 'vite-plugin-vuetify';
+
 import { defineConfig, type ConfigEnv, type UserConfig } from 'vite';
 
 const baseConfig = {
    base: './',
-   plugins: [vue()],
+   plugins: [vue(), vuetify({ styles: { configFile: 'src/styles/settings.scss' } })],
    resolve: {
       alias: {
          '@': fileURLToPath(new URL('./src', import.meta.url)),
